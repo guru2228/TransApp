@@ -98,6 +98,7 @@ namespace TransApp.Site
         
             try
             {
+
                 //ConfigureAuth(app);
                 app.UseDefaultFiles();
                 app.UseStaticFiles();
