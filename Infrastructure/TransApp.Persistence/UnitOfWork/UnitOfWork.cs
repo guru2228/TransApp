@@ -21,7 +21,7 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         // private readonly HawWebDbContext _context ;
         private readonly IOptions<SiteDbContext> _dataBaseConfig;
 
-        private GenericRepository<TransAppUser> _applicationUserRepository;
+        private GenericRepository<User> _applicationUserRepository;
         GenericRepository<ModuleTranslationResource> _moduleTranslationResourceRepository;
         GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
 
@@ -87,13 +87,13 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         /// <summary>
         /// HawWebDictionaryRepository
         /// </summary>
-        public GenericRepository<TransAppUser> ApplicationUserRepository
+        public GenericRepository<User> ApplicationUserRepository
         {
             get
             {
                 if (this._applicationUserRepository == null)
                 {
-                    this._applicationUserRepository = new GenericRepository<TransAppUser>("TransAppUser", _dataBaseConfig.Value.DefaultConnectionString);
+                    this._applicationUserRepository = new GenericRepository<User>("User", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _applicationUserRepository;
             }
