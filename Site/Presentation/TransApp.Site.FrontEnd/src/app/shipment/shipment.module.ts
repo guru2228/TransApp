@@ -5,12 +5,14 @@ import { HttpModule } from "@angular/http";
 
 import { ShipmentSearchComponent } from "app/shipment/components/shipment-search.component";
 import { ShipmentCreateComponent } from "app/shipment/components/shipment-create.component";
+import { MdModule } from "app/shared/md/md.module";
 
 @NgModule({
     imports: [
         CommonModule,
         FormsModule,
-        HttpModule
+        HttpModule,
+        MdModule
     ],
     exports: [
     ],

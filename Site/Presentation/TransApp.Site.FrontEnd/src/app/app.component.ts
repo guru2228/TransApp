@@ -1,28 +1,23 @@
-import { Component, OnInit } from '@angular/core';
-import {LocationStrategy, PlatformLocation, Location} from '@angular/common';
+import { Component, OnInit, ElementRef } from '@angular/core';
+import { Router, ActivatedRoute } from '@angular/router';
 
+declare var $:any;
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html'
+    selector: 'my-app',
+    templateUrl: './app.component.html'
 })
-export class AppComponent implements OnInit{
-    location: Location;
-    constructor(location:Location) {
-        this.location = location;
-    }
-    ngOnInit(){
-        $.getScript('../assets/js/material-dashboard.js');
-        $.getScript('../assets/js/initMenu.js');
-    }
 
-    public isMaps(path){
-        var titlee = this.location.prepareExternalUrl(this.location.path());
-        titlee = titlee.slice( 1 );
-        if(path == titlee){
-            return false;
+export class AppComponent implements OnInit{
+    constructor(private elRef:ElementRef) {}
+    ngOnInit(){
+        let body = document.getElementsByTagName('body')[0];
+        var isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
+        if (isWindows){
+           // if we are on windows OS we activate the perfectScrollbar function
+            body.classList.add("perfect-scrollbar-on");
+        } else {
+            body.classList.add("perfect-scrollbar-off");
         }
-        else {
-            return true;
-        }
+        $.material.init();
     }
 }

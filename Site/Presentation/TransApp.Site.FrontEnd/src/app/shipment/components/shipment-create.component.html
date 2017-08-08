@@ -1,91 +1,105 @@
-<div class="row">
-    <div class="col-md-12">
-        <div class="card">
-            <div class="card-header" data-background-color="red">
-                <h4 class="title">Material Dashboard Heading</h4>
-                <p class="category">Created using Roboto Font Family</p>
-            </div>
-            <div class="card-content">
-                <div id="typography">
-                    <div class="title">
-                        <h2>Typography</h2>
-                    </div>
-                    <div class="row">
-                        <div class="tim-typo">
-                            <h1><span class="tim-note">Header 1</span>The Life of Material Dashboard </h1>
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <form #f="ngForm" novalidate (ngSubmit)="save(f.value, f.valid)">
+                        <div class="card-header card-header-icon" data-background-color="rose">
+                            <i class="material-icons">send</i>
                         </div>
-                        <div class="tim-typo">
-                            <h2><span class="tim-note">Header 2</span>The life of Material Dashboard </h2>
-                        </div>
-                        <div class="tim-typo">
-                            <h3><span class="tim-note">Header 3</span>The life of Material Dashboard </h3>
-                        </div>
-                        <div class="tim-typo">
-                            <h4><span class="tim-note">Header 4</span>The life of Material Dashboard </h4>
-                        </div>
-                        <div class="tim-typo">
-                            <h5><span class="tim-note">Header 5</span>The life of Material Dashboard </h5>
-                        </div>
-                        <div class="tim-typo">
-                            <h6><span class="tim-note">Header 6</span>The life of Material Dashboard </h6>
-                        </div>
-                        <div class="tim-typo">
-                            <p><span class="tim-note">Paragraph</span> I will be the leader of a company that ends up being worth billions of dollars, because I got the answers. I understand culture. I am the nucleus. I think that’s a responsibility that
-                                I have, to push possibilities, to show people, this is the level that things could be at.</p>
-                        </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Quote</span>
-                            <blockquote>
-                                <p>
-                                    I will be the leader of a company that ends up being worth billions of dollars, because I got the answers. I understand culture. I am the nucleus. I think that’s a responsibility that I have, to push possibilities, to show people, this is the level that
-                                    things could be at.
-                                </p>
-                                <small>
-                                 Kanye West, Musician
-                                 </small>
-                            </blockquote>
-                        </div>
+                        <div class="card-content">
+                            <h4 class="card-title">Sender</h4>
+                            <div class="form-group label-floating">
+                                <label for="" class="control-label">Sender
+                                    <span class="star">*</span>
+                                </label>
+                                <input type="text" class="form-control" name="sender" [ngModel]="user.sender" required #email="ngModel">
+                            </div>
+                            <h3>Adress info</h3>
+                            <div class="form-group label-floating">
+                                <label for="" class="control-label">Pickup date
+                                    <span class="star">*</span>
+                                </label>
+                                <input type="text" class="form-control datetimepicker" value="10/05/2016" />
+                            </div>
 
-                        <div class="tim-typo">
-                            <span class="tim-note">Muted Text</span>
-                            <p class="text-muted">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers...
-                            </p>
+                            <div class="form-group label-floating">
+                                <label for="" class="control-label">Pickup adress
+                                    <span class="star">*</span>
+                                </label>
+                                <textarea class="form-control" rows="5"></textarea>
+                            </div>
+                            <h3>Opening hours</h3>
+                            <div class="form-group label-floating">
+                                <div id="sliderDouble" class="slider slider-info"></div>
+                            </div>
+                            <div class="form-group label-floating">
+                                <label class="control-label" for="">Contact
+                                </label>
+                                <input type="text" class="form-control" name="email" [ngModel]="user.phpne">
+                            </div>
+                            <div class="form-group label-floating">
+                                <label class="control-label" for="">Phone
+                                </label>
+                                <input type="text" class="form-control" name="email" [ngModel]="user.email">
+                            </div>
+
+                            <div class="form-group label-floating">
+                                <label class="control-label" for="">Info
+                                </label>
+                                <input type="text" class="form-control" name="email" [ngModel]="user.email">
+                            </div>
+
+                            <h3>Truck</h3>
+                            <div class="form-group label-floating">
+                                <div class="togglebutton">
+                                    <label>
+                                        <input type="checkbox" checked> Toggle is on
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Primary Text</span>
-                            <p class="text-primary">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
+                    </form>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="card">
+                    <form #f1="ngForm" novalidate (ngSubmit)="save(f1.value, f1.valid)">
+                        <div class="card-header card-header-icon" data-background-color="rose">
+                            <i class="material-icons">call_received</i>
                         </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Info Text</span>
-                            <p class="text-info">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
+                        <div class="card-content">
+                            <h4 class="card-title">Receiver</h4>
+                            <div class="form-group label-floating">
+                                <label class="control-label" for="">Email Address:
+                                    <span class="star">*</span>
+                                </label>
+                                <input type="email" class="form-control" name="email" [ngModel]="user.email" required #email="ngModel" pattern="^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+.[a-zA-Z0-9-.]+$">
+                                <small [hidden]="email.valid || (email.pristine && !f1.submitted)" class="text-danger">
+                                  Email is required and format should be <i>john@doe.com</i>.
+                                </small>
+                            </div>
+                            <div class="form-group label-floating">
+                                <label for="" class="control-label">Password
+                                    <span class="star">*</span>
+                                </label>
+                                <input type="password" class="form-control" name="password" [ngModel]="user.password" required validateEqual="confirmPassword" reverse="true" #password="ngModel">
+                                <small [hidden]="password.valid || (password.pristine && !f1.submitted)" class="text-danger">
+                                  Password is required
+                                </small>
+
+                            </div>
+                            <div class="category form-category">
+                                <span class="star">*</span> Required fields</div>
+                            <div class="text-center">
+                                <button type="submit" class="btn btn-rose btn-fill btn-wd" [disabled]="!f1.valid">Login</button>
+                            </div>
                         </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Success Text</span>
-                            <p class="text-success">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                        </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Warning Text</span>
-                            <p class="text-warning">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers...
-                            </p>
-                        </div>
-                        <div class="tim-typo">
-                            <span class="tim-note">Danger Text</span>
-                            <p class="text-danger">
-                                I will be the leader of a company that ends up being worth billions of dollars, because I got the answers... </p>
-                        </div>
-                        <div class="tim-typo">
-                            <h2><span class="tim-note">Small Tag</span> Header with small subtitle <br>
-                                <small>Use "small" tag for the headers</small>
-                            </h2>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
+
         </div>
     </div>
 </div>

@@ -6,13 +6,58 @@ import { ShipmentCreateComponent } from "app/shipment/components/shipment-create
 
 import { ErrorComponent } from "app/common/error.component";
 import { PageNotFoundComponent } from "app/common/pageNotFound.component";
+import { AdminLayoutComponent } from "app/layouts/admin/admin-layout.component";
+import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
+import { LoginComponent } from "app/authentication/login.component";
 
 const routes: Routes = [
-    { path: '', component: ShipmentSearchComponent },
     {
-        path: 'createshipment',
-        component: ShipmentCreateComponent
+        path: '',
+        redirectTo: 'searchshipment',
+        pathMatch: 'full',
     },
+    {
+        path: '',
+        component: AdminLayoutComponent,
+        children: [
+            {
+                path: '',
+                children: [{
+                    path: 'searchshipment',
+                    component: ShipmentSearchComponent
+                }]
+            },
+
+            {
+                path: 'createshipment',
+                component: ShipmentCreateComponent
+            },
+        ]
+    },
+
+        {
+        path: '',
+        component: AuthLayoutComponent,
+        children: [
+            {
+                path: '',
+                children: [{
+                    path: 'login',
+                    component: LoginComponent
+                }]
+            },
+
+            {
+                path: 'createshipment',
+                component: ShipmentCreateComponent
+            },
+        ]
+    },
+    {
+        path: '',
+        component: AuthLayoutComponent,
+    },
+
 
     {
         path: 'error',

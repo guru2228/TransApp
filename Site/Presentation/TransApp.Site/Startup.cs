@@ -98,7 +98,6 @@ namespace TransApp.Site
         
             try
             {
-                //test git commit
                 //ConfigureAuth(app);
                 app.UseDefaultFiles();
                 app.UseStaticFiles();
