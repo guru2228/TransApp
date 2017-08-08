@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Dapper;
 using TransApp.DataModel;
 
-namespace TransApp.Persistence.Repository
+namespace TransApp.Persistence.Repository.Generic
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IDataAccessObject
     {

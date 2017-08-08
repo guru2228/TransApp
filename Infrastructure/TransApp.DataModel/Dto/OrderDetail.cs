@@ -47,4 +47,5 @@ namespace TransApp.DataModel.Dto
 
 
     }
+}
 

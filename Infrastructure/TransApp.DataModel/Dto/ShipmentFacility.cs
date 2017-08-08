@@ -26,7 +26,6 @@ namespace TransApp.DataModel.Dto
 
 
         public DateTime? DateModified { get; set; }
-
-
     }
+}
 

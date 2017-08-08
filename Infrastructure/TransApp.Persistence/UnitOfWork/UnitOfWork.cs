@@ -2,11 +2,10 @@
 using System.Data.SqlClient;
 using Microsoft.Extensions.Options;
 using TransApp.DataModel.Dto;
-using TransApp.Persistence;
 using TransApp.Persistence.Repository;
-using TransApp.Persistence.UnitOfWork;
+using TransApp.Persistence.Repository.Generic;
 
-namespace HawWeb.Site.Infrastructure.UnitOfWork
+namespace TransApp.Persistence.UnitOfWork
 {
     /// <summary>
     /// The Entity Framework implementation of IUnitOfWork
@@ -22,8 +21,11 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         private readonly IOptions<SiteDbContext> _dataBaseConfig;
 
         private GenericRepository<User> _applicationUserRepository;
-        GenericRepository<ModuleTranslationResource> _moduleTranslationResourceRepository;
-        GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
+        private GenericRepository<ModuleTranslationResource> _moduleTranslationResourceRepository;
+        private GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
+        private IAddressesRepository _addressesRepository;
+        private GenericRepository<AddressAvailability> _addressAvailabilitiesRepository;
+        
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -85,7 +87,7 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         }
 
         /// <summary>
-        /// HawWebDictionaryRepository
+        /// ApplicationUserRepository
         /// </summary>
         public GenericRepository<User> ApplicationUserRepository
         {
@@ -100,7 +102,7 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         }
 
         /// <summary>
-        /// HawWebPrivateDictionary
+        /// ModuleTranslationResourceRepository
         /// </summary>
         public GenericRepository<ModuleTranslationResource> ModuleTranslationResourceRepository
         {
@@ -118,7 +120,7 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
         }
 
         /// <summary>
-        /// HawWebSettings
+        /// PublicTranslationResourceRepository
         /// </summary>
         public GenericRepository<PublicTranslationResource> PublicTranslationResourceRepository
         {
@@ -129,6 +131,36 @@ namespace HawWeb.Site.Infrastructure.UnitOfWork
                     this._publicTranslationResourceRepository = new GenericRepository<PublicTranslationResource>("PublicTranslationResource", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _publicTranslationResourceRepository;
+            }
+        }
+
+        /// <summary>
+        /// AddressesRepository
+        /// </summary>
+        public IAddressesRepository AddressesRepository
+        {
+            get
+            {
+                if (this._addressesRepository == null)
+                {
+                    this._addressesRepository = new AddressesRepository("Address", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _addressesRepository;
+            }
+        }
+
+        /// <summary>
+        /// AddressAvailabilitiesRepository
+        /// </summary>
+        public GenericRepository<AddressAvailability> AddressAvailabilitiesRepository
+        {
+            get
+            {
+                if (this._addressAvailabilitiesRepository == null)
+                {
+                    this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailability", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _addressAvailabilitiesRepository;
             }
         }
     }

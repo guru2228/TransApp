@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace TransApp.Persistence.Repository
+namespace TransApp.Persistence.Repository.Generic
 {
     interface ILocalizedGenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity : class
     {

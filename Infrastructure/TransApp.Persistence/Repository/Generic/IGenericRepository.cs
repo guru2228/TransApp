@@ -2,7 +2,7 @@
 using System.Data;
 using System.Threading.Tasks;
 
-namespace TransApp.Persistence.Repository
+namespace TransApp.Persistence.Repository.Generic
 {
     public interface IGenericRepository<TEntity> where TEntity : class
     {

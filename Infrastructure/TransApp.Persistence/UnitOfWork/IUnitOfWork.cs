@@ -1,6 +1,7 @@
 ﻿using System.Data;
 using TransApp.DataModel.Dto;
 using TransApp.Persistence.Repository;
+using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.UnitOfWork
 {
