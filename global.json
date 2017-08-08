@@ -1,3 +1,6 @@
 {
-  "projects": [ "Domain", "Infrastructure", "Core", "Service", "Site/Application" ]
+  "projects": [ "Domain", "Infrastructure", "Core", "Service", "Site/Application" ],
+  "sdk": {
+    "version": "1.0.0-preview2-003131"
+  }
 }

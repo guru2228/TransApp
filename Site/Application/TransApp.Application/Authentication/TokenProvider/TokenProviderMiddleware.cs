@@ -85,7 +85,7 @@ namespace TransApp.Application.Authentication.TokenProvider
                 new Claim(JwtRegisteredClaimNames.UniqueName, identity.Username),
                 new Claim(JwtRegisteredClaimNames.Jti,  _options.NonceGenerator),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64),
-                new Claim("TransAppUser", "IAmTransAppUser"),
+                new Claim("User", "IAmTransAppUser"),
                 new Claim("Language", identity.Language)
             };
 

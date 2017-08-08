@@ -19,7 +19,7 @@ namespace TransApp.Persistence.UnitOfWork
         /// <summary>
         /// PublicTranslationResource
         /// </summary>
-        GenericRepository<TransAppUser> ApplicationUserRepository { get; }
+        GenericRepository<User> ApplicationUserRepository { get; }
 
         #region Web repositories
         /// <summary>

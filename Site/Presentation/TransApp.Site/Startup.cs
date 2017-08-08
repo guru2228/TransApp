@@ -210,7 +210,7 @@ namespace TransApp.Site
             services.AddAuthorization(options =>
             {
                 options.AddPolicy("HawWebUser",
-                                  policy => policy.RequireClaim("TransAppUser", "IAmTransAppUser"));
+                                  policy => policy.RequireClaim("User", "IAmTransAppUser"));
             });
         }
 
