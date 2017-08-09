@@ -22,10 +22,11 @@
             "../src/assets/js/core/material.min.js",
             "../node_modules/arrive/src/arrive.js",
             "../node_modules/moment/moment.js",
+            "../node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
             "../node_modules/chartist/dist/chartist.js",
             "../node_modules/twitter-bootstrap-wizard/jquery.bootstrap.wizard.js",
             "../node_modules/bootstrap-notify/bootstrap-notify.js",
-            "../node_modules/eonasdan-bootstrap-datetimepicker/src/js/bootstrap-datetimepicker.js",
+
 
             "../node_modules/nouislider/distribute/nouislider.min.js",
             "../node_modules/bootstrap-select/dist/js/bootstrap-select.js",

@@ -1,18 +1,22 @@
-﻿using System.Collections.Generic;
+﻿
+
+
+using Dapper;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
-using Dapper;
 using TransApp.DataModel;
+using TransApp.DataModel.Dto;
 
 namespace TransApp.Persistence.Repository.Generic
 {
     public class GenericRepository<TEntity> : IGenericRepository<TEntity> where TEntity : class, IDataAccessObject
     {
-        protected  string TableName;
-        protected  string ConnectionString;
+        protected string TableName;
+        protected string ConnectionString;
 
         public GenericRepository(string tableName, string connectionString)
         {
@@ -38,7 +42,7 @@ namespace TransApp.Persistence.Repository.Generic
             {
                 cn.Open();
                 item =
-                    cn.Query<TEntity>("SELECT * FROM " + TableName + " WHERE ID=@ID", new {ID = id}).FirstOrDefault();
+                    cn.Query<TEntity>("SELECT * FROM " + TableName + " WHERE ID=@ID", new { ID = id }).FirstOrDefault();
             }
 
             return item;
@@ -57,7 +61,7 @@ namespace TransApp.Persistence.Repository.Generic
             {
                 cn.Open();
                 item =
-                    (await cn.QueryAsync<TEntity>("SELECT * FROM " + TableName + " WHERE ID=@ID", new {ID = id}))
+                    (await cn.QueryAsync<TEntity>("SELECT * FROM " + TableName + " WHERE ID=@ID", new { ID = id }))
                         .FirstOrDefault();
             }
 
@@ -97,49 +101,6 @@ namespace TransApp.Persistence.Repository.Generic
                 cn.Open();
                 item =
                     (await cn.QueryAsync<TEntity>("SELECT * FROM " + TableName + " WHERE " + predicate)).FirstOrDefault();
-            }
-
-            return item;
-        }
-
-        /// <summary>
-        /// Get item by id
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="operation"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public TEntity Get(string field, string operation, string value)
-        {
-            TEntity item = default(TEntity);
-
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
-            {
-                cn.Open();
-                item =
-                    cn.Query<TEntity>("SELECT * FROM " + TableName + " WHERE "+ field + operation+ "@param", new { param = value }).FirstOrDefault();
-            }
-
-            return item;
-        }
-
-
-        /// <summary>
-        /// Get item by id
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="operation"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        public async Task<TEntity> GetAsync(string field, string operation, string value)
-        {
-            TEntity item = default(TEntity);
-
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
-            {
-                cn.Open();
-                item =
-                    (await cn.QueryAsync<TEntity>("SELECT * FROM " + TableName + " WHERE " + field + operation + "@param", new { param = value })).FirstOrDefault();
             }
 
             return item;
@@ -185,7 +146,7 @@ namespace TransApp.Persistence.Repository.Generic
         public IEnumerable<TEntity> GetAll()
         {
             IEnumerable<TEntity> items = null;
-            
+
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
@@ -217,9 +178,13 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
-        public int Add(TEntity entity, IDbTransaction transaction = null, bool excludeId = true)
+        /// <param name="excludeDictionaryData"></param>
+        public int Add(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, bool excludeDictionaryData = true)
         {
             PropertyInfo[] props = entity.GetType().GetProperties();
+            if (excludeDictionaryData)
+                props = props.Where(p => p.DeclaringType != typeof(Dictionary)).ToArray();
+
             string[] columns = props.Select(p => p.Name).ToArray();
             if (excludeId)
             {
@@ -231,12 +196,13 @@ namespace TransApp.Persistence.Repository.Generic
                 string.Join(",@", columns));
 
             var parameterValues = (object)Mapping(entity);
+
+            if (transaction != null)
+                return transaction.Connection.ExecuteScalar<int>(sqlCommand, parameterValues, transaction);
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                if (transaction == null)
-                    return cn.ExecuteScalar<int>(sqlCommand, parameterValues);
-                return cn.ExecuteScalar<int>(sqlCommand, parameterValues,transaction);
+                return cn.ExecuteScalar<int>(sqlCommand, parameterValues);
             }
         }
 
@@ -246,9 +212,13 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
-        public async Task<int> AddAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true)
+        /// <param name="excludeDictionaryData"></param>
+        public async Task<int> AddAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, bool excludeDictionaryData = true)
         {
             PropertyInfo[] props = entity.GetType().GetProperties();
+            if (excludeDictionaryData)
+                props = props.Where(p => p.DeclaringType != typeof(Dictionary)).ToArray();
+
             string[] columns = props.Select(p => p.Name).ToArray();
             if (excludeId)
             {
@@ -258,13 +228,14 @@ namespace TransApp.Persistence.Repository.Generic
                 TableName,
                 string.Join(",", columns),
                 string.Join(",@", columns));
-            var parameterValues = (object) Mapping(entity);
+            var parameterValues = (object)Mapping(entity);
+
+            if (transaction != null)
+                return await transaction.Connection.ExecuteScalarAsync<int>(sqlCommand, parameterValues, transaction);
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                if (transaction == null)
-                    return await cn.ExecuteScalarAsync<int>(sqlCommand, parameterValues);
-                return await cn.ExecuteScalarAsync<int>(sqlCommand, parameterValues, transaction);
+                return await cn.ExecuteScalarAsync<int>(sqlCommand, parameterValues);
             }
         }
 
@@ -274,27 +245,32 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
-        /// <param name="updateColumns"></param>
         /// <param name="columnsToUpdate"></param>
-        public void Update(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null)
+        /// <param name="excludeDictionaryData"></param>
+        public void Update(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null, bool excludeDictionaryData = true)
         {
             PropertyInfo[] props = entity.GetType().GetProperties();
+            if (excludeDictionaryData)
+                props = props.Where(p => p.DeclaringType != typeof(Dictionary)).ToArray();
             string[] columns = props.Select(p => p.Name).ToArray();
             if (excludeId)
                 columns = columns.Where(s => s.ToUpper() != "ID").ToArray();
             if (columnsToUpdate != null)
-                columns = columns.Where(s => columnsToUpdate.Any(c=>c.ToUpper() == s.ToUpper())).ToArray();
+                columns = columns.Where(s => columnsToUpdate.Any(c => c.ToUpper() == s.ToUpper())).ToArray();
 
             var parameters = columns.Select(name => name + "=@" + name).ToList();
             var sqlCommand = string.Format("UPDATE {0} SET {1} WHERE ID=@ID", TableName, string.Join(",", parameters));
             var parameterValues = (object)Mapping(entity);
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
+
+            if (transaction != null)
+                transaction.Connection.Execute(sqlCommand, parameterValues, transaction);
+            else
             {
-                cn.Open();
-                if (transaction == null)
+                using (IDbConnection cn = new SqlConnection(ConnectionString))
+                {
+                    cn.Open();
                     cn.Execute(sqlCommand, parameterValues);
-                else
-                    cn.Execute(sqlCommand, parameterValues, transaction);
+                }
             }
         }
 
@@ -305,9 +281,12 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
         /// <param name="columnsToUpdate"></param>
-        public async Task UpdateAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null)
+        /// <param name="excludeDictionaryData"></param>
+        public async Task UpdateAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null, bool excludeDictionaryData = true)
         {
             PropertyInfo[] props = entity.GetType().GetProperties();
+            if (excludeDictionaryData)
+                props = props.Where(p => p.DeclaringType != typeof(Dictionary)).ToArray();
             string[] columns = props.Select(p => p.Name).ToArray();
             if (excludeId)
                 columns = columns.Where(s => s.ToUpper() != "ID").ToArray();
@@ -318,13 +297,16 @@ namespace TransApp.Persistence.Repository.Generic
 
             var sqlCommand = string.Format("UPDATE {0} SET {1} WHERE ID=@ID", TableName, string.Join(",", parameters));
             var parameterValues = (object)Mapping(entity);
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
+
+            if (transaction != null)
+                await transaction.Connection.ExecuteAsync(sqlCommand, parameterValues, transaction);
+            else
             {
-                cn.Open();
-                if (transaction == null)
+                using (IDbConnection cn = new SqlConnection(ConnectionString))
+                {
+                    cn.Open();
                     await cn.ExecuteAsync(sqlCommand, parameterValues);
-                else
-                    await cn.ExecuteAsync(sqlCommand, parameterValues, transaction);
+                }
             }
         }
 
@@ -335,14 +317,17 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="transaction"></param>
         public void Delete(TEntity entity, IDbTransaction transaction = null)
         {
-            var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE Id=@ID", new {ID = entity.Id});
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE Id=@ID", new { ID = entity.Id });
+
+            if (transaction != null)
+                transaction.Connection.Execute(sqlCommand, transaction);
+            else
             {
-                cn.Open();
-                if (transaction == null)
+                using (IDbConnection cn = new SqlConnection(ConnectionString))
+                {
+                    cn.Open();
                     cn.Execute(sqlCommand);
-                else
-                    cn.Execute(sqlCommand, transaction);
+                }
             }
         }
 
@@ -352,14 +337,17 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         public async Task DeleteAsync(TEntity entity, IDbTransaction transaction = null)
         {
-            var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE Id=@ID", new {ID = entity.Id});
-            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE Id=@ID", new { ID = entity.Id });
+
+            if (transaction != null)
+                await transaction.Connection.ExecuteAsync(sqlCommand, transaction);
+            else
             {
-                cn.Open();
-                if (transaction == null)
+                using (IDbConnection cn = new SqlConnection(ConnectionString))
+                {
+                    cn.Open();
                     await cn.ExecuteAsync(sqlCommand);
-                else
-                    await cn.ExecuteAsync(sqlCommand, transaction);
+                }
             }
         }
     }

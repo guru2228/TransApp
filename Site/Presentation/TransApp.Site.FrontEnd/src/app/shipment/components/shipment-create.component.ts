@@ -56,6 +56,9 @@ export class ShipmentCreateComponent{
         url: ''
     }
 
+setTimeout(function() {
+    
+
             // $.getScript('../../../assets/js/plugins/bootstrap-datetimepicker.js');
         // $.getScript('../../../assets/js/plugins/jquery.tagsinput.js');
 
@@ -86,7 +89,7 @@ export class ShipmentCreateComponent{
                  min: 0,
                  max: 100
              }
-         });
+         });}, 1000);
   }
 
   save(model: User, isValid: boolean) {

@@ -13,8 +13,6 @@ namespace TransApp.Persistence.Repository
 {
     public class AddressesRepository:GenericRepository<Address>, IAddressesRepository
     {
-
-
         public AddressesRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {
         }

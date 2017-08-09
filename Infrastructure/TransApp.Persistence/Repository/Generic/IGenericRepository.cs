@@ -20,23 +20,6 @@ namespace TransApp.Persistence.Repository.Generic
         /// <returns></returns>
         Task<TEntity> GetAsync(int id);
 
-        /// <summary>
-        /// Get item by id
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="operation"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        TEntity Get(string field, string operation, string value);
-
-        /// <summary>
-        /// Get item by id
-        /// </summary>
-        /// <param name="field"></param>
-        /// <param name="operation"></param>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        Task<TEntity> GetAsync(string field, string operation, string value);
 
         /// <summary>
         /// Get all
@@ -68,7 +51,8 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
-        int Add(TEntity entity, IDbTransaction transaction = null, bool excludeId = true);
+        /// <param name="excludeDictionaryData"></param>
+        int Add(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, bool excludeDictionaryData = true);
 
         /// <summary>
         /// Insert entity
@@ -76,7 +60,8 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
-        Task<int> AddAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true);
+        /// <param name="excludeDictionaryData"></param>
+        Task<int> AddAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, bool excludeDictionaryData = true);
 
         /// <summary>
         /// Update entity
@@ -85,7 +70,8 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
         /// <param name="columnsToUpdate"></param>
-        void Update(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null);
+        /// <param name="excludeDictionaryData"></param>
+        void Update(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null, bool excludeDictionaryData = true);
 
         /// <summary>
         /// Update entity
@@ -94,7 +80,8 @@ namespace TransApp.Persistence.Repository.Generic
         /// <param name="transaction"></param>
         /// <param name="excludeId"></param>
         /// <param name="columnsToUpdate"></param>
-        Task UpdateAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null);
+        /// <param name="excludeDictionaryData"></param>
+        Task UpdateAsync(TEntity entity, IDbTransaction transaction = null, bool excludeId = true, List<string> columnsToUpdate = null, bool excludeDictionaryData = true);
 
         /// <summary> 
         /// Delete entity

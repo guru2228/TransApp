@@ -17,6 +17,7 @@ using TransApp.Site.Filters;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using TransApp.Application.Authentication.TokenProvider;
+using TransApp.Persistence;
 
 namespace TransApp.Site
 {
@@ -46,7 +47,7 @@ namespace TransApp.Site
             // *If* you need access to generic IConfiguration this is **required**
             services.AddSingleton<IConfiguration>(Configuration);
             // Add framework services.
-            //services.Configure<SiteDbContext>(Configuration.GetSection("ConnectionString"));
+            services.Configure<SiteDbContext>(Configuration.GetSection("ConnectionString"));
 
             //// Add global exception filter, all error exceptions are caught in here
             var builder = services.AddMvc();
