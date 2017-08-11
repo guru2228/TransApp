@@ -17,6 +17,20 @@ declare var require: any
 
 declare var $:any;
 
+declare interface Table_With_Checkboxes {
+    id?: number;
+    ischecked?: boolean;
+    product_name: string;
+    type: string;
+    quantity: number;
+    price: any;
+    amount: string;
+}
+export interface TableData2 {
+    headerRow: string[];
+    dataRows: Table_With_Checkboxes[];
+  }
+
 @Component({
     moduleId: module.id,
   selector: 'shipment-create-component',
@@ -41,7 +55,7 @@ export class ShipmentCreateComponent{
     // }
     public user: User;
     public typeValidation: User;
-
+    public tableData2: TableData2;
   ngOnInit() {
     this.user = {
       email: '',
@@ -55,9 +69,6 @@ export class ShipmentCreateComponent{
         idDestination: '',
         url: ''
     }
-
-setTimeout(function() {
-    
 
             // $.getScript('../../../assets/js/plugins/bootstrap-datetimepicker.js');
         // $.getScript('../../../assets/js/plugins/jquery.tagsinput.js');
@@ -83,13 +94,35 @@ setTimeout(function() {
 
         var sliderDouble = document.getElementById('sliderDouble');
         noUiSlider.create(sliderDouble, {
-             start: [20, 60] ,
+             start: [6, 11,14, 18] ,
              connect: true,
              range: {
                  min: 0,
-                 max: 100
+                 max: 24
              }
-         });}, 1000);
+         });
+
+         
+         var sliderDouble = document.getElementById('sliderDoubleReceiver');
+         noUiSlider.create(sliderDouble, {
+            start: [6, 11,14, 18] ,
+              connect: true,
+              range: {
+                  min: 0,
+                  max: 24
+              }
+          });
+         
+          this.tableData2 = {
+            headerRow: [ '#', '', 'Product Name', 'Type', 'Qty', 'Price', 'Amount'],
+            dataRows: [
+                {id: 1, ischecked: true, product_name: 'Moleskine Agenda', type: 'Office', quantity: 25, price: 49, amount: '1,225'},
+                {id: 2, ischecked: true, product_name: 'Stabilo Pen', type: 'Office', quantity: 30, price: 10.99, amount: '109'},
+                {id: 3, ischecked: true, product_name: 'A4 Paper Pack', type: 'Office', quantity: 50, price: 49, amount: '1,225'},
+                {id: 4, ischecked: false, product_name: 'Apple iPad', type: 'Meeting', quantity: 10, price: 499.00, amount: '4,990'},
+                {id: 5, ischecked: false, product_name: 'Apple iPhone', type: 'Communication', quantity: 10, price: 599.00, amount: '5,999'}
+            ]
+         };
   }
 
   save(model: User, isValid: boolean) {
