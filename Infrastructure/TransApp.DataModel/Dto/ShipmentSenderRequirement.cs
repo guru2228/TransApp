@@ -5,21 +5,17 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto
 {
-    public class AddressAvailability : IDataAccessObject
+    public class ShipmentSenderRequirement : IDataAccessObject
     {
         public int Id { get; set; }
 
-        public int? AddressId { get; set; }
+        public int? ShipmentId { get; set; }
 
-        public int? Day { get; set; }
+        public int? RequirementId { get; set; }
 
-        public TimeSpan? AmStart { get; set; }
+        public decimal? AmountInsurance { get; set; }
 
-        public TimeSpan? AmStop { get; set; }
-
-        public TimeSpan? PmStart { get; set; }
-
-        public TimeSpan? PmStop { get; set; }
+        public bool Active { get; set; }
 
         public int? UserIdCreated { get; set; }
 
@@ -30,6 +26,5 @@ namespace TransApp.DataModel.Dto
         public DateTime? DateModified { get; set; }
 
     }
-
 
 }

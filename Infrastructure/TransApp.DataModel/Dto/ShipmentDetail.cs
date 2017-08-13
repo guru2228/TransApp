@@ -5,47 +5,34 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto
 {
-    public class OrderDetail : IDataAccessObject
+    public class ShipmentDetail : IDataAccessObject
     {
         public int Id { get; set; }
 
-
-        public int? OrderId { get; set; }
-
+        public int? ShipmentId { get; set; }
 
         public float? Quantity { get; set; }
 
-
         public int? TypeId { get; set; }
-
 
         public int? Length { get; set; }
 
-
         public int? Width { get; set; }
-
 
         public int? Height { get; set; }
 
-
         public int? Weight { get; set; }
-
 
         public int? ParentDetailId { get; set; }
 
-
         public int? UserIdCreated { get; set; }
-
 
         public DateTime? DateCreated { get; set; }
 
-
         public int? UserIdModified { get; set; }
-
 
         public DateTime? DateModified { get; set; }
 
-
     }
-}
 
+}

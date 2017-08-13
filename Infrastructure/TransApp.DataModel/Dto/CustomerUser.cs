@@ -1,22 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto
 {
-    public class User : IDataAccessObject
+    public class CustomerUser : IDataAccessObject
     {
         public int Id { get; set; }
 
-        public string FirstName { get; set; }
+        public int? CustomerId { get; set; }
 
-        public string LastName { get; set; }
-
-        public string Login { get; set; }
-
-        public string Password { get; set; }
-
-        public string Email { get; set; }
-
-        public string Phone { get; set; }
+        public int? UserId { get; set; }
 
         public DateTime? UserIdCreated { get; set; }
 
