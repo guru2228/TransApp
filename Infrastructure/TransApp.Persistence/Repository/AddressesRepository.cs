@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Dapper;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Persistence.Repository.Generic;
+using static Dapper.SqlMapper;
 
 namespace TransApp.Persistence.Repository
 {
@@ -17,24 +19,45 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public void GetFullAddressById(int id)
+        public async Task<AddressDto> GetFullAddressById(int id)
         {
-            //AddressDto item = default(AddressDto);
+            var lookup = new Dictionary<int, AddressDto>();
+            var lookupAvailability = new Dictionary<int, List<int>>();
 
-            //using (IDbConnection cn = new SqlConnection(ConnectionString))
-            //{
-            //    cn.Open();
-            //    var result =
-            //        cn.Query(
-            //            "SELECT * FROM Adrresses Join AddressAvailabilities WHERE ID=@ID AND A LOT OF JOINS AND A LOT OF COLUMNS IN HERE TO BE ABLE TO AVOID A LOT OF QUERIES, AND TO GET EVERYTHING IN ONE QUERY",
-            //            new {ID = id}).SingleOrDefault();
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                cn.Open();
+                var item = await cn.QueryAsync<AddressDto, AddressAvailability, AddressDto>(GetQuery(id),
+                    (address, addressAvailability) =>
+                    {
+                        AddressDto entity;
+                        if (!lookup.TryGetValue(address.Id, out entity))
+                        {
+                            lookup.Add(address.Id, entity = address);
+                        }
 
-            //    item = new AddressDto {Address = new Address {Country = result.Country}};
-            //}
+                        if (!lookupAvailability.ExistsList(entity.Id, addressAvailability.Id))
+                        {
+                            if (entity.AddressAvailability == null)
+                                entity.AddressAvailability = new List<AddressAvailability>();
+                            entity.AddressAvailability.Add(addressAvailability);
+                        }
 
-            //return item;
+                        return address;
+                    }, "SplitOn");
+            }
+            return lookup.Values.FirstOrDefault();
+        }
 
-        //// TODO - check how to map nested objects with dapper (if it makes sense if not, just use generic repository, and execute multiple queries, or create custom objects).
+        private string GetQuery(int id)
+        {
+            var sb = new StringBuilder();
+            sb.Append(@"select Address.*,SplitAnswer='',AddressAvailability.*
+from Address left outer
+join AddressAvailability on AddressAvailability.AddressId = Address.Id
+where Address.Id = " + id);
+
+            return sb.ToString();
         }
     }
 }

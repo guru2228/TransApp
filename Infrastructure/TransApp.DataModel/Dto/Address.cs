@@ -32,7 +32,7 @@ namespace TransApp.DataModel.Dto
 
         public string Remark { get; set; }
 
-      //  public Point? Location { get; set; }
+        //  public Point? Location { get; set; }
 
         public int? UserIdCreated { get; set; }
 
@@ -41,7 +41,7 @@ namespace TransApp.DataModel.Dto
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
     }
+}
 
 

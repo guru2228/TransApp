@@ -33,6 +33,16 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         GenericRepository<PublicTranslationResource> PublicTranslationResourceRepository { get; }
 
+        /// <summary>
+        /// Address custom 
+        /// </summary>
+        IAddressesRepository AddressesRepository { get; }
+
+        /// <summary>
+        /// AddressAvailability
+        /// </summary>
+        GenericRepository<AddressAvailability> AddressAvailabilitiesRepository { get; }
+
         #endregion
 
     }

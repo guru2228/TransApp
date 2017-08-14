@@ -7,7 +7,7 @@ using TransApp.Domain.Services.Authentication;
 
 namespace TransApp.Application.QueryHandler
 {
-    public class AddressByIdQueryHandler : IQueryHandler<QueryAddress, Address>
+    public class AddressByIdQueryHandler : IQueryHandler<QueryAddress, Domain.Addresses.Address>
     {
         /// <summary>
         /// AddressesService
@@ -25,9 +25,10 @@ namespace TransApp.Application.QueryHandler
             _accountService = accountService;
         }
 
-        public async Task<Address> Retrieve(QueryAddress query)
+        public async Task<Domain.Addresses.Address> Retrieve(QueryAddress query)
         {
-            return  new Address();
+            var currentAddress = await _addressesService.Get(query.Id);
+            return currentAddress;
         }
     }
 }

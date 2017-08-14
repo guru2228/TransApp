@@ -13,7 +13,7 @@ namespace TransApp.Domain.Addresses
 
         public string Street1 { get; set; }
 
-        private IEnumerable<AddressAvailability> Availabilities { get; set; }
+        public List<AddressAvailability> Availabilities { get; set; }
         ///// and other fields necessary for address business object (combination of one or multiple dtos)
     }
 }

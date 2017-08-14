@@ -14,6 +14,6 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
-        Address Get(int addressId);
+        Task<Address> Get(int addressId);
     }
 }
