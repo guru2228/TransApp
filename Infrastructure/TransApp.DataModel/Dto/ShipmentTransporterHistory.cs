@@ -29,7 +29,7 @@ namespace TransApp.DataModel.Dto
 
         public DateTime? SelectedDate { get; set; }
 
-        public float? Price { get; set; }
+        public decimal? Price { get; set; }
 
         public int? LoadingOn { get; set; }
 

@@ -3,19 +3,24 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TransApp.DataModel.Dto
+namespace TransApp.Domain.Addresses
 {
-    public class Transporter : IDataAccessObject
+    public class AddressAvailabilityModel
     {
-        public int Id { get; set; }
 
-        public string Name { get; set; }
+        public int Id { get; set; }
 
         public int? AddressId { get; set; }
 
-        public byte[] Image { get; set; }
+        public int? Day { get; set; }
 
-        public string IconName { get; set; }
+        public TimeSpan? AmStart { get; set; }
+
+        public TimeSpan? AmStop { get; set; }
+
+        public TimeSpan? PmStart { get; set; }
+
+        public TimeSpan? PmStop { get; set; }
 
         public int? UserIdCreated { get; set; }
 
@@ -24,8 +29,5 @@ namespace TransApp.DataModel.Dto
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
     }
-
-
 }

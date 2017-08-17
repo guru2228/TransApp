@@ -51,13 +51,13 @@ namespace TransApp.DataModel.Dto
 
         public TimeSpan? ReceiverPmStop { get; set; }
 
-        public float? TotalPrice { get; set; }
+        public decimal? TotalPrice { get; set; }
 
-        public float? TotalVolume { get; set; }
+        public decimal? TotalVolume { get; set; }
 
-        public float? TotalQuatity { get; set; }
+        public decimal? TotalQuatity { get; set; }
 
-        public float? TotalWeight { get; set; }
+        public decimal? TotalWeight { get; set; }
 
         public int? StatusId { get; set; }
 

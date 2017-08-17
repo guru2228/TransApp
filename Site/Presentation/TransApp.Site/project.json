@@ -22,7 +22,8 @@
     "Microsoft.Extensions.Options.ConfigurationExtensions": "1.0.0",
     "Microsoft.VisualStudio.Web.BrowserLink.Loader": "14.0.0",
     "TransApp.Application": "1.0.0-*",
-    "NLog.Extensions.Logging": "1.0.0-rtm-alpha4"
+    "NLog.Extensions.Logging": "1.0.0-rtm-alpha4",
+    "AutoMapper": "6.1.1"
   },
 
   "tools": {

@@ -41,7 +41,7 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAddress/{adressId}")]
-        public async Task<Domain.Addresses.Address> GetAddress(int adressId)
+        public async Task<Domain.Addresses.AddressModel> GetAddress(int adressId)
         {
             var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
             var result = await queryHandler.Retrieve(new QueryAddress

@@ -39,7 +39,7 @@ namespace TransApp.Persistence.UnitOfWork
         IAddressesRepository AddressesRepository { get; }
 
         /// <summary>
-        /// AddressAvailability
+        /// AddressAvailabilities
         /// </summary>
         GenericRepository<AddressAvailability> AddressAvailabilitiesRepository { get; }
 

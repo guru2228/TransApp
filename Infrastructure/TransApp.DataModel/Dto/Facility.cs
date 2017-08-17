@@ -18,6 +18,8 @@ namespace TransApp.DataModel.Dto
 
         public byte[] Image { get; set; }
 
+        public string IconName { get; set; }
+
 
         public int? UserIdCreated { get; set; }
 

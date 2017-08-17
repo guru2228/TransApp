@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
-using Address = TransApp.Domain.Addresses.Address;
+using AddressModel = TransApp.Domain.Addresses.AddressModel;
 
 namespace TransApp.Domain.Services.Addresses
 {
@@ -14,6 +14,6 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
-        Task<Address> Get(int addressId);
+        Task<AddressModel> Get(int addressId);
     }
 }

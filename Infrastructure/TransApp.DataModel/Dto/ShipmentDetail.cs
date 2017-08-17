@@ -11,7 +11,7 @@ namespace TransApp.DataModel.Dto
 
         public int? ShipmentId { get; set; }
 
-        public float? Quantity { get; set; }
+        public decimal? Quantity { get; set; }
 
         public int? TypeId { get; set; }
 

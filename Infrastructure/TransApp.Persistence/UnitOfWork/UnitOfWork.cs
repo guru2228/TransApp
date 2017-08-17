@@ -158,7 +158,7 @@ namespace TransApp.Persistence.UnitOfWork
             {
                 if (this._addressAvailabilitiesRepository == null)
                 {
-                    this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailability", _dataBaseConfig.Value.DefaultConnectionString);
+                    this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailabilities", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _addressAvailabilitiesRepository;
             }

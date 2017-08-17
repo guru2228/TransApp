@@ -5,22 +5,15 @@ using System.Threading.Tasks;
 
 namespace TransApp.Domain.Addresses
 {
-    public class AddressAvailability
+    public class AddressFacilityModel
     {
-
         public int Id { get; set; }
 
         public int? AddressId { get; set; }
 
-        public int? Day { get; set; }
+        public int? FacilityId { get; set; }
 
-        public TimeSpan? AmStart { get; set; }
-
-        public TimeSpan? AmStop { get; set; }
-
-        public TimeSpan? PmStart { get; set; }
-
-        public TimeSpan? PmStop { get; set; }
+        public bool Active { get; set; }
 
         public int? UserIdCreated { get; set; }
 
