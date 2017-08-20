@@ -22,6 +22,7 @@ import { FooterModule } from "app/shared/footer/footer.module";
 import { NavbarModule } from "app/shared/navbar/navbar.module";
 import { SidebarModule } from "app/shared/sidebar/sidebar.module";
 import { MdModule } from "app/shared/md/md.module";
+import { AddressModule } from "app/address/address.module";
 
 
 @NgModule({
@@ -29,14 +30,16 @@ import { MdModule } from "app/shared/md/md.module";
     BrowserModule,
     FormsModule,
     HttpModule,
-      MdModule,
+    MdModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ShipmentModule,
     FooterModule,
     NavbarModule,
-    SidebarModule
-  ], 
+    SidebarModule,
+
+    ShipmentModule,
+    AddressModule,
+  ],
   declarations: [
     AppComponent,
     AdminLayoutComponent,

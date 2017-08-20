@@ -32,7 +32,7 @@ export class AdminLayoutComponent implements OnInit {
         this.location = location;
     }
     ngOnInit() {
-
+debugger;
         var isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
         if (isWindows){
            // if we are on windows OS we activate the perfectScrollbar function

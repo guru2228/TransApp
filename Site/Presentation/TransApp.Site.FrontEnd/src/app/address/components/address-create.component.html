@@ -1,0 +1,261 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+
+                    <div class="card-content">
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                        Naam
+                                        <span class="star">*</span>
+                                    </label>
+                            <input type="text" class="form-control" name="name">
+                        </div>
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                      Search by address
+                                        <span class="star">*</span>
+                                    </label>
+                            <input type="text" class="form-control" type="text" #searchByAddress [formControl]="searchByAddressControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                          Search by zipcode
+                                            <span class="star">*</span>
+                                        </label>
+                            <input type="text" class="form-control" type="text" #searchByZipCode [formControl]="searchByZipCodeControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group label-floating">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="addressDetails['street_number']" placeholder="Straat nr">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group label-floating">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="addressDetails['route']" placeholder="Straat">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" id="state" disabled="" [(ngModel)]="addressDetails['administrative_area_level_1']" placeholder="State">
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" id="city" disabled="" [(ngModel)]="addressDetails['locality']" placeholder="City">
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" id="zipcode" disabled="" [(ngModel)]="addressDetails['postal_code']" placeholder="Zipcode">
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" id="country" disabled="" [(ngModel)]="addressDetails['country']" placeholder="Country">
+                        </div>
+
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                        Contactperson
+                                        <span class="star">*</span>
+                                    </label>
+                            <input type="text" class="form-control" name="contactperson">
+                        </div>
+                        <div class="form-group label-floating">
+                            <label class="control-label">
+                                        Email address
+                                        <span class="star">*</span>
+                                    </label>
+                            <input type="email" class="form-control">
+                        </div>
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                        Phone
+                                        <span class="star">*</span>
+                                    </label>
+                            <input type="text" class="form-control" name="phone">
+                        </div>
+                        <div class="form-group label-floating">
+                            <label for="" class="control-label">
+                                        Remarks
+                                        <span class="star">*</span>
+                                    </label>
+                            <textarea class="form-control" rows="5"></textarea>
+                        </div>
+
+                        <!-- Opening hours -->
+                        <h3>Opening hours</h3>
+                        <div class="form-group label-floating">
+                            <div id="sliderDouble" class="slider slider-info"></div>
+                        </div>
+
+                        <!-- Facilities -->
+                        <h3>Facilities</h3>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                            <div class="form-group label-floating">
+                                <div class="togglebutton">
+                                    <label>
+                                                <input type="checkbox" checked> Pallet jack
+                                            </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                            <div class="form-group label-floating">
+                                <div class="togglebutton">
+                                    <label>
+                                                <input type="checkbox" checked> Loading dock
+                                            </label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                            <div class="form-group label-floating">
+                                <div class="togglebutton">
+                                    <label>
+                                                <input type="checkbox" checked> Forklift
+                                            </label>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <!--  ***************** Right side *************** -->
+            <div class="col-md-6">
+                <div class="card">
+                    <form #f="ngForm" novalidate (ngSubmit)="save(f.value, f.valid)">
+
+                        <div class="card-content">
+                            <h4 class="card-title">Map</h4>
+                            <div id="regularMap" class="map">
+
+                            </div>
+                            <!-- Truck -->
+                            <h3>Truck</h3>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Van (&lt;8m)
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Distri (8m)
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Tautliner (<8m)
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Boxtrailer (<8m)
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Transport requirments -->
+                            <h3>Transport requirments</h3>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Frigo
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Hidraulic lift
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> All risk insurance
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                        <i class="material-icons">local_shipping</i>
+                                    </span>
+                                <div class="form-group label-floating">
+                                    <div class="togglebutton">
+                                        <label>
+                                                <input type="checkbox" checked> Adr
+                                            </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <button type="submit" class="btn btn-fill btn-rose">+ Add more packages</button>

@@ -47,7 +47,7 @@ export class SidebarComponent implements OnInit{
                 mda.initMovingTab();
                 mda.movingTabInitialised = true;
             }
-        }, 10);
+        }, 100);
     }
 }
 

@@ -1,0 +1,180 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-3 col-md-6 col-sm-6  filterpanels active">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="orange">
+                        <i class="material-icons">weekend</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Unassigned</p>
+                        <h3 class="card-title">184</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">date_range</i> Last 24 Hours
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 filterpanels ">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="gray">
+                        <i class="material-icons">equalizer</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Open market</p>
+                        <h3 class="card-title">184</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">date_range</i> Last 24 Hours
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6  filterpanels">
+                <div class="card card-stats ">
+                    <div class="card-header" data-background-color="green">
+                        <i class="material-icons">assignment_turned_in</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Assigned</p>
+                        <h3 class="card-title">184</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">date_range</i> Last 24 Hours
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 col-sm-6 filterpanels">
+                <div class="card card-stats">
+                    <div class="card-header" data-background-color="blue">
+                        <i class="fa fa-twitter"></i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">Confirmed</p>
+                        <h3 class="card-title">184</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">update</i> Just Updated
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="row">
+            <div class="col-md-12">
+                <!--   <div class="nav-center">
+                    <ul class="nav nav-pills nav-pills-warning nav-pills-icons" role="tablist">
+                        
+                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
+            
+                        <li>
+                            <a href="#description-1" role="tab" data-toggle="tab">
+                                <i class="material-icons">info</i> Unassigned
+                            </a>
+                        </li>
+                        <li class="active">
+                            <a href="#schedule-1" role="tab" data-toggle="tab">
+                                <i class="material-icons">location_on</i> Open merket
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#tasks-1" role="tab" data-toggle="tab">
+                                <i class="material-icons">gavel</i> Assigned
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#tasks-2" role="tab" data-toggle="tab">
+                                <i class="material-icons">help_outline</i> Confirmed
+                            </a>
+                        </li>
+                    </ul>
+                </div>    -->
+
+                <button class="btn btn-warning">
+                        <i class="material-icons">warning</i> Pending
+                    </button>
+                <button class="btn btn-danger">
+                        <i class="material-icons">close</i> Declined
+                    </button>
+
+                <div class="card">
+                    <!-- <div class="card-header card-header-icon" data-background-color="rose">
+                        <i class="material-icons">assignment</i>
+                    </div> -->
+                    <div class="card-content table-full-width">
+                        <!--<h4 class="card-title">Regular Table with Colors</h4>-->
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th *ngFor="let cell of headerRow">{{ cell }}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+
+                                    <ng-container *ngFor="let shipmentRow of shipmentModel; let rowindex = index">
+                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="i%2==0?'success':''">
+                                            <td>{{shipmentRow.shipment.pickupdate}}</td>
+                                            <td>{{shipmentRow.shipment.deliverydate}}</td>
+                                            <td>{{shipmentRow.shipment.from}}</td>
+                                            <td>{{shipmentRow.shipment.destionation}}</td>
+                                            <td>{{shipmentRow.shipment.quantity}}</td>
+                                            <td>{{shipmentRow.shipment.transporter}}</td>
+                                            <td>{{shipmentRow.shipment.price}}</td>
+                                        </tr>
+
+                                        <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
+                                            <td id="actionsRowContent" colspan="7" align="center">
+                                                <button class="btn" (click)="onClickEditShipment(shipmentRow)">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">keyboard_arrow_left</i>
+                                                            </span>
+                                                            Edit shipment
+                                                        </button>
+                                                <button class="btn">
+                                                            Delete shipment
+                                                            <span class="btn-label btn-label-right">
+                                                                <i class="material-icons">keyboard_arrow_right</i>
+                                                            </span>
+                                                        </button>
+                                                <button class="btn btn-info">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">priority_high</i>
+                                                            </span>
+                                                            Assign to open market
+                                                        </button>
+                                                <button class="btn btn-success">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">check</i>
+                                                            </span>
+                                                            Assign to haulier
+                                                        </button>
+                                            </td>
+                                        </tr>
+                                        <tr id="editShipmentRow" *ngIf="shipmentRow.viewActions && shipmentRow.viewEdit">
+                                            <td colspan="7">
+                                                <router-outlet></router-outlet>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+
+
+                                </tbody>
+                            </table>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
