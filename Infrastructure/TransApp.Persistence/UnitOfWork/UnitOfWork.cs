@@ -25,7 +25,10 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
         private IAddressesRepository _addressesRepository;
         private GenericRepository<AddressAvailability> _addressAvailabilitiesRepository;
-        
+        private GenericRepository<AddressFacility> _addressFacilityRepository;
+        private GenericRepository<AddressRequirement> _addressRequirementRepository;
+        private GenericRepository<AddressTruck> _addressTruckRepository;
+
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -161,6 +164,51 @@ namespace TransApp.Persistence.UnitOfWork
                     this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailabilities", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _addressAvailabilitiesRepository;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public GenericRepository<AddressFacility> AddressFacilityRepository
+        {
+            get
+            {
+                if (this._addressFacilityRepository == null)
+                {
+                    this._addressFacilityRepository = new GenericRepository<AddressFacility>("AddressFacility", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _addressFacilityRepository;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public GenericRepository<AddressRequirement> AddressRequirementRepository
+        {
+            get
+            {
+                if (this._addressRequirementRepository == null)
+                {
+                    this._addressRequirementRepository = new GenericRepository<AddressRequirement>("AddressRequirement", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _addressRequirementRepository;
+            }
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        public GenericRepository<AddressTruck> AddressTruckRepository
+        {
+            get
+            {
+                if (this._addressTruckRepository == null)
+                {
+                    this._addressTruckRepository = new GenericRepository<AddressTruck>("AddressTruck", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _addressTruckRepository;
             }
         }
     }

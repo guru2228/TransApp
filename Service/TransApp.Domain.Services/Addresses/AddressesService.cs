@@ -7,6 +7,7 @@ using TransApp.Core.CacheService;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Addresses;
+using TransApp.Framework.Filter;
 using TransApp.Persistence.UnitOfWork;
 
 namespace TransApp.Domain.Services.Addresses
@@ -53,6 +54,17 @@ namespace TransApp.Domain.Services.Addresses
             return new AddressModel();
         }
 
+        public async Task<AddressModel> GetAddressFiltered(FilterAddress filter)
+        {
+            var currentAdrress =
+                await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
+            if (currentAdrress != null)
+            {
+                return Mapper.Map<AddressDto, AddressModel>(currentAdrress);
+            }
+            return new AddressModel();
+        }
+
         public async Task SaveAddress(AddressModel address)
         {
             var dest = Mapper.Map<AddressModel, AddressDto>(address);
@@ -65,6 +77,7 @@ namespace TransApp.Domain.Services.Addresses
                 {
                     if (aAvailability.Id <= 0)
                     {
+                        aAvailability.AddressId = dest.Address.Id;
                         await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
                     }
                     else
@@ -73,6 +86,55 @@ namespace TransApp.Domain.Services.Addresses
                     }
                 }
             }
+            if (dest.AddressFacilities != null)
+            {
+                List<AddressFacility> currentAddressFacilities = dest.AddressFacilities;
+                foreach (AddressFacility aFacility in currentAddressFacilities)
+                {
+                    if (aFacility.Id <= 0)
+                    {
+                        aFacility.AddressId = dest.Address.Id;
+                        await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.AddressFacilityRepository.UpdateAsync(aFacility, transaction);
+                    }
+                }
+            }
+            if (dest.AddressRequirements != null)
+            {
+                List<AddressRequirement> currentAddressRequirements = dest.AddressRequirements;
+                foreach (AddressRequirement aRequirement in currentAddressRequirements)
+                {
+                    if (aRequirement.Id <= 0)
+                    {
+                        aRequirement.AddressId = dest.Address.Id;
+                        await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.AddressRequirementRepository.UpdateAsync(aRequirement, transaction);
+                    }
+                }
+            }
+            if (dest.AddressTrucks != null)
+            {
+                List<AddressTruck> currentAddressTrucks = dest.AddressTrucks;
+                foreach (AddressTruck aTruck in currentAddressTrucks)
+                {
+                    if (aTruck.Id <= 0)
+                    {
+                        aTruck.AddressId = dest.Address.Id;
+                        await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.AddressTruckRepository.UpdateAsync(aTruck, transaction);
+                    }
+                }
+            }
+
             _unitOfWork.Commit(transaction);
         }
     }

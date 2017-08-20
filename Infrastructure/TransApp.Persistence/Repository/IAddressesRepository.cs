@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
+using TransApp.Framework.Filter;
 
 namespace TransApp.Persistence.Repository
 {
@@ -15,6 +16,8 @@ namespace TransApp.Persistence.Repository
         /// </summary>
         /// <param name="id"></param>
         Task<AddressDto> GetFullAddressById(int id);
+
+        Task<AddressDto> GetFullAddressFiltered(FilterAddress filter);
 
         Task SaveAddress(Address address, IDbTransaction transaction = null);
 

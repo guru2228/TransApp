@@ -12,7 +12,5 @@ namespace TransApp.Domain.Addresses
         public List<AddressFacilityModel> Facilities { get; set; }
         public List<AddressRequirementModel> Requirements { get; set; }
         public List<AddressTruckModel> Trucks { get; set; }
-
-        ///// and other fields necessary for address business object (combination of one or multiple dtos)
     }
 }

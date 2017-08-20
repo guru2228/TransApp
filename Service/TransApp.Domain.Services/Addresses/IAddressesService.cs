@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
+using TransApp.Framework.Filter;
 using AddressModel = TransApp.Domain.Addresses.AddressModel;
 
 namespace TransApp.Domain.Services.Addresses
@@ -15,5 +16,7 @@ namespace TransApp.Domain.Services.Addresses
         /// <param name="addressId"></param>
         /// <returns></returns>
         Task<AddressModel> Get(int addressId);
+
+        Task<AddressModel> GetAddressFiltered(FilterAddress filter);
     }
 }

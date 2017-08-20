@@ -43,6 +43,21 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         GenericRepository<AddressAvailability> AddressAvailabilitiesRepository { get; }
 
+        /// <summary>
+        ///AddressFacilityRepository 
+        /// </summary>
+        GenericRepository<AddressFacility> AddressFacilityRepository { get; }
+
+        /// <summary>
+        /// AddressRequirementRepository
+        /// </summary>
+        GenericRepository<AddressRequirement> AddressRequirementRepository { get; }
+
+        /// <summary>
+        /// AddressTruckRepository
+        /// </summary>
+        GenericRepository<AddressTruck> AddressTruckRepository { get; }
+
         #endregion
 
     }
