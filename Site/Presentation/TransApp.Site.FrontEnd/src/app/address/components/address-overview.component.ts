@@ -6,10 +6,10 @@ import { TableData } from "app/shared/md/md-table/md-table.component";
 declare var $:any;
 
 @Component({
-  selector: 'app-dashboard',
-  templateUrl: './shipment-search.component.html'
+  selector: 'address-overview',
+  templateUrl: './address-overview.component.html'
 })
-export class ShipmentSearchComponent implements OnInit, AfterViewInit{
+export class AddressOverviewComponent implements OnInit, AfterViewInit{
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
   public tableData: TableData;
   startAnimationForLineChart(chart){
