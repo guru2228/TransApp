@@ -24,13 +24,13 @@ namespace TransApp.Domain.Services.Addresses
             _cacheService = cacheService;
         }
 
-        public async Task<AddressModel> Get(int addressId)
+        public async Task<AddressFullModel> Get(int addressId)
         {
             var currentAdrress =
                 await _unitOfWork.AddressesRepository.GetFullAddressById(addressId);
             if (currentAdrress != null)
             {
-                return Mapper.Map<AddressDto, AddressModel>(currentAdrress);
+                return Mapper.Map<AddressDto, AddressFullModel>(currentAdrress);
                 //AddressModel result = new AddressModel
                 //{
                 //    Id = currentAdrress.Id,
@@ -51,23 +51,23 @@ namespace TransApp.Domain.Services.Addresses
                 //}
                 //return result;
             }
-            return new AddressModel();
+            return new AddressFullModel();
         }
 
-        public async Task<AddressModel> GetAddressFiltered(FilterAddress filter)
+        public async Task<AddressFullModel> GetAddressFiltered(FilterAddress filter)
         {
             var currentAdrress =
                 await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
             if (currentAdrress != null)
             {
-                return Mapper.Map<AddressDto, AddressModel>(currentAdrress);
+                return Mapper.Map<AddressDto, AddressFullModel>(currentAdrress);
             }
-            return new AddressModel();
+            return new AddressFullModel();
         }
 
-        public async Task SaveAddress(AddressModel address)
+        public async Task SaveAddress(AddressFullModel address)
         {
-            var dest = Mapper.Map<AddressModel, AddressDto>(address);
+            var dest = Mapper.Map<AddressFullModel, AddressDto>(address);
             var transaction = _unitOfWork.BeginTransaction();
             await _unitOfWork.AddressesRepository.SaveAddress(dest.Address, transaction);
             if (dest.AddressAvailabilities != null)

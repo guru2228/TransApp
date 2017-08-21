@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
+using TransApp.Domain.Addresses;
 using TransApp.Framework.Filter;
-using AddressModel = TransApp.Domain.Addresses.AddressModel;
 
 namespace TransApp.Domain.Services.Addresses
 {
@@ -15,8 +15,20 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
-        Task<AddressModel> Get(int addressId);
+        Task<AddressFullModel> Get(int addressId);
 
-        Task<AddressModel> GetAddressFiltered(FilterAddress filter);
+        /// <summary>
+        /// filter address/by customer now
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<AddressFullModel> GetAddressFiltered(FilterAddress filter);
+
+        /// <summary>
+        /// Save Full Address
+        /// </summary>
+        /// <param name="address"></param>
+        /// <returns></returns>
+        Task SaveAddress(AddressFullModel address);
     }
 }

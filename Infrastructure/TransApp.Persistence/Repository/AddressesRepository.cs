@@ -20,11 +20,6 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public void SetAddressFilter()
-        {
-            
-        }
-
         public async Task<AddressDto> GetFullAddressById(int id)
         {
             var lookup = new Dictionary<int, AddressDto>();

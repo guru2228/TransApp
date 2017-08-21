@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TransApp.Domain.Shipment
 {
-    public class ShipmentTransporterModelModel 
+    public class ShipmentTransporterModel 
     {
         public int Id { get; set; }
 
