@@ -58,6 +58,16 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         GenericRepository<AddressTruck> AddressTruckRepository { get; }
 
+        /// <summary>
+        /// Customer
+        /// </summary>
+        GenericRepository<Customer> CustomerRepository { get; }
+
+        /// <summary>
+        /// CustomerUser
+        /// </summary>
+        GenericRepository<CustomerUser> CustomerUserRepository { get; }
+
         #endregion
 
     }

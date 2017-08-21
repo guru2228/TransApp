@@ -50,5 +50,22 @@ namespace TransApp.Site.ApiControllers
             });
             return result;
         }
+
+        /// <summary>
+        /// Get address
+        /// </summary>
+        /// <param name="adressId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getAddressFiltered/{CustomerId}")]
+        public async Task<Domain.Addresses.AddressModel> GetAddressFiltered(int customerId)
+        {
+            var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
+            var result = await queryHandler.Retrieve(new QueryAddress
+            {
+                CustomerId = customerId
+            });
+            return result;
+        }
     }
 }

@@ -24,14 +24,21 @@ namespace TransApp.Domain.Services.Authentication
         {
             var user =
                 (await _unitOfWork.ApplicationUserRepository.GetAllAsync()).FirstOrDefault(item => item.Login == login);
-            return new ApplicationUser
+            if (user != null)
             {
-                Id = user.Id,
-                Login = user.Login,
-                FirstName = user.FirstName,
-                Name = user.LastName,
-                Password = user.Password
-            };
+                var customerUser =
+                    (await _unitOfWork.CustomerUserRepository.GetAsync("UserId=" + user.Id));
+                return new ApplicationUser
+                {
+                    Id = user.Id,
+                    Login = user.Login,
+                    FirstName = user.FirstName,
+                    Name = user.LastName,
+                    Password = user.Password,
+                    CustomerId = customerUser?.CustomerId
+                };
+            }
+            return null;
         }
 
         public async Task<bool> IsUserValid(string login, string password)

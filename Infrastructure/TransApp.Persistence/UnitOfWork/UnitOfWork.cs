@@ -28,7 +28,8 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<AddressFacility> _addressFacilityRepository;
         private GenericRepository<AddressRequirement> _addressRequirementRepository;
         private GenericRepository<AddressTruck> _addressTruckRepository;
-
+        private GenericRepository<Customer> _customerRepository;
+        private GenericRepository<CustomerUser> _customerUserRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -209,6 +210,29 @@ namespace TransApp.Persistence.UnitOfWork
                     this._addressTruckRepository = new GenericRepository<AddressTruck>("AddressTruck", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _addressTruckRepository;
+            }
+        }
+
+        public GenericRepository<Customer> CustomerRepository
+        {
+            get
+            {
+                if (this._customerRepository == null)
+                {
+                    this._customerRepository = new GenericRepository<Customer>("Customer", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _customerRepository;
+            }
+        }
+        public GenericRepository<CustomerUser> CustomerUserRepository
+        {
+            get
+            {
+                if (this._customerUserRepository == null)
+                {
+                    this._customerUserRepository = new GenericRepository<CustomerUser>("CustomerUser", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _customerUserRepository;
             }
         }
     }

@@ -13,5 +13,6 @@ namespace TransApp.Application.Query
         public string Language { get; set; }
 
         public int User { get; set; }
+        public int? CustomerId { get; set; }
     }
 }
