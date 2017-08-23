@@ -13,17 +13,17 @@
             <div class="collapse navbar-collapse" id="menu-example">
                 <ul class="nav navbar-nav navbar-right">
                     <li>
-                        <a href="/dashboard">
-                            <i class="material-icons">dashboard</i> Dashboard
+                        <a href="/">
+                            <i class="material-icons">dashboard</i> Transapp
                         </a>
                     </li>
                     <li class="">
-                        <a href="/pages/register">
+                        <a href="/register">
                             <i class="material-icons">person_add</i> Register
                         </a>
                     </li>
                     <li class=" active ">
-                        <a href="/pages/login">
+                        <a href="/login">
                             <i class="material-icons">fingerprint</i> Login
                         </a>
                     </li>
@@ -42,12 +42,12 @@
             <div class="container">
                 <div class="row">
                     <div class="col-md-4 col-sm-6 col-md-offset-4 col-sm-offset-3">
-                        <form method="#" action="#">
+                        <form id="LoginForm" #loginForm="ngForm">
                             <div class="card card-login card-hidden">
                                 <div class="card-header text-center" data-background-color="rose">
                                     <h4 class="card-title">Login</h4>
                                     <div class="social-line">
-                                        <a href="#btn" class="btn btn-just-icon btn-simple">
+                                        <!-- <a href="#btn" class="btn btn-just-icon btn-simple">
                                             <i class="fa fa-facebook-square"></i>
                                         </a>
                                         <a href="#pablo" class="btn btn-just-icon btn-simple">
@@ -55,29 +55,20 @@
                                         </a>
                                         <a href="#eugen" class="btn btn-just-icon btn-simple">
                                             <i class="fa fa-google-plus"></i>
-                                        </a>
+                                        </a> -->
                                     </div>
                                 </div>
-                                <p class="category text-center">
+                                <!--  <p class="category text-center">
                                     Or Be Classical
-                                </p>
+                                </p>-->
                                 <div class="card-content">
-                                    <div class="input-group">
-                                        <span class="input-group-addon">
-                                            <i class="material-icons">face</i>
-                                        </span>
-                                        <div class="form-group label-floating">
-                                            <label class="control-label">First Name</label>
-                                            <input type="text" class="form-control">
-                                        </div>
-                                    </div>
                                     <div class="input-group">
                                         <span class="input-group-addon">
                                             <i class="material-icons">email</i>
                                         </span>
                                         <div class="form-group label-floating">
                                             <label class="control-label">Email address</label>
-                                            <input type="email" class="form-control">
+                                            <input type="email" class="form-control" [(ngModel)]="applicationUser.login" name="login">
                                         </div>
                                     </div>
                                     <div class="input-group">
@@ -86,12 +77,12 @@
                                         </span>
                                         <div class="form-group label-floating">
                                             <label class="control-label">Password</label>
-                                            <input type="password" class="form-control">
+                                            <input type="password" class="form-control" [(ngModel)]="applicationUser.password" name="password">
                                         </div>
                                     </div>
                                 </div>
                                 <div class="footer text-center">
-                                    <button type="submit" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
+                                    <button type="submit" (click)="onLoginClick()" class="btn btn-rose btn-simple btn-wd btn-lg">Let's go</button>
                                 </div>
                             </div>
                         </form>
@@ -104,30 +95,20 @@
                 <nav class="pull-left">
                     <ul>
                         <li>
-                            <a href="#">
+                            <a href="javascript:void(0)">
                                 Home
                             </a>
                         </li>
                         <li>
-                            <a href="#">
+                            <a href="javascript:void(0)">
                                 Company
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Portfolio
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#">
-                                Blog
                             </a>
                         </li>
                     </ul>
                 </nav>
                 <p class="copyright pull-right">
-                    &copy; {{test | date: 'yyyy'}}
-                    <a href="https://www.creative-tim.com">Creative Tim</a>, made with love for a better web
+                    &copy; {{pageDate | date: 'yyyy'}}
+                    <a href="/">Transapp</a>, transportation application
                 </p>
             </div>
         </footer>

@@ -91,15 +91,15 @@ namespace TransApp.Site
 
             //// add nlog
             loggerFactory.AddNLog();
-            foreach (var target1 in LogManager.Configuration.AllTargets.Where(t => t is DatabaseTarget))
-            {
-                var target = (DatabaseTarget)target1;
-                target.ConnectionString = Configuration.GetSection("ConnectionString:DefaultConnectionString").Value;
-            }
+            //foreach (var target1 in LogManager.Configuration.AllTargets.Where(t => t is DatabaseTarget))
+            //{
+            //    var target = (DatabaseTarget)target1;
+            //    target.ConnectionString = Configuration.GetSection("ConnectionString:DefaultConnectionString").Value;
+            //}
         
             try
             {
-                //ConfigureAuth(app);
+                ConfigureAuth(app);
                 app.UseDefaultFiles();
                 app.UseStaticFiles();
                 //// configuring routing, add a route for single page application to match all urls, in this way, angular routing is used.

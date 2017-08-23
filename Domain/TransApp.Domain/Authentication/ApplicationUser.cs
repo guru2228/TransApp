@@ -18,5 +18,6 @@ namespace TransApp.Domain.Authentication
         public string Password { get; set; }
 
         public int? CustomerId { get; set; }
+       
     }
 }

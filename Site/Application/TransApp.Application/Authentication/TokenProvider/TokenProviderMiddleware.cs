@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using TransApp.Domain.Authentication;
 
 namespace TransApp.Application.Authentication.TokenProvider
 {
@@ -57,7 +58,7 @@ namespace TransApp.Application.Authentication.TokenProvider
                 return context.Response.WriteAsync("Bad request.");
             }
 
-            _logger.LogInformation("Handling request: " + context.Request.Path);
+           // _logger.LogInformation("Handling request: " + context.Request.Path);
 
             return GenerateToken(context);
         }
@@ -67,7 +68,9 @@ namespace TransApp.Application.Authentication.TokenProvider
             var username = context.Request.Form["username"];
             var password = context.Request.Form["password"];
 
-            var identity = new { UserId = 1, Username ="test", Language = "en"};// await GetIdentity(username, password)};
+            ApplicationUser identity = null;
+            if (username == "admin@admin.com" && password == "admin")
+             identity = new ApplicationUser { Id = 1, Login = "admin"};// await GetIdentity(username, password)};
             if (identity == null)
             {
                 context.Response.StatusCode = 400;
@@ -81,12 +84,11 @@ namespace TransApp.Application.Authentication.TokenProvider
             // You can add other claims here, if you want:
             var claims = new Claim[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, identity.UserId.ToString()),
-                new Claim(JwtRegisteredClaimNames.UniqueName, identity.Username),
+                new Claim(JwtRegisteredClaimNames.Sub, identity.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, identity.Login),
                 new Claim(JwtRegisteredClaimNames.Jti,  _options.NonceGenerator),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64),
-                new Claim("User", "IAmTransAppUser"),
-                new Claim("Language", identity.Language)
+                new Claim("User", "IAmTransAppUser")
             };
 
             // Create the JWT and write it to a string

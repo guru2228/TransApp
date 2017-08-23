@@ -12,16 +12,17 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { AppComponent } from './app.component';
 import { AdminLayoutComponent } from "app/layouts/admin/admin-layout.component";
 import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
-import { LoginComponent } from "app/authentication/login.component";
-import { RegisterComponent } from "app/authentication/register.component";
-import { ErrorComponent } from "app/common/error.component";
-import { PageNotFoundComponent } from "app/common/pageNotFound.component";
 
-import { ShipmentModule } from "app/shipment/shipment.module";
+
+import { MdModule } from "app/shared/md/md.module";
+import { CommonAppModule } from "app/common/common-app.module";
+
+import { AuthenticationModule } from "app/authentication/authentication.module";
 import { FooterModule } from "app/shared/footer/footer.module";
 import { NavbarModule } from "app/shared/navbar/navbar.module";
 import { SidebarModule } from "app/shared/sidebar/sidebar.module";
-import { MdModule } from "app/shared/md/md.module";
+
+import { ShipmentModule } from "app/shipment/shipment.module";
 import { AddressModule } from "app/address/address.module";
 
 
@@ -33,10 +34,13 @@ import { AddressModule } from "app/address/address.module";
     MdModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+
+    CommonAppModule,
+    AuthenticationModule,
+    
     FooterModule,
     NavbarModule,
     SidebarModule,
-
     ShipmentModule,
     AddressModule,
   ],
@@ -44,11 +48,6 @@ import { AddressModule } from "app/address/address.module";
     AppComponent,
     AdminLayoutComponent,
     AuthLayoutComponent,
-
-    LoginComponent,
-    RegisterComponent,
-    ErrorComponent,
-    PageNotFoundComponent
   ],
   providers: [],
   bootstrap: [AppComponent]

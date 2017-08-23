@@ -106,11 +106,11 @@ export class AddressCreateComponent {
             this.createMap();
             debugger;
             let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchAddressElementRef.nativeElement, {
-                types: ["address"]
+               // types: ["address"]
             });
 
             let zipCodeAutocomplete = new google.maps.places.Autocomplete(this.searchZipCodeElementRef.nativeElement, {
-                types: ["(regions)"]
+                types: ["establishment"]
             });
 
             addressesAutocomplete.addListener("place_changed", () => {

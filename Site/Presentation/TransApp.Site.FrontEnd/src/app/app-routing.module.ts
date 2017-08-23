@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { ErrorComponent } from "app/common/error.component";
-import { PageNotFoundComponent } from "app/common/pageNotFound.component";
 import { AdminLayoutComponent } from "app/layouts/admin/admin-layout.component";
 import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
-import { LoginComponent } from "app/authentication/login.component";
+
+import { ErrorComponent } from "app/common/components/error.component";
+import { PageNotFoundComponent } from "app/common/components/pageNotFound.component";
+import { LoginComponent } from "app/authentication/components/login.component";
 
 import { AddressCreateComponent } from "app/address/components/address-create.component";
 import { AddressOverviewComponent } from "app/address/components/address-overview.component";
@@ -14,10 +15,11 @@ import { ShipmentSaveComponent } from "app/shipment/components/shipment-save.com
 import { ShipmentOverviewComponent } from "app/shipment/components/shipment-overview.component";
 
 
+
 const routes: Routes = [
     {
         path: '',
-        redirectTo: 'shipment-overview',
+        redirectTo: 'login',
         pathMatch: 'full',
     },
 
