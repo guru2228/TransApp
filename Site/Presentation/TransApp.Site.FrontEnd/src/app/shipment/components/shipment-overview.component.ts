@@ -90,7 +90,7 @@ shipmentRow.viewActions = !shipmentRow.viewActions;
         debugger;
         if(shipmentRow.viewActions){
             shipmentRow.viewEdit = false;
-            this.router.navigate(['/']);
+            this.router.navigate(['/shipment-overview']);
         }
             setTimeout(function() {
                // $('#actionsRowContent').slideToggle('slow');

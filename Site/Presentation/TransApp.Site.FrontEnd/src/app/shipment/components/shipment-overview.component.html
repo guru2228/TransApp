@@ -121,7 +121,7 @@
                                 <tbody>
 
                                     <ng-container *ngFor="let shipmentRow of shipmentModel; let rowindex = index">
-                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="i%2==0?'success':''">
+                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
                                             <td>{{shipmentRow.shipment.pickupdate}}</td>
                                             <td>{{shipmentRow.shipment.deliverydate}}</td>
                                             <td>{{shipmentRow.shipment.from}}</td>

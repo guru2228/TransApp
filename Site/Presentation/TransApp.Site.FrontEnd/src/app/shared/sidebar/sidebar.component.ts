@@ -1,5 +1,6 @@
 import { Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentInit } from '@angular/core';
 import { ROUTES } from "app/shared/sidebar/sidebar-routes.config";
+import { AuthenticationService } from "app/authentication/services/authentication.service";
 
 
 declare var $:any;
@@ -14,6 +15,9 @@ var sidebarTimer;
 export class SidebarComponent implements OnInit{
     public menuItems: any[];
 
+    constructor(private authenticationService: AuthenticationService){
+
+    }
     isNotMobileMenu(){
         if($(window).width() > 991){
             return false;
@@ -48,6 +52,10 @@ export class SidebarComponent implements OnInit{
                 mda.movingTabInitialised = true;
             }
         }, 100);
+    }
+
+    onClickSignOut() : void{
+this.authenticationService.logout();
     }
 }
 

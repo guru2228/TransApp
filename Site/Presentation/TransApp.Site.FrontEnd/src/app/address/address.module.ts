@@ -2,12 +2,13 @@ import { NgModule }       from '@angular/core';
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule }   from '@angular/common';
 import { HttpModule } from "@angular/http";
+import { RouterModule, Routes } from '@angular/router';
 
 import {AgmCoreModule} from '@agm/core';
 
 import { MdModule } from "app/shared/md/md.module";
-import { AddressCreateComponent } from "app/address/components/address-create.component";
 import { AddressOverviewComponent } from "app/address/components/address-overview.component";
+import { AddressSaveComponent } from "app/address/components/address-save.component";
 
 @NgModule({
     imports: [
@@ -15,6 +16,7 @@ import { AddressOverviewComponent } from "app/address/components/address-overvie
         FormsModule,
         ReactiveFormsModule,
         HttpModule,
+        RouterModule,
         MdModule,
         AgmCoreModule.forRoot({    libraries: ["places"],
             apiKey: 'AIzaSyChUim14iXhf6riJ73R3qxNxnMls2SGZDA'
@@ -23,7 +25,7 @@ import { AddressOverviewComponent } from "app/address/components/address-overvie
     exports: [
     ],
     declarations: [
-        AddressCreateComponent,
+        AddressSaveComponent,
         AddressOverviewComponent
     ],
     providers: [

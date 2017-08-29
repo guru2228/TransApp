@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 
 import { AppComponent } from './app.component';
-import { AdminLayoutComponent } from "app/layouts/admin/admin-layout.component";
+import { AppLayoutComponent } from "app/layouts/admin/app-layout.component";
 import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
 
 
@@ -46,7 +46,7 @@ import { AddressModule } from "app/address/address.module";
   ],
   declarations: [
     AppComponent,
-    AdminLayoutComponent,
+    AppLayoutComponent,
     AuthLayoutComponent,
   ],
   providers: [],

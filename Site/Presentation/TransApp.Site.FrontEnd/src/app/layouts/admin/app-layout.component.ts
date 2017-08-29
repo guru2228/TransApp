@@ -22,10 +22,10 @@ var md:any ={
 };
 @Component({
   selector: 'app-layout',
-  templateUrl: './admin-layout.component.html'
+  templateUrl: './app-layout.component.html'
 })
 
-export class AdminLayoutComponent implements OnInit {
+export class AppLayoutComponent implements OnInit {
     public navItems: NavItem[];
     location: Location;
     constructor(location:Location) {

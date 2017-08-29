@@ -20,11 +20,11 @@ declare var $: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'address-create-component',
-    templateUrl: './address-create.component.html'
+    selector: 'address-save-component',
+    templateUrl: './address-save.component.html'
 })
 
-export class AddressCreateComponent {
+export class AddressSaveComponent {
     // rangeValidation : FormGroup;
     //
     // // We are passing an instance of the FormBuilder to our constructor
