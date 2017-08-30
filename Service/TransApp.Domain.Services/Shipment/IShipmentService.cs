@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
 using TransApp.Domain.Shipment;
 using TransApp.Framework.Filter;
-using AddressModel = TransApp.Domain.Addresses.AddressModel;
+using AddressModel = TransApp.Domain.Addresses.AddressLocationModel;
 
 namespace TransApp.Domain.Services.Shipment
 {

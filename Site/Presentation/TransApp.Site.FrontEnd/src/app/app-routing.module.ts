@@ -56,7 +56,7 @@ const routes: Routes = [
             },
 
             {
-                path: 'shipment-create',
+                path: 'shipment-add',
                 component: ShipmentSaveComponent
             },
             {
@@ -72,7 +72,7 @@ const routes: Routes = [
             },
 
             {
-                path: 'address-create',
+                path: 'address-add',
                 component: AddressSaveComponent
             },
         ]

@@ -2,8 +2,8 @@ import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { TableData } from "app/shared/md/md-table/md-table.component";
-import { Address } from "app/address/models/address";
-import { AddressRow } from "app/address/models/address-row";
+import { AddressRowViewModel } from "app/address/models/address-row-viewmodel";
+
 var moment = require('moment/moment');
 
 declare var $:any;
@@ -14,7 +14,7 @@ declare var $:any;
 })
 export class AddressOverviewComponent implements OnInit, AfterViewInit{
      // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
-     addressModel: AddressRow[] = [];
+     addressModel: AddressRowViewModel[] = [];
      headerRow: string[];
  
      constructor(private router: Router,

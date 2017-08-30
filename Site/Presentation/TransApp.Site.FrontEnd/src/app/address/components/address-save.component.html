@@ -11,7 +11,7 @@
                                         Naam
                                         <span class="star">*</span>
                                     </label>
-                            <input type="text" class="form-control" name="name">
+                            <input type="text" class="form-control" id="name" name="name" [(ngModel)]="componentModel.name">
                         </div>
                         <div class="form-group label-floating">
                             <label for="" class="control-label">
@@ -21,12 +21,22 @@
                             <input type="text" class="form-control" type="text" #searchByAddress [formControl]="searchByAddressControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
                         </div>
 
-                        <div class="form-group label-floating">
-                            <label for="" class="control-label">
-                                          Search by zipcode
-                                            <span class="star">*</span>
-                                        </label>
-                            <input type="text" class="form-control" type="text" #searchByZipCode [formControl]="searchByZipCodeControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="form-group label-floating">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="componentModel.location.street" placeholder="Straat nr">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group label-floating">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="componentModel.location.streetNumber" placeholder="Straat">
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
                         </div>
 
                         <div class="row">
@@ -34,12 +44,12 @@
                                 <div class="row">
                                     <div class="col-md-4">
                                         <div class="form-group label-floating">
-                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="addressDetails['street_number']" placeholder="Straat nr">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="componentModel.location.latitude" placeholder="Latitude">
                                         </div>
                                     </div>
                                     <div class="col-md-8">
                                         <div class="form-group label-floating">
-                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="addressDetails['route']" placeholder="Straat">
+                                            <input type="text" id="street_number" class="form-control" disabled="" [(ngModel)]="componentModel.location.longitude" placeholder="Longitude">
                                         </div>
                                     </div>
 
@@ -48,19 +58,28 @@
                         </div>
 
                         <div class="form-group label-floating">
-                            <input type="text" class="form-control" id="state" disabled="" [(ngModel)]="addressDetails['administrative_area_level_1']" placeholder="State">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.state" id="state" disabled="" placeholder="State">
+                        </div>
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.stateCode" id="stateCode" disabled="" placeholder="State">
                         </div>
 
                         <div class="form-group label-floating">
-                            <input type="text" class="form-control" id="city" disabled="" [(ngModel)]="addressDetails['locality']" placeholder="City">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.city" id="city" disabled="" placeholder="City">
+                        </div>
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.cityCode" id="cityCode" disabled="" placeholder="City">
                         </div>
 
                         <div class="form-group label-floating">
-                            <input type="text" class="form-control" id="zipcode" disabled="" [(ngModel)]="addressDetails['postal_code']" placeholder="Zipcode">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.zipcode" id="zipcode" disabled="" placeholder="Zipcode">
                         </div>
 
                         <div class="form-group label-floating">
-                            <input type="text" class="form-control" id="country" disabled="" [(ngModel)]="addressDetails['country']" placeholder="Country">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.country" id="country" disabled="" placeholder="Country">
+                        </div>
+                        <div class="form-group label-floating">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.location.countryCode" id="countryCode" disabled="" placeholder="Country">
                         </div>
 
                         <div class="form-group label-floating">
@@ -68,28 +87,28 @@
                                         Contactperson
                                         <span class="star">*</span>
                                     </label>
-                            <input type="text" class="form-control" name="contactperson">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.contactPerson" id="contactperson">
                         </div>
                         <div class="form-group label-floating">
                             <label class="control-label">
                                         Email address
                                         <span class="star">*</span>
                                     </label>
-                            <input type="email" class="form-control">
+                            <input type="email" class="form-control" [(ngModel)]="componentModel.email" id="email">
                         </div>
                         <div class="form-group label-floating">
                             <label for="" class="control-label">
                                         Phone
                                         <span class="star">*</span>
                                     </label>
-                            <input type="text" class="form-control" name="phone">
+                            <input type="text" class="form-control" [(ngModel)]="componentModel.phone" id="phone">
                         </div>
                         <div class="form-group label-floating">
                             <label for="" class="control-label">
                                         Remarks
                                         <span class="star">*</span>
                                     </label>
-                            <textarea class="form-control" rows="5"></textarea>
+                            <textarea class="form-control" rows="5" [(ngModel)]="componentModel.remark" id="remark"></textarea>
                         </div>
 
                         <!-- Opening hours -->

@@ -15,20 +15,20 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
-        Task<AddressFullModel> Get(int addressId);
+        Task<AddressModel> Get(int addressId);
 
         /// <summary>
         /// filter address/by customer now
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<AddressFullModel> GetAddressFiltered(FilterAddress filter);
+        Task<AddressModel> GetAddressFiltered(FilterAddress filter);
 
         /// <summary>
         /// Save Full Address
         /// </summary>
         /// <param name="address"></param>
         /// <returns></returns>
-        Task SaveAddress(AddressFullModel address);
+        Task SaveAddress(AddressModel address);
     }
 }

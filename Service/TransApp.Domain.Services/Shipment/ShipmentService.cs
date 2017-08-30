@@ -47,7 +47,7 @@ namespace TransApp.Domain.Services.Shipment
             return new ShipmentFullModel();
         }
 
-        public async Task SaveShipment(AddressModel address)
+        public async Task SaveShipment(AddressLocationModel address)
         {
            
         }

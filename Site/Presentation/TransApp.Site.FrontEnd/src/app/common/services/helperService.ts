@@ -1,7 +1,26 @@
-﻿import { Injectable }    from '@angular/core';
+﻿import { Injectable } from '@angular/core';
+import { ComponentStateType } from "app/common/helper/component-state-type";
 
 @Injectable()
 export class HelperService {
+
+
+    /**
+     * Get component state based on current url
+     * @param url 
+     */
+    getComponentStateByUrl(url: string) {
+        if (url.indexOf('-add') >= 0) {
+            return ComponentStateType.add;
+        }
+        else if (url.indexOf('-edit') >= 0) {
+            return ComponentStateType.add;
+        }
+        else if (url.indexOf('-edit') >= 0) {
+            return ComponentStateType.display;
+        }
+    }
+
     /**
      * Convert datetime to string
      * @param dateobj 
@@ -9,7 +28,7 @@ export class HelperService {
      * @param include 
      * @returns {} 
      */
-    dateToString(dateobj: any, format: string, includeTime: boolean=false) {
+    dateToString(dateobj: any, format: string, includeTime: boolean = false) {
         var year = dateobj.getFullYear();
         var month = ("0" + (dateobj.getMonth() + 1)).slice(-2);
         var day = ("0" + dateobj.getDate()).slice(-2);
@@ -19,24 +38,24 @@ export class HelperService {
         var convertedDate = "";
 
         switch (format) {
-        case "nl":
-            convertedDate = day + "/" + month + "/" + year;
-            break;
-        case "fr": //dd-mm-yyyy
-            convertedDate = day + "-" + month + "-" + year;
-            break;
-        case "de": //yyyy-mm-dd
-            convertedDate = year + "-" + month + "-" + day;
-            break;
-        case "ro": //yyyy-mm-dd
-            convertedDate = day + "." + month + "." + year;
-            break;
-        default:
-            convertedDate = day + month + year;
-            if (includeTime) {
-                convertedDate += hours + minutes + seconds;
-            }
-            return convertedDate;
+            case "nl":
+                convertedDate = day + "/" + month + "/" + year;
+                break;
+            case "fr": //dd-mm-yyyy
+                convertedDate = day + "-" + month + "-" + year;
+                break;
+            case "de": //yyyy-mm-dd
+                convertedDate = year + "-" + month + "-" + day;
+                break;
+            case "ro": //yyyy-mm-dd
+                convertedDate = day + "." + month + "." + year;
+                break;
+            default:
+                convertedDate = day + month + year;
+                if (includeTime) {
+                    convertedDate += hours + minutes + seconds;
+                }
+                return convertedDate;
         }
 
         if (includeTime) {
@@ -54,29 +73,29 @@ export class HelperService {
         return date1;
     }
 
-/**
- * Receive user language parameter and return datetime format
- * @param language 
- * @returns {} 
- */
-    getLanguageSpecificFormatForDate(language: string, includeTime: boolean=false) {
+    /**
+     * Receive user language parameter and return datetime format
+     * @param language 
+     * @returns {} 
+     */
+    getLanguageSpecificFormatForDate(language: string, includeTime: boolean = false) {
         let format = '';
         switch (language) {
-        case "nl":
-            format = "dd/MM/yyyy";
-            break;
-        case "fr": //dd-mm-yyyy
-            format = "dd-MM-yyyy";
-            break;
-        case "de": //yyyy-mm-dd
-            format = "yyyy-MM-dd";
-            break;
-        case "ro": //yyyy-mm-dd
-            format = "dd.MM.yyyy";
-            break;
-        default:
-            format = 'dd/MM/yyyy';
-            break;
+            case "nl":
+                format = "dd/MM/yyyy";
+                break;
+            case "fr": //dd-mm-yyyy
+                format = "dd-MM-yyyy";
+                break;
+            case "de": //yyyy-mm-dd
+                format = "yyyy-MM-dd";
+                break;
+            case "ro": //yyyy-mm-dd
+                format = "dd.MM.yyyy";
+                break;
+            default:
+                format = 'dd/MM/yyyy';
+                break;
         }
         if (includeTime) {
             format += " hh:mm:ss";

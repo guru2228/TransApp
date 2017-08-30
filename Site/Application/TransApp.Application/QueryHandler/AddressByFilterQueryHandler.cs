@@ -8,7 +8,7 @@ using TransApp.Framework.Filter;
 
 namespace TransApp.Application.QueryHandler
 {
-    public class AddressByFilterQueryHandler : IQueryHandler<QueryAddress, Domain.Addresses.AddressFullModel>
+    public class AddressByFilterQueryHandler : IQueryHandler<QueryAddress, Domain.Addresses.AddressModel>
     {
         /// <summary>
         /// AddressesService
@@ -26,7 +26,7 @@ namespace TransApp.Application.QueryHandler
             _accountService = accountService;
         }
 
-        public async Task<Domain.Addresses.AddressFullModel> Retrieve(QueryAddress query)
+        public async Task<Domain.Addresses.AddressModel> Retrieve(QueryAddress query)
         {
             FilterAddress filter = new FilterAddress();
             filter.CustomerId = query.CustomerId;
