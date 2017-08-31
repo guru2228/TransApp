@@ -5,6 +5,7 @@ import { AgmCoreModule, MapsAPILoader } from '@agm/core';
 import { AddressModel } from "app/address/models/address-model";
 import { ComponentStateType } from "app/common/helper/component-state-type";
 import { HelperService } from "app/common/services/helperService";
+import { AddressService } from "app/address/services/address.service";
 
 declare var require: any
 declare var google: any;
@@ -37,7 +38,8 @@ export class AddressSaveComponent {
         private route: ActivatedRoute,
         private mapsAPILoader: MapsAPILoader,
         private ngZone: NgZone,
-        private helperService: HelperService
+        private helperService: HelperService,
+        private addressService: AddressService,
     ) { }
 
     ngOnInit() {
@@ -45,6 +47,10 @@ export class AddressSaveComponent {
         // get component state
       this.componentState =  this.helperService.getComponentStateByUrl(this.router.url);
 
+      if(this.componentState == ComponentStateType.add){
+          this.componentModel = new AddressModel();
+          this.componentModel.id = -1;
+      }
         //  Init Bootstrap Select Picker
         if ($(".selectpicker").length != 0) {
             $(".selectpicker").selectpicker();
@@ -188,11 +194,17 @@ debugger;
           }
       }
     
-    save(model: User, isValid: boolean) {
+    save() {
         // call API to save customer
-        console.log(model, isValid);
+        console.log(this.componentModel);
+debugger;        
+                this.addressService.save(this.componentModel).subscribe(result=>{
+        alert("saved");
+                }, error=>{
+        
+                });
     }
     onSubmit(value: any): void {
-        console.log(value);
+      
     }
 }

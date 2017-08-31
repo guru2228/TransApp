@@ -17,6 +17,8 @@ export class AddressModel {
     public dateCreated: Date;
     public userIdModified: number;
     public dateModified: Date;
+    public userCreated: string;
+    public userModified: string;
     public availabilities: Array<AddressAvailabilityModel>;
     public facilities: Array<AddressFacilityModel>;
     public requirements: Array<AddressRequirementModel>;

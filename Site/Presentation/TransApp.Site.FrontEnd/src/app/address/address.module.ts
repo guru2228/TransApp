@@ -9,6 +9,7 @@ import {AgmCoreModule} from '@agm/core';
 import { MdModule } from "app/shared/md/md.module";
 import { AddressOverviewComponent } from "app/address/components/address-overview.component";
 import { AddressSaveComponent } from "app/address/components/address-save.component";
+import { AddressService } from "app/address/services/address.service";
 
 @NgModule({
     imports: [
@@ -29,6 +30,7 @@ import { AddressSaveComponent } from "app/address/components/address-save.compon
         AddressOverviewComponent
     ],
     providers: [
+        AddressService
     ]
 })
 export class AddressModule {}

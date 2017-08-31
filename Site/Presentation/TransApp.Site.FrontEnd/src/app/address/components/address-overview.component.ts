@@ -3,6 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { TableData } from "app/shared/md/md-table/md-table.component";
 import { AddressRowViewModel } from "app/address/models/address-row-viewmodel";
+import { AddressModel } from "app/address/models/address-model";
 
 var moment = require('moment/moment');
 
@@ -26,16 +27,16 @@ export class AddressOverviewComponent implements OnInit, AfterViewInit{
          debugger;
          this.headerRow = ['Name', 'Created by', 'Phone'];
  
-         let address = new Address();
+         let address = new AddressModel();
          address.name = 'Transaap BVBA, Stationstraat 3, Gent';
-         address.createdBy = 'Joske Bermeulen';
+         address.userCreated = 'Joske Bermeulen';
          address.phone = '+44 5464 45665 45';
   
  
          for (let i = 0; i < 10; i++) {
             address.id = i;
             address.name = address.name + ' ' + address.id ;
-             let addressRow = new AddressRow();
+             let addressRow = new AddressRowViewModel();
              addressRow.address = address;
              addressRow.viewActions = i == 2 ? true : false;
              this.addressModel.push(addressRow);
@@ -47,7 +48,7 @@ export class AddressOverviewComponent implements OnInit, AfterViewInit{
      }
  
      /** Show row available actions on click */
-     onClickShowActions(addressRow: AddressRow, index: number) {
+     onClickShowActions(addressRow: AddressRowViewModel, index: number) {
          for (let i = 0; i < this.addressModel.length; i++) {
              if (i != index)
                  this.addressModel[i].viewActions = false;
@@ -67,7 +68,7 @@ export class AddressOverviewComponent implements OnInit, AfterViewInit{
  
  
      /** Show edit address */
-     onClickEditAddress(addressRow: AddressRow) {
+     onClickEditAddress(addressRow: AddressRowViewModel) {
         addressRow.viewEdit = !addressRow.viewEdit;
          debugger;
              this.router.navigate(['./address-edit/1'], { relativeTo: this.route });

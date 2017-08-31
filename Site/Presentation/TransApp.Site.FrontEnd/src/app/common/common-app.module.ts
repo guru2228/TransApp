@@ -9,6 +9,7 @@ import { PageNotFoundComponent } from "app/common/components/pageNotFound.compon
 import { HelperService } from "app/common/services/helperService";
 import { HttpService } from "app/common/services/httpService";
 import { TranslateService } from "app/common/services/localization/translate.service";
+import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
 
 
 @NgModule({
@@ -25,6 +26,7 @@ import { TranslateService } from "app/common/services/localization/translate.ser
     providers: [
         HelperService,
         HttpService,
+        GlobalErrorHandler,
         TranslateService,
         {
             provide: HttpService,

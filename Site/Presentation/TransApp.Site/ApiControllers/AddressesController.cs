@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using TransApp.Application.Query;
 using TransApp.Application.QueryHandler;
 using TransApp.DataModel.Dto;
+using TransApp.Domain.Addresses;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
 
@@ -35,26 +36,42 @@ namespace TransApp.Site.ApiControllers
         }
 
         /// <summary>
-        /// Get address
+        /// Get address by id
         /// </summary>
-        /// <param name="adressId"></param>
+        /// <param name="addressid"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getAddress/{adressId}")]
-        public async Task<Domain.Addresses.AddressModel> GetAddress(int adressId)
+        [HttpGet("get/{addressid}")]
+        public async Task<Domain.Addresses.AddressModel> Get(int addressid)
         {
             var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
             var result = await queryHandler.Retrieve(new QueryAddress
             {
-               Id = adressId
+               Id = addressid
             });
             return result;
         }
 
+
+        /// <summary>
+        /// Save an address
+        /// </summary>
+        /// <param name="addressModel"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("save/")]
+        public async Task<int> Save([FromBody]AddressModel addressModel)
+        {
+            //// get customer from user
+            /// save address based on customer
+            //// return address id
+            return 1;
+        }
+
+
         /// <summary>
         /// Get address
         /// </summary>
-        /// <param name="adressId"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAddressFiltered/{CustomerId}")]
