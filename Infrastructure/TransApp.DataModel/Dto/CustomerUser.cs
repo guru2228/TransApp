@@ -13,13 +13,13 @@ namespace TransApp.DataModel.Dto
 
         public int? UserId { get; set; }
 
-        public DateTime? UserIdCreated { get; set; }
+        public int? UserIdCreated { get; set; }
 
-        public int? DateCreated { get; set; }
+        public DateTime? DateCreated { get; set; }
 
-        public DateTime? UserIdModified { get; set; }
+        public int? UserIdModified { get; set; }
 
-        public int? DateModified { get; set; }
+        public DateTime? DateModified { get; set; }
 
     }
 

@@ -38,6 +38,8 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         IAddressesRepository AddressesRepository { get; }
 
+        IFacilityRepository FacilityRepository { get; }
+
         /// <summary>
         /// AddressAvailabilities
         /// </summary>

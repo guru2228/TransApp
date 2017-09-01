@@ -30,6 +30,8 @@ namespace TransApp.Domain.Shipment
 
         public DateTime? DateModified { get; set; }
 
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
 
     }
 
