@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -21,6 +22,7 @@ using TransApp.Application.Authentication.TokenProvider;
 using TransApp.Application.SeedData;
 using TransApp.Core.CacheService;
 using TransApp.Core.Logging;
+using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
@@ -70,6 +72,9 @@ namespace TransApp.Site
             services.AddMemoryCache();
 
             services.AddAuthentication();
+
+            //// initialize mapper
+            AutoMapperBootStrapper.CreateMapperConfiguration();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -100,11 +105,11 @@ namespace TransApp.Site
 
             //// add nlog
             loggerFactory.AddNLog();
-            //foreach (var target1 in LogManager.Configuration.AllTargets.Where(t => t is DatabaseTarget))
-            //{
-            //    var target = (DatabaseTarget)target1;
-            //    target.ConnectionString = Configuration.GetSection("ConnectionString:DefaultConnectionString").Value;
-            //}
+            foreach (var target1 in LogManager.Configuration.AllTargets.Where(t => t is DatabaseTarget))
+            {
+                var target = (DatabaseTarget)target1;
+                target.ConnectionString = Configuration.GetSection("ConnectionString:DefaultConnectionString").Value;
+            }
 
             try
             {

@@ -19,6 +19,5 @@ namespace TransApp.DataModel.Dto.Custom
         public int? DictionaryId { get; set; }
         public byte[] Image { get; set; }
         public string IconName { get; set; }
-        public bool? Active { get; set; }
     }
 }

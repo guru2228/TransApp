@@ -59,7 +59,7 @@ namespace TransApp.Application.Authentication.TokenProvider
                 return context.Response.WriteAsync("Bad request.");
             }
 
-           // _logger.LogInformation("Handling request: " + context.Request.Path);
+       //   _logger.LogInformation("Handling request: " + context.Request.Path);
 
             return GenerateToken(context);
         }
