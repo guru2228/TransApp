@@ -12,7 +12,7 @@ using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.Repository
 {
-    public class FacilityRepository : GenericRepository<Facility>, IFacilityRepository
+    public class FacilityRepository : LocalizedGenericRepository<Facility>, IFacilityRepository
     {
         public FacilityRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {
@@ -53,5 +53,8 @@ left outer join [User] as UserModifiedTable on UserModifiedTable.Id=Facility.Use
 
             return sb.ToString();
         }
+
+
+      
     }
 }

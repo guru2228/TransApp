@@ -11,13 +11,22 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using TransApp.Site.Filters;
 using NLog.Extensions.Logging;
 using NLog.Targets;
 using TransApp.Application.Authentication.TokenProvider;
+using TransApp.Application.SeedData;
+using TransApp.Core.CacheService;
+using TransApp.Core.Logging;
+using TransApp.Domain.Services.Addresses;
+using TransApp.Domain.Services.Authentication;
+using TransApp.Domain.Services.Common;
+using TransApp.Framework;
 using TransApp.Persistence;
+using TransApp.Persistence.UnitOfWork;
 
 namespace TransApp.Site
 {
@@ -43,7 +52,7 @@ namespace TransApp.Site
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
-        {          
+        {
             // *If* you need access to generic IConfiguration this is **required**
             services.AddSingleton<IConfiguration>(Configuration);
             // Add framework services.
@@ -54,7 +63,7 @@ namespace TransApp.Site
             builder.AddMvcOptions(o => { o.Filters.Add(new GlobalExceptionFilter(this.LoggerFactory)); });
 
             //// set DI
-           // AddDependencyInjection(services);
+            AddDependencyInjection(services);
 
             AddPoliciesAuthorization(services);
 
@@ -67,7 +76,6 @@ namespace TransApp.Site
         public void Configure(IApplicationBuilder app, IHostingEnvironment env, ILoggerFactory loggerFactory,
             IServiceScopeFactory scopeFactory)
         {
-
             // This stuff should be routed to angular
             // middleware used to rewrite the path on the Request
             app.Use(async (context, next) =>
@@ -78,7 +86,7 @@ namespace TransApp.Site
                     !Path.HasExtension(context.Request.Path.Value) &&
                     !context.Request.Path.Value.StartsWith("/api/"))
                 {
-                    context.Request.Path = "/index.html";
+                    context.Request.Path = "/";
                     await next();
                 }
             });
@@ -86,7 +94,8 @@ namespace TransApp.Site
             //// seed data
             if (Configuration.GetValue<bool>("ApplicationSettings:SeedData"))
             {
-               // scopeFactory.SeedDataTranslations();
+                //scopeFactory.SeedDataTranslations();
+                scopeFactory.SeedDataCommonConfiguration();
             }
 
             //// add nlog
@@ -96,7 +105,7 @@ namespace TransApp.Site
             //    var target = (DatabaseTarget)target1;
             //    target.ConnectionString = Configuration.GetSection("ConnectionString:DefaultConnectionString").Value;
             //}
-        
+
             try
             {
                 ConfigureAuth(app);
@@ -113,7 +122,7 @@ namespace TransApp.Site
                     routes.MapRoute(
                         "transapp-spa",
                         "{*url}",
-                        new { controller = "Home", action = "Index" });
+                        new {controller = "Home", action = "Index"});
                 });
             }
             catch (Exception ex)
@@ -122,7 +131,7 @@ namespace TransApp.Site
                     async context =>
                     {
                         //// log error
-                        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+                        context.Response.StatusCode = (int) HttpStatusCode.InternalServerError;
                         context.Response.ContentType = "text/plain";
                         await context.Response.WriteAsync(ex.Message).ConfigureAwait(false);
                         await context.Response.WriteAsync(ex.StackTrace).ConfigureAwait(false);
@@ -153,8 +162,8 @@ namespace TransApp.Site
                 CookieOptions = new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = Configuration.GetValue<bool>("TokenProviderOptions:SecureCookie")//,
-                                                                                              // Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(Configuration.GetValue<int>("TokenProviderOptions:Expiration")))
+                    Secure = Configuration.GetValue<bool>("TokenProviderOptions:SecureCookie") //,
+                    // Expires = DateTime.UtcNow.Add(TimeSpan.FromMinutes(Configuration.GetValue<int>("TokenProviderOptions:Expiration")))
                 }
             });
 
@@ -201,6 +210,26 @@ namespace TransApp.Site
             });
         }
 
+        /// <summary>
+        /// Bind interfaces to concrete classes
+        /// </summary>
+        /// <param name="services"></param>
+        private void AddDependencyInjection(IServiceCollection services)
+        {
+            // Dependecy injection
+            //// General
+            services.AddTransient<IUnitOfWork, UnitOfWork>();
+
+            //services.AddSingleton<IApplicationLogger, ApplicationLogger>();
+            //services.AddSingleton<IEncryptionService, EncryptionService>();
+            services.AddSingleton<IAuthenticationService, AuthenticationService>();
+            services.AddSingleton<ICacheService, CacheService>();
+
+            // addresses
+            services.AddSingleton<ICommonService, CommonService>();
+            services.AddSingleton<IAddressesService, AddressesService>();
+        }
+
 
         /// <summary>
         /// Add authorization policies
@@ -210,8 +239,8 @@ namespace TransApp.Site
         {
             services.AddAuthorization(options =>
             {
-                options.AddPolicy("HawWebUser",
-                                  policy => policy.RequireClaim("User", "IAmTransAppUser"));
+                options.AddPolicy("TransAppUser",
+                    policy => policy.RequireClaim("User", "IAmTransAppUser"));
             });
         }
 

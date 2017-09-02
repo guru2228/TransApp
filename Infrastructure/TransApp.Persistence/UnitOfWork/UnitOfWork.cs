@@ -20,9 +20,10 @@ namespace TransApp.Persistence.UnitOfWork
         // private readonly HawWebDbContext _context ;
         private readonly IOptions<SiteDbContext> _dataBaseConfig;
 
-        private GenericRepository<User> _applicationUserRepository;
+        private GenericRepository<ApplicationUser> _applicationUserRepository;
         private GenericRepository<ModuleTranslationResource> _moduleTranslationResourceRepository;
         private GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
+        private GenericRepository<Dictionary> _dictionaryRepository;
         private IAddressesRepository _addressesRepository;
         private GenericRepository<AddressAvailability> _addressAvailabilitiesRepository;
         private GenericRepository<AddressFacility> _addressFacilityRepository;
@@ -94,13 +95,13 @@ namespace TransApp.Persistence.UnitOfWork
         /// <summary>
         /// ApplicationUserRepository
         /// </summary>
-        public GenericRepository<User> ApplicationUserRepository
+        public GenericRepository<ApplicationUser> ApplicationUserRepository
         {
             get
             {
                 if (this._applicationUserRepository == null)
                 {
-                    this._applicationUserRepository = new GenericRepository<User>("User", _dataBaseConfig.Value.DefaultConnectionString);
+                    this._applicationUserRepository = new GenericRepository<ApplicationUser>("ApplicationUser", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _applicationUserRepository;
             }
@@ -121,6 +122,21 @@ namespace TransApp.Persistence.UnitOfWork
                             _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _moduleTranslationResourceRepository;
+            }
+        }
+
+        /// <summary>
+        /// ApplicationUserRepository
+        /// </summary>
+        public GenericRepository<Dictionary> DictionaryRepository
+        {
+            get
+            {
+                if (this._dictionaryRepository == null)
+                {
+                    this._dictionaryRepository = new GenericRepository<Dictionary>("Dictionary", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _dictionaryRepository;
             }
         }
 

@@ -14,6 +14,13 @@ namespace TransApp.Persistence.Repository.Generic
         TEntity Get(int id);
 
         /// <summary>
+        /// Get item by id
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        TEntity Get(string predicate);
+
+        /// <summary>
         /// Get item by id async
         /// </summary>
         /// <param name="id"></param>

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace TransApp.Persistence.Repository.Generic
 {
-    interface ILocalizedGenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity : class
+   public interface ILocalizedGenericRepository<TEntity>: IGenericRepository<TEntity> where TEntity : class
     {
         /// <summary>
         /// Get item by id

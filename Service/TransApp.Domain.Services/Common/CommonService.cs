@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
 using TransApp.DataModel.Dto.Custom;
-using TransApp.Domain.Addresses;
 using TransApp.Domain.Shipment;
 using TransApp.Persistence.UnitOfWork;
 
@@ -22,6 +19,11 @@ namespace TransApp.Domain.Services.Common
             _cacheService = cacheService;
         }
 
+        /// <summary>
+        /// Get facilities list
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
         public async Task<List<FacilityModel>> GetFacilities(string language)
         {
             var faciltyList =
