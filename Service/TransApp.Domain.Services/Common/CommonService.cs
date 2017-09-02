@@ -34,5 +34,16 @@ namespace TransApp.Domain.Services.Common
             }
             return new List<FacilityModel>();
         }
+
+        public async Task<List<RequirementModel>> GetRequirements(string language)
+        {
+            //var requirementList =
+            //    await _unitOfWork.RequirementRepository.GetRequirements(language);
+            //if (requirementList != null)
+            //{
+            //    return Mapper.Map<List<RequirementDto>, List<RequirementModel>>(requirementList);
+            //}
+            return new List<RequirementModel>();
+        }
     }
 }
