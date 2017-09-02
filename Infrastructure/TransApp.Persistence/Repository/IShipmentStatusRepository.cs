@@ -8,9 +8,8 @@ using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.Repository
 {
-    public interface IRequirementRepository : ILocalizedGenericRepository<Requirement>
+    public interface IShipmentStatusRepository : ILocalizedGenericRepository<ShipmentStatus>
     {
-        Task<List<RequirementDto>> GetRequirements(string language);
-
+        Task<List<ShipmentStatusDto>> GetStatuses(string language);
     }
 }

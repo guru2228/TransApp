@@ -35,14 +35,47 @@ namespace TransApp.Domain.Services.Common
             return new List<FacilityModel>();
         }
 
+        public async Task<List<ShipmentStatusModel>> GetStatuses(string language)
+        {
+            var shipmentStatusList =
+               await _unitOfWork.ShipmentStatusRepository.GetStatuses(language);
+            if (shipmentStatusList != null)
+            {
+                return Mapper.Map<List<ShipmentStatusDto>, List<ShipmentStatusModel>>(shipmentStatusList);
+            }
+            return new List<ShipmentStatusModel>();
+        }
+
+        public async Task<List<TruckModel>> GetTrucks(string language)
+        {
+            var truckList =
+               await _unitOfWork.TruckRepository.GetTrucks(language);
+            if (truckList != null)
+            {
+                return Mapper.Map<List<TruckDto>, List<TruckModel>>(truckList);
+            }
+            return new List<TruckModel>();
+        }
+
+        public async Task<List<PackTypeModel>> GetTypes(string language)
+        {
+            var typeList =
+              await _unitOfWork.PackTypeRepository.GetTypes(language);
+            if (typeList != null)
+            {
+                return Mapper.Map<List<PackTypeDto>, List<PackTypeModel>>(typeList);
+            }
+            return new List<PackTypeModel>();
+        }
+
         public async Task<List<RequirementModel>> GetRequirements(string language)
         {
-            //var requirementList =
-            //    await _unitOfWork.RequirementRepository.GetRequirements(language);
-            //if (requirementList != null)
-            //{
-            //    return Mapper.Map<List<RequirementDto>, List<RequirementModel>>(requirementList);
-            //}
+            var requirementList =
+                await _unitOfWork.RequirementRepository.GetRequirements(language);
+            if (requirementList != null)
+            {
+                return Mapper.Map<List<RequirementDto>, List<RequirementModel>>(requirementList);
+            }
             return new List<RequirementModel>();
         }
     }

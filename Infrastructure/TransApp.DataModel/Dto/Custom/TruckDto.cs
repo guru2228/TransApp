@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TransApp.Domain.Shipment
+namespace TransApp.DataModel.Dto.Custom
 {
-    public class StatusModel
+    public class TruckDto
     {
         public int Id { get; set; }
 
         public string Code { get; set; }
 
         public int? DictionaryId { get; set; }
+
+        public byte[] Image { get; set; }
+
+        public string IconName { get; set; }
 
         public int? UserIdCreated { get; set; }
 
@@ -21,6 +25,9 @@ namespace TransApp.Domain.Shipment
 
         public DateTime? DateModified { get; set; }
 
-    }
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
 
+        public string Description { get; set; }
+    }
 }

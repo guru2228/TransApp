@@ -13,6 +13,8 @@ namespace TransApp.Domain.Addresses
 
         public int? RequirementId { get; set; }
 
+        public decimal? AmountInsurance { get; set; }
+
         public bool Active { get; set; }
 
         public int? UserIdCreated { get; set; }

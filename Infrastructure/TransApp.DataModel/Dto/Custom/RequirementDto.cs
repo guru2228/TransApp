@@ -15,6 +15,8 @@ namespace TransApp.DataModel.Dto.Custom
 
         public byte[] Image { get; set; }
 
+        public decimal Insurance { get; set; }
+
         public string IconName { get; set; }
 
         public int? UserIdCreated { get; set; }

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TransApp.DataModel.Dto
+namespace TransApp.Domain.Shipment
 {
-    public class Status : IDataAccessObject
+    public class PackTypeModel
     {
         public int Id { get; set; }
 
@@ -21,6 +21,10 @@ namespace TransApp.DataModel.Dto
 
         public DateTime? DateModified { get; set; }
 
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
+
+        public string Description { get; set; }
     }
 
 }

@@ -20,6 +20,8 @@ namespace TransApp.DataModel.Dto
 
         public string IconName { get; set; }
 
+        public decimal Insurance { get; set; }
+
         public int? UserIdCreated { get; set; }
 
 
