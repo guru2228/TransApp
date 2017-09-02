@@ -20,7 +20,7 @@ namespace TransApp.Persistence.UnitOfWork
         /// <summary>
         /// PublicTranslationResource
         /// </summary>
-        GenericRepository<User> ApplicationUserRepository { get; }
+        GenericRepository<ApplicationUser> ApplicationUserRepository { get; }
 
         #region Web repositories
         /// <summary>
@@ -33,11 +33,20 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         GenericRepository<PublicTranslationResource> PublicTranslationResourceRepository { get; }
 
+
+        /// <summary>
+        /// DictionaryRepository
+        /// </summary>
+        GenericRepository<Dictionary> DictionaryRepository { get; }
+
         /// <summary>
         /// Address custom 
         /// </summary>
         IAddressesRepository AddressesRepository { get; }
 
+        /// <summary>
+        /// FacilityRepository
+        /// </summary>
         IFacilityRepository FacilityRepository { get; }
 
         /// <summary>

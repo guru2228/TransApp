@@ -7,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using TransApp.Domain.Authentication;
+using TransApp.Domain.Services.Authentication;
 
 namespace TransApp.Application.Authentication.TokenProvider
 {
@@ -22,15 +23,15 @@ namespace TransApp.Application.Authentication.TokenProvider
         private readonly TokenProviderOptions _options;
         private readonly ILogger _logger;
         private readonly JsonSerializerSettings _serializerSettings;
-      //  private readonly IAuthenticationService _authenticationService;
+       private readonly IAuthenticationService _authenticationService;
 
         public TokenProviderMiddleware(
             RequestDelegate next,
             IOptions<TokenProviderOptions> options,
-            ILoggerFactory loggerFactory)//, IAuthenticationService authenticationService)
+            ILoggerFactory loggerFactory, IAuthenticationService authenticationService)
         {
             _next = next;
-          //  _authenticationService = authenticationService;
+            _authenticationService = authenticationService;
             _logger = loggerFactory.CreateLogger<TokenProviderMiddleware>();
 
             _options = options.Value;
@@ -68,9 +69,7 @@ namespace TransApp.Application.Authentication.TokenProvider
             var username = context.Request.Form["username"];
             var password = context.Request.Form["password"];
 
-            ApplicationUser identity = null;
-            if (username == "admin@admin.com" && password == "admin")
-             identity = new ApplicationUser { Id = 1, Login = "admin"};// await GetIdentity(username, password)};
+            ApplicationUser identity = await GetIdentity(username, password);
             if (identity == null)
             {
                 context.Response.StatusCode = 400;
@@ -86,7 +85,7 @@ namespace TransApp.Application.Authentication.TokenProvider
             {
                 new Claim(JwtRegisteredClaimNames.Sub, identity.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.UniqueName, identity.Login),
-                new Claim(JwtRegisteredClaimNames.Jti,  _options.NonceGenerator),
+                new Claim(JwtRegisteredClaimNames.Jti, _options.NonceGenerator),
                 new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(now).ToString(), ClaimValueTypes.Integer64),
                 new Claim("User", "IAmTransAppUser")
             };
@@ -103,7 +102,7 @@ namespace TransApp.Application.Authentication.TokenProvider
 
             var response = new
             {
-                access_token =string.Empty,// encodedJwt,
+                access_token = string.Empty, // encodedJwt,
                 expires_in = now.Add(_options.Expiration),
                 user = identity
             };
@@ -112,18 +111,18 @@ namespace TransApp.Application.Authentication.TokenProvider
             context.Response.Cookies.Append(
                 "access_token",
                 encodedJwt,
-             _options.CookieOptions);
+                _options.CookieOptions);
 
             // Serialize and return the response
             context.Response.ContentType = "application/json";
             await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
         }
 
-        //private async Task<SiteUser> GetIdentity(string username, string password)
-        //{
-        //    var isValid = await _authenticationService.IsUserValid(username, password);
-        //    return isValid ? await _authenticationService.GetUser(username) : null;
-        //}
+        private async Task<ApplicationUser> GetIdentity(string username, string password)
+        {
+            var isValid = await _authenticationService.IsUserValid(username, password);
+            return isValid ? await _authenticationService.GetUser(username) : null;
+        }
 
         private static void ThrowIfInvalidOptions(TokenProviderOptions options)
         {

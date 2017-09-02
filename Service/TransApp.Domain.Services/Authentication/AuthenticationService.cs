@@ -45,7 +45,8 @@ namespace TransApp.Domain.Services.Authentication
         {
             var user =
                 (await _unitOfWork.ApplicationUserRepository.GetAllAsync()).FirstOrDefault(item => item.Login == login);
-            return string.Equals(PasswordHashingService.HashSha2String(password), user.Password);
+
+            return user != null && string.Equals(PasswordHashingService.HashSha2String(password), user.Password);
         }
     }
 }

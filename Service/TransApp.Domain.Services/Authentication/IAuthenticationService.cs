@@ -9,7 +9,7 @@ namespace TransApp.Domain.Services.Authentication
 {
  public   interface IAuthenticationService
  {
-     Task<ApplicationUser> GetUser(string login);
+     Task<Domain.Authentication.ApplicationUser> GetUser(string login);
      Task<bool> IsUserValid(string login, string password);
  }
 }

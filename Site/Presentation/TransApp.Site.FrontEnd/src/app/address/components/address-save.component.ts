@@ -183,6 +183,7 @@ debugger;
             postal_code: 'short_name'
           };
 
+          
               // Get each component of the address from the place details
         // and fill the corresponding field on the form.
         for (var i = 0; i < place.address_components.length; i++) {

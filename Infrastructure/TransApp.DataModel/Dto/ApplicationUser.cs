@@ -2,7 +2,7 @@
 
 namespace TransApp.DataModel.Dto
 {
-    public class User : IDataAccessObject
+    public class ApplicationUser : IDataAccessObject
     {
         public int Id { get; set; }
 
