@@ -12,18 +12,18 @@ using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.Repository
 {
-    public class FacilityRepository : GenericRepository<Facility>, IFacilityRepository
+    public class RequirementRepository: GenericRepository<Requirement>, IRequirementRepository
     {
-        public FacilityRepository(string tableName, string connectionString) : base(tableName, connectionString)
+        public RequirementRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {
         }
 
-        public async Task<List<FacilityDto>> GetFacilities(string language)
+        public async Task<List<RequirementDto>> GetRequirements(string language)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                return (List<FacilityDto>) await cn.QueryAsync<FacilityDto>(GetQuery(language));
+                return (List<RequirementDto>)await cn.QueryAsync<RequirementDto>(GetQuery(language));
             }
         }
 
@@ -34,22 +34,22 @@ namespace TransApp.Persistence.Repository
                 language = "EN";
             }
             var sb = new StringBuilder();
-            sb.Append(@" select Facility.Id
-      ,Facility.[Code]
-      ,Facility.[DictionaryId]
-      ,Facility.[Image]
-      ,Facility.[IconName]
-      ,Facility.[UserIdCreated]
-      ,Facility.[DateCreated]
-      ,Facility.[UserIdModified]
-      ,Facility.[DateModified] 
+            sb.Append(@" select Requirement.Id
+      ,Requirement.[Code]
+      ,Requirement.[DictionaryId]
+      ,Requirement.[Image]
+      ,Requirement.[IconName]
+      ,Requirement.[UserIdCreated]
+      ,Requirement.[DateCreated]
+      ,Requirement.[UserIdModified]
+      ,Requirement.[DateModified] 
 	  ,isnull(UserCreatedTable.FirstName,'') + ' '+isnull(UserCreatedTable.LastName,'') as UserCreated
 	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
 	  ,Dictionary." + language + @" as Description
 
-from Facility left outer join Dictionary on Dictionary.Id=Facility.DictionaryId
-left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Facility.UserIdCreated
-left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Facility.UserIdModified ");
+from Requirement left outer join Dictionary on Dictionary.Id=Requirement.DictionaryId
+left outer join ApplicationUser as UserCreatedTable on UserCreatedTable.Id=Requirement.UserIdCreated
+left outer join ApplicationUser as UserModifiedTable on UserModifiedTable.Id=Requirement.UserIdModified ");
 
             return sb.ToString();
         }
