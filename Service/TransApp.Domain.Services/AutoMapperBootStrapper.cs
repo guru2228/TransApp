@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using TransApp.DataModel.Dto.Custom;
+using TransApp.Domain.Common;
 using TransApp.Domain.Shipment;
 using Profile = AutoMapper.Profile;
 

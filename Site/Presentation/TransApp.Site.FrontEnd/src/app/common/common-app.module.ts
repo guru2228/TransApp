@@ -10,6 +10,7 @@ import { HelperService } from "app/common/services/helperService";
 import { HttpService } from "app/common/services/httpService";
 import { TranslateService } from "app/common/services/localization/translate.service";
 import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
+import { ParametersDataService } from "app/common/services/parameters-data.service";
 
 
 @NgModule({
@@ -27,6 +28,7 @@ import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
         HelperService,
         HttpService,
         GlobalErrorHandler,
+        ParametersDataService,
         TranslateService,
         {
             provide: HttpService,

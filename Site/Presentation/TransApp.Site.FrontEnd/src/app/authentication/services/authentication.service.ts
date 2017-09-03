@@ -38,7 +38,6 @@ export class AuthenticationService {
         const headers = new Headers({ 'Content-Type': 'application/x-www-form-urlencoded' });
         const data = this.toUrlEncodedString({ username: user.login, password: user.password });
         return this.http.post(this.getTokenUrl, data, { headers }).map(response => {
-            debugger;
                 // let token = response.json() && response.json().access_token;
                 let user = response.json() && response.json().user;
                 let expiresIn = response.json() && response.json().expires_in;

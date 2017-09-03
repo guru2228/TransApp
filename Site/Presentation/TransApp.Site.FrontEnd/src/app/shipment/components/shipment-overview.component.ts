@@ -23,7 +23,6 @@ export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
     }
     // constructor(private navbarTitleService: NavbarTitleService) { }
     public ngOnInit() {
-        debugger;
         this.headerRow = ['Pickup data', 'Delivery date', 'From', 'Destination', 'Quantity', 'Transport company', 'Price'];
 
         let shipment = new Shipment();
@@ -85,9 +84,7 @@ export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
             if (i != index)
                 this.shipmentModel[i].viewActions = false;
         }
-debugger;
 shipmentRow.viewActions = !shipmentRow.viewActions;
-        debugger;
         if(shipmentRow.viewActions){
             shipmentRow.viewEdit = false;
             this.router.navigate(['/shipment-overview']);
@@ -102,7 +99,6 @@ shipmentRow.viewActions = !shipmentRow.viewActions;
     /** Show edit shipment */
     onClickEditShipment(shipmentRow: ShipmentRow) {
         shipmentRow.viewEdit = !shipmentRow.viewEdit;
-        debugger;
             this.router.navigate(['./shipment-edit/1'], { relativeTo: this.route });
     }
 

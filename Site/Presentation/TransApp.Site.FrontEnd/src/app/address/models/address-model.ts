@@ -8,7 +8,7 @@ export class AddressModel {
     public id: number;
     public customerId: number;
     public name: string;
-    public Location: AddressLocationModel ;
+    public location: AddressLocationModel ;
     public contactPerson: string;
     public email: string;
     public phone: string;

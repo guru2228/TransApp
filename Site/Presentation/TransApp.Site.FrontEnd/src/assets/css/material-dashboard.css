@@ -14334,4 +14334,11 @@ footer .btn {
 }
 
 
+/*class used to have one label upper and control is disabled */
+
+.nofocusline {
+    background-image: none!important;
+}
+
+
 /*# sourceMappingURL=material-dashboard.css.map */

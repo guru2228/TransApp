@@ -42,7 +42,6 @@ export class LoginComponent implements OnInit{
      */
     onLoginClick(): void {
         this.errorMessage = '';
-        debugger;
         this.authenticationService.login(this.applicationUser)
             .subscribe(isLoggedIn => {
                     if (isLoggedIn) {

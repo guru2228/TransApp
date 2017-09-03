@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
 using TransApp.DataModel.Dto.Custom;
+using TransApp.Domain.Common;
 using TransApp.Domain.Shipment;
 using TransApp.Persistence.UnitOfWork;
 

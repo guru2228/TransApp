@@ -1,6 +1,8 @@
 export class AddressLocationModel {
     public latitude: number;
+    public latitudeStr: string;
     public longitude: number;
+    public longitudeStr: string;
     public countryCode: string;
     public country: string;
     public city: string;
@@ -10,4 +12,6 @@ export class AddressLocationModel {
     public street: string;
     public streetNumber: number;
     public zipCode: string;
+
+    public mapZoom :number = 15;
 }

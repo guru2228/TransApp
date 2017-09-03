@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TransApp.Domain.Common;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
 using TransApp.Domain.Shipment;
@@ -10,7 +11,7 @@ namespace TransApp.Site.ApiControllers
 {
 
     [Route("api/[controller]")]
-    public class CommonConfigurationDataController
+    public class ParametersDataController
     {
         /// <summary>
         /// AddressesService
@@ -22,7 +23,7 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         private readonly IAuthenticationService _accountService;
 
-        public CommonConfigurationDataController( IAuthenticationService accountService, ICommonService commonService)
+        public ParametersDataController( IAuthenticationService accountService, ICommonService commonService)
         {
             _accountService = accountService;
             _commonService = commonService;
@@ -34,7 +35,7 @@ namespace TransApp.Site.ApiControllers
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("ConfiguredData/{language}")]
+        [HttpGet("getFacilities/{language}")]
         public Task<List<FacilityModel>> GetFacilities(string language)
         {
             var facilities = _commonService.GetFacilities(language);

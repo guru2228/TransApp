@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransApp.Domain.Common;
 using TransApp.Domain.Shipment;
 
 namespace TransApp.Domain.Services.Common
