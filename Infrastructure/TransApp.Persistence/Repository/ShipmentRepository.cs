@@ -14,7 +14,7 @@ using static Dapper.SqlMapper;
 
 namespace TransApp.Persistence.Repository
 {
-    public class ShipmentRepository : GenericRepository<Shipment>, IShipmentRepository
+    public class ShipmentRepository : LocalizedGenericRepository<Shipment>, IShipmentRepository
     {
         public ShipmentRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {

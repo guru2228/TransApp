@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto
 {
-    public class Type : IDataAccessObject
+    public class PackType : IDataAccessObject
     {
         public int Id { get; set; }
 

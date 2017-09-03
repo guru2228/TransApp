@@ -50,6 +50,26 @@ namespace TransApp.Persistence.UnitOfWork
         IFacilityRepository FacilityRepository { get; }
 
         /// <summary>
+        /// RequirementRepository
+        /// </summary>
+        IRequirementRepository RequirementRepository { get; }
+
+        /// <summary>
+        /// ShipmentStatusRepository
+        /// </summary>
+        IShipmentStatusRepository ShipmentStatusRepository { get; }
+
+        /// <summary>
+        /// TruckRepository
+        /// </summary>
+        ITruckRepository TruckRepository { get; }
+
+        /// <summary>
+        /// PackTypeRepository
+        /// </summary>
+        IPackTypeRepository PackTypeRepository { get; }
+
+        /// <summary>
         /// AddressAvailabilities
         /// </summary>
         GenericRepository<AddressAvailability> AddressAvailabilitiesRepository { get; }

@@ -32,6 +32,10 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<Customer> _customerRepository;
         private GenericRepository<CustomerUser> _customerUserRepository;
         private IFacilityRepository _facilityRepository;
+        private IRequirementRepository _requirementRepository;
+        private IShipmentStatusRepository _shipmentStatusRepository;
+        private ITruckRepository _truckRepository;
+        private IPackTypeRepository _packTypeRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -171,7 +175,7 @@ namespace TransApp.Persistence.UnitOfWork
         }
 
         /// <summary>
-        /// 
+        /// FacilityRepository
         /// </summary>
         public IFacilityRepository FacilityRepository
         {
@@ -182,6 +186,66 @@ namespace TransApp.Persistence.UnitOfWork
                     this._facilityRepository = new FacilityRepository("Facility", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _facilityRepository;
+            }
+        }
+
+        /// <summary>
+        /// RequirementRepository
+        /// </summary>
+        public IRequirementRepository RequirementRepository
+        {
+            get
+            {
+                if (this._requirementRepository == null)
+                {
+                    this._requirementRepository = new RequirementRepository("Requirement", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _requirementRepository;
+            }
+        }
+
+        /// <summary>
+        /// ShipmentStatusRepository
+        /// </summary>
+        public IShipmentStatusRepository ShipmentStatusRepository
+        {
+            get
+            {
+                if (this._shipmentStatusRepository == null)
+                {
+                    this._shipmentStatusRepository = new ShipmentStatusRepository("ShipmentStatus", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentStatusRepository;
+            }
+        }
+
+        /// <summary>
+        /// TruckRepository
+        /// </summary>
+        public ITruckRepository TruckRepository
+        {
+            get
+            {
+                if (this._truckRepository == null)
+                {
+                    this._truckRepository = new TruckRepository("Truck", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _truckRepository;
+            }
+        }
+
+        /// <summary>
+        /// PackTypeRepository
+        /// </summary>
+        public IPackTypeRepository PackTypeRepository
+        {
+            get
+            {
+                if (this._packTypeRepository == null)
+                {
+                    this._packTypeRepository = new PackTypeRepository("PackType", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _packTypeRepository;
             }
         }
 

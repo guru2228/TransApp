@@ -12,7 +12,7 @@ using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.Repository
 {
-    public class RequirementRepository: GenericRepository<Requirement>, IRequirementRepository
+    public class RequirementRepository: LocalizedGenericRepository<Requirement>, IRequirementRepository
     {
         public RequirementRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {
@@ -39,6 +39,7 @@ namespace TransApp.Persistence.Repository
       ,Requirement.[DictionaryId]
       ,Requirement.[Image]
       ,Requirement.[IconName]
+      ,Requirement.[Insurance]
       ,Requirement.[UserIdCreated]
       ,Requirement.[DateCreated]
       ,Requirement.[UserIdModified]

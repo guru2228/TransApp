@@ -1,8 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace TransApp.Domain.Common
+namespace TransApp.Domain.Shipment
 {
-    public class StatusModel
+    public class PackTypeModel
     {
         public int Id { get; set; }
 
@@ -18,6 +21,10 @@ namespace TransApp.Domain.Common
 
         public DateTime? DateModified { get; set; }
 
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
+
+        public string Description { get; set; }
     }
 
 }
