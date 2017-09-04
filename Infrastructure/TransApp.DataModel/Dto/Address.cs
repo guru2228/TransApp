@@ -43,6 +43,15 @@ namespace TransApp.DataModel.Dto
         public decimal? Latitude { get; set; }
 
         public decimal? Longitude { get; set; }
+        public string CountryCode { get; set; }
+
+        public string CityCode { get; set; }
+
+        public string StateCode { get; set; }
+
+        public string Street { get; set; }
+
+        public int StreetNumber { get; set; }
     }
 }
 

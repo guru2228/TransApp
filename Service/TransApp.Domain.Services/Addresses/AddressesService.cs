@@ -48,15 +48,14 @@ namespace TransApp.Domain.Services.Addresses
                 result.Location = new AddressLocationModel
                 {
                     City = currentAdrress.Address.City,
-                    CityCode = currentAdrress.Address.City,
+                    CityCode = currentAdrress.Address.CityCode,
                     Country = currentAdrress.Address.Country,
-                    CountryCode = currentAdrress.Address.Country,
+                    CountryCode = currentAdrress.Address.CountryCode,
                     Latitude = currentAdrress.Address.Latitude ?? 0,
                     Longitude = currentAdrress.Address.Longitude ?? 0,
                     Street = currentAdrress.Address.Street1,
-                    //  StreetNumber = currentAdrress.Address.S,
-                    // Phone = currentAdrress.Address.Phone,
-                    // Remark = currentAdrress.Address.Remark,
+                    StreetNumber = currentAdrress.Address.StreetNumber,
+                    StateCode = currentAdrress.Address.StateCode,
                 };
                 if (currentAdrress.Address.UserIdCreated.HasValue)
                 {
@@ -113,15 +112,14 @@ namespace TransApp.Domain.Services.Addresses
                 result.Location = new AddressLocationModel
                 {
                     City = currentAdrress.Address.City,
-                    CityCode = currentAdrress.Address.City,
+                    CityCode = currentAdrress.Address.CityCode,
                     Country = currentAdrress.Address.Country,
-                    CountryCode = currentAdrress.Address.Country,
+                    CountryCode = currentAdrress.Address.CountryCode,
                     Latitude = currentAdrress.Address.Latitude ?? 0,
                     Longitude = currentAdrress.Address.Longitude ?? 0,
                     Street = currentAdrress.Address.Street1,
-                    //  StreetNumber = currentAdrress.Address.S,
-                    // Phone = currentAdrress.Address.Phone,
-                    // Remark = currentAdrress.Address.Remark,
+                    StreetNumber = currentAdrress.Address.StreetNumber,
+                    StateCode= currentAdrress.Address.StateCode,
                 };
                 if (currentAdrress.Address.UserIdCreated.HasValue)
                 {
@@ -176,8 +174,11 @@ namespace TransApp.Domain.Services.Addresses
                 City = currentAdrress.Location.City,
                 Country = currentAdrress.Location.Country,
                 Latitude = currentAdrress.Location.Latitude,
-                Longitude = currentAdrress.Location.Longitude
-
+                Longitude = currentAdrress.Location.Longitude,
+                CityCode = currentAdrress.Location.CityCode,
+                CountryCode = currentAdrress.Location.CountryCode,
+                StateCode = currentAdrress.Location.StateCode,
+                StreetNumber = currentAdrress.Location.StreetNumber
             };
 
 
