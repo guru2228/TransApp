@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+
 import { Observable } from "rxjs/Rx";
 
 import { ActivatedRoute, Params, RouterModule, Router, Routes } from '@angular/router';
@@ -34,14 +35,14 @@ export class AddressSaveComponent {
     componentState: ComponentStateType;
 
     //// models for each option panes are generated
-    facilities: FacilityModel[];
-    requirements: RequirementModel[];
-    truks: TruckModel[];
+    facilities: any[];
+    requirements: any[];
+    truks: any[];
 
-     searchByAddressControl: FormControl;
+    public searchControl: FormControl;
 
-    @ViewChild("searchByAddress")
-    public searchAddressElementRef: ElementRef;
+     @ViewChild("searchElement")
+     public searchElementRef: ElementRef;
 
     constructor(
         private router: Router,
@@ -57,6 +58,9 @@ export class AddressSaveComponent {
 
     ngOnInit() {
         debugger;
+              //create search FormControl
+              this.searchControl = new FormControl();
+
         // get component state
         this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
         
@@ -77,7 +81,6 @@ export class AddressSaveComponent {
             });
         }
 
-      
         // load required data
         this.loadRequiredData().subscribe(executed => {
             debugger;
@@ -97,20 +100,22 @@ export class AddressSaveComponent {
         return Observable.create(observer => {
             // return new Promise((resolve, reject) => {
             Observable.forkJoin([
-                this.parametersDataService.getFacilities(this.translateService.currentLanguage)//, 
-                //this.commonConfigurationDataService.getTruks(this.translateService.currentLanguage),
-                //this.commonConfigurationDataService.getRequirements(this.translateService.currentLanguage),
+                this.parametersDataService.getFacilities(this.translateService.currentLanguage), 
+                this.parametersDataService.getTruks(this.translateService.currentLanguage),
+                this.parametersDataService.getRequirements(this.translateService.currentLanguage),
             ])
                 .subscribe(data => {
                     debugger;
-                    var facilities = data[0];
+                    this.facilities = data[0];
+                    this.truks = data[1] ,
+                    this.requirements = data[2]
                     observer.next(true);
                     //   resolve(true);
-                }, error => {
+                }), error => {
                     //   reject(false);
                     observer.next(false);
                     this.errorHandler.handleError(error);
-                });
+                };
             //  });
         });
     }
@@ -120,8 +125,7 @@ export class AddressSaveComponent {
      * When palce is changed, handler to update model is registered
      */
     private register_googleMapsPlaceHandler() {
-        //create search FormControl
-        this.searchByAddressControl = new FormControl();
+  
         //set current position
         debugger;
         this.getLocationCurrentPosition();
@@ -129,7 +133,7 @@ export class AddressSaveComponent {
         this.mapsAPILoader.load().then(() => {
             // create map
             this.createMap();
-            let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchAddressElementRef.nativeElement, {
+            let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
                 // types: ["address"]
             });
             // init place change listener
@@ -163,7 +167,7 @@ export class AddressSaveComponent {
      */
     private updateLocationModel(place: any) {
 
-        this.componentModel.location.latitude =  place.geometry.location.lat();
+        this.componentModel.location.latitude = place.geometry.location.lat();
         this.componentModel.location.longitude = place.geometry.location.lng();
 
         for (let i = 0; i < place.address_components.length; i++) {
@@ -202,12 +206,22 @@ export class AddressSaveComponent {
                 case 'postal_code':
                     {
                         this.componentModel.location.zipCode = place.address_components[i]['short_name'];
-
                     }
                     break;
             }
         }
 
+        debugger;
+        if (place.formatted_phone_number) {
+            this.componentModel.location.phone = place.formatted_phone_number;
+        }
+
+        if (place.opening_hours) {
+            this.componentModel.location.openNow = place.opening_hours.open_now ?'open':'closed';
+            let opening_hours = place.opening_hours.weekday_text;
+            this.componentModel.location.openingHours = place.formatted_phone_number;
+            this.componentModel.location.openingHours = opening_hours.join('<br> ')
+        }
     }
 
     /**
@@ -255,16 +269,19 @@ export class AddressSaveComponent {
      */
     private getLocationCurrentPosition() {
         debugger;
+        this.componentModel.location.latitude = 50.82;
+        this.componentModel.location.longitude = 3.26;
+
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
                 this.componentModel.location.latitude = position.coords.latitude;
-                this.componentModel.location.latitude = position.coords.longitude;
-            });
+                this.componentModel.location.longitude = position.coords.longitude;
+            }, function() {
+                this.componentModel.location.latitude = -34.397;
+                this.componentModel.location.longitude = 150.644;
+              });
         }
-        else{
-            this.componentModel.location.latitude = -34.397;
-            this.componentModel.location.latitude = 150.644;
-        }
+        
     }
 
 /**

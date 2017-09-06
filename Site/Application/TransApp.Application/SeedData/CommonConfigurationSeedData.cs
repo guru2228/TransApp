@@ -48,7 +48,7 @@ namespace TransApp.Application.SeedData
                 });
 
                 //Create Truck Seed
-                await CreateTruck("VAN", "local_truck", new Dictionary
+                await CreateTruck("VAN", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -56,7 +56,7 @@ namespace TransApp.Application.SeedData
                     NL = "Van (<8m)",
                     FR = "Van (<8m)"
                 });
-                await CreateTruck("DIS", "local_truck", new Dictionary
+                await CreateTruck("DIS", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -65,7 +65,7 @@ namespace TransApp.Application.SeedData
                     FR = "Distri (8m)"
                 });
 
-                await CreateTruck("TAU", "local_truck", new Dictionary
+                await CreateTruck("TAU", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -74,7 +74,7 @@ namespace TransApp.Application.SeedData
                     FR = "Tautliner (13,6m)"
                 });
 
-                await CreateTruck("BOX", "local_truck", new Dictionary
+                await CreateTruck("BOX", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -84,7 +84,7 @@ namespace TransApp.Application.SeedData
                 });
 
                 //Create Requirements
-                await CreateRequirement("FRI", "local_requirement",10, new Dictionary
+                await CreateRequirement("FRI", "local_shipping", 10, new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -92,7 +92,7 @@ namespace TransApp.Application.SeedData
                     NL = "Frigo",
                     FR = "Frigo"
                 });
-                await CreateRequirement("HYD", "local_requirement", 100, new Dictionary
+                await CreateRequirement("HYD", "local_shipping", 100, new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -101,7 +101,7 @@ namespace TransApp.Application.SeedData
                     FR = "Hydraulic Lift"
                 });
 
-                await CreateRequirement("ALL", "local_requirement", 500, new Dictionary
+                await CreateRequirement("ALL", "local_shipping", 500, new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -110,7 +110,7 @@ namespace TransApp.Application.SeedData
                     FR = "All risk insurance"
                 });
 
-                await CreateRequirement("ADR", "local_requirement", 200, new Dictionary
+                await CreateRequirement("ADR", "local_shipping", 200, new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -120,7 +120,7 @@ namespace TransApp.Application.SeedData
                 });
 
                 //Create Shipment Status
-                await CreateShipmentStatus("UAS", "local_shipmentstatus", new Dictionary
+                await CreateShipmentStatus("UAS", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -128,7 +128,7 @@ namespace TransApp.Application.SeedData
                     NL = "Unassigned",
                     FR = "Unassigned"
                 });
-                await CreateShipmentStatus("ASS", "local_shipmentstatus", new Dictionary
+                await CreateShipmentStatus("ASS", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -137,7 +137,7 @@ namespace TransApp.Application.SeedData
                     FR = "Assigned"
                 });
 
-                await CreateShipmentStatus("CON", "local_shipmentstatus", new Dictionary
+                await CreateShipmentStatus("CON", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -147,7 +147,7 @@ namespace TransApp.Application.SeedData
                 });
 
                 //Create Shipment Status
-                await CreatepackType("Box", "local_packtype", new Dictionary
+                await CreatepackType("Box", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -155,7 +155,7 @@ namespace TransApp.Application.SeedData
                     NL = "Box",
                     FR = "Box"
                 });
-                await CreatepackType("PAL", "local_packtype", new Dictionary
+                await CreatepackType("PAL", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,

@@ -13,5 +13,9 @@ export class AddressLocationModel {
     public streetNumber: number;
     public zipCode: string;
 
+    public phone: string;
+    public openNow: string;
+    public openingHours: string;
+
     public mapZoom :number = 15;
 }

@@ -11,16 +11,17 @@
                                         Naam
                                         <span class="star">*</span>
                                     </label>
-                            <input type="text" class="form-control" id="compname" name="compname" [(ngModel)]="componentModel.name">
+                            <input type="text" class="form-control" id="compname2" [(ngModel)]="componentModel.name">
                         </div>
-                        <div class="form-group label-floating">
-                            <label for="" class="control-label">
+                        <form id="searchForm" #searchForm="ngForm">
+                            <div class="form-group label-floating">
+                                <label for="" class="control-label">
                                       Search by address
                                         <span class="star">*</span>
                                     </label>
-                            <input type="text" class="form-control" type="text" name="searchByAddress" #searchByAddress [formControl]="searchByAddressControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
-                        </div>
-
+                                <input type="text" class="form-control" type="text" #searchElement [formControl]="searchControl" placeholder="" autocorrect="off" autocapitalize="off" spellcheck="off">
+                            </div>
+                        </form>
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="row">
@@ -33,7 +34,7 @@
                                     <div class="col-md-2">
                                         <div class="form-group label-floating is-focused">
                                             <label for="" class="control-label">Longitude</label>
-                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.longitude">
+                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.longitudeStr">
                                         </div>
                                     </div>
                                     <div class="col-md-4">
@@ -56,12 +57,6 @@
                         <div class="row">
                             <div class="col-sm-12">
                                 <div class="row">
-                                    <div class="col-md-4">
-                                        <div class="form-group label-floating is-focused">
-                                            <label for="" class="control-label">City</label>
-                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.city">
-                                        </div>
-                                    </div>
                                     <div class="col-md-2">
                                         <div class="form-group label-floating is-focused">
                                             <label for="" class="control-label">City Code</label>
@@ -70,17 +65,23 @@
                                     </div>
                                     <div class="col-md-4">
                                         <div class="form-group label-floating is-focused">
-                                            <label for="" class="control-label">State</label>
-                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.state">
+                                            <label for="" class="control-label">City</label>
+                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.city">
                                         </div>
                                     </div>
+
                                     <div class="col-md-2">
                                         <div class="form-group label-floating is-focused">
                                             <label for="" class="control-label">State Code</label>
                                             <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.stateCode">
                                         </div>
                                     </div>
-
+                                    <div class="col-md-4">
+                                        <div class="form-group label-floating is-focused">
+                                            <label for="" class="control-label">State</label>
+                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.state">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -91,7 +92,13 @@
                                     <div class="col-md-4">
                                         <div class="form-group label-floating is-focused">
                                             <label for="" class="control-label">Zipcode</label>
-                                            <input type="text" class="form-control nofocusline" [(ngModel)]="componentModel.location.zipcode" id="zipcode" disabled="">
+                                            <input type="text" class="form-control nofocusline" [(ngModel)]="componentModel.location.zipCode" id="zipcode" disabled="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group label-floating is-focused">
+                                            <label for="" class="control-label">Straat</label>
+                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.street">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
@@ -100,10 +107,29 @@
                                             <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.streetNumber">
                                         </div>
                                     </div>
-                                    <div class="col-md-6">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="row">
+                                    <div class="col-md-3" *ngIf="componentModel.location.phone">
                                         <div class="form-group label-floating is-focused">
-                                            <label for="" class="control-label">Straat</label>
-                                            <input type="text" id="street_number" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.street">
+                                            <label for="" class="control-label">Phone</label>
+                                            <input type="text" class="form-control nofocusline" [(ngModel)]="componentModel.location.phone" id="phone" disabled="">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3" *ngIf="componentModel.location.openingHours">
+                                        <div class="form-group label-floating is-focused">
+                                            <label for="" class="control-label">Open now</label>
+                                            <input type="text" class="form-control nofocusline" [(ngModel)]="componentModel.location.openNow" id="openNow" disabled="">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6" *ngIf="componentModel.location.openingHours">
+                                        <div class="form-group label-floating is-focused">
+                                            <label for="" class="control-label">Opening hours</label>
+                                            <label [innerHtml]="componentModel.location.openingHours"></label>
                                         </div>
                                     </div>
                                 </div>
@@ -147,43 +173,18 @@
 
                         <!-- Facilities -->
                         <h3>Facilities</h3>
-                        <div class="input-group">
+                        <div class="input-group" *ngFor="let facility of facilities">
                             <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
+                                        <i class="material-icons">{{facility.iconName}}</i>
                                     </span>
                             <div class="form-group label-floating">
                                 <div class="togglebutton">
                                     <label>
-                                                <input type="checkbox" checked> Pallet jack
+                                                <input type="checkbox" checked> {{facility.description}}
                                             </label>
                                 </div>
                             </div>
                         </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Loading dock
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Forklift
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
 
@@ -198,105 +199,33 @@
                         </div>
                         <!-- Truck -->
                         <h3>Truck</h3>
-                        <div class="input-group">
+                        <div class="input-group" *ngFor="let truck of truks">
                             <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
+                                        <i class="material-icons">{{truck.iconName}}</i>
                                     </span>
                             <div class="form-group label-floating">
                                 <div class="togglebutton">
                                     <label>
-                                                <input type="checkbox" checked> Van (&lt;8m)
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Distri (8m)
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Tautliner (<8m)
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Boxtrailer (<8m)
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <!-- Transport requirments -->
-                        <h3>Transport requirments</h3>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Frigo
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Hidraulic lift
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> All risk insurance
-                                            </label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                            <div class="form-group label-floating">
-                                <div class="togglebutton">
-                                    <label>
-                                                <input type="checkbox" checked> Adr
+                                                <input type="checkbox" checked> {{truck.description}}
                                             </label>
                                 </div>
                             </div>
                         </div>
 
+                        <!-- Transport requirments -->
+                        <h3>Transport requirments</h3>
+                        <div class="input-group" *ngFor="let requirement of requirements">
+                            <span class="input-group-addon">
+                                        <i class="material-icons">{{requirement.iconName}}</i>
+                                    </span>
+                            <div class="form-group label-floating">
+                                <div class="togglebutton">
+                                    <label>
+                                                <input type="checkbox" checked> {{requirement.description}}
+                                            </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

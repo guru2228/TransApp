@@ -48,7 +48,7 @@ Proxy to the API
 	{
 	  "/api": {
 		"target": "http://localhost:65498",
-		"secure": false
+		"secure": falsenpm
 	  }
 	}	
 The target value contains a port number. If you’re using Visual Studio, you can read it from Backend project properties.

@@ -32,10 +32,6 @@ namespace TransApp.DataModel.Dto
 
         public DateTime? DateModified { get; set; }
 
-
-        public bool? Active { get; set; }
-
-
     }
 
 }

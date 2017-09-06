@@ -36,10 +36,36 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getFacilities/{language}")]
-        public Task<List<FacilityModel>> GetFacilities(string language)
+        public async Task<List<FacilityModel>> GetFacilities(string language)
         {
-            var facilities = _commonService.GetFacilities(language);
+            var facilities = await _commonService.GetFacilities(language);
             return facilities;
+        }
+
+        /// <summary>
+        /// Get facilities list
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getRequirements/{language}")]
+        public async Task<List<RequirementModel>> GetRequirements(string language)
+        {
+            var items = await _commonService.GetRequirements(language);
+            return items;
+        }
+
+        /// <summary>
+        /// Get facilities list
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getTrucks/{language}")]
+        public async Task<List<TruckModel>> GetTrucks(string language)
+        {
+            var items =await _commonService.GetTrucks(language);
+            return items;
         }
     }
 }

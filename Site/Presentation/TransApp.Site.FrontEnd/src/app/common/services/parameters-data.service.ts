@@ -5,6 +5,8 @@ import { HttpService } from "app/common/services/httpService";
 import { Constants } from "app/common/constants";
 import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
 import { FacilityModel } from "app/common/models/facility-model";
+import { TruckModel } from "app/common/models/truck-model";
+import { RequirementModel } from "app/common/models/requirement-model";
 
 
 @Injectable()
@@ -18,7 +20,7 @@ export class ParametersDataService {
      * getFacilities
      * @param language 
      */
-    getFacilities(language: string): Observable<FacilityModel> {
+    getFacilities(language: string): Observable<FacilityModel[]> {
         return this.http.get(this.serviceUrl +
             'getFacilities' +
             '/' +
@@ -31,9 +33,9 @@ export class ParametersDataService {
      * getTruks
      * @param language 
      */
-    getTruks(language: string): Observable<FacilityModel> {
+    getTruks(language: string): Observable<TruckModel[]> {
         return this.http.get(this.serviceUrl +
-            'getTruks' +
+            'getTrucks' +
             '/' +
             language)
             .map((res: Response) => res.json())
@@ -44,7 +46,7 @@ export class ParametersDataService {
      * getRequirements
      * @param language 
      */
-    getRequirements(language: string): Observable<FacilityModel> {
+    getRequirements(language: string): Observable<RequirementModel[]> {
         return this.http.get(this.serviceUrl +
             'getRequirements' +
             '/' +

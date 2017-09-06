@@ -27,6 +27,8 @@ namespace TransApp.Domain.Services
         public AutoMapperRegistry()
         {
             CreateMap<FacilityDto, FacilityModel>();
+            CreateMap<TruckDto, TruckModel>();
+            CreateMap<RequirementDto, RequirementModel>();
         }
     }
 }
