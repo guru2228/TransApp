@@ -119,7 +119,7 @@ namespace TransApp.Domain.Services.Addresses
                     Longitude = currentAdrress.Address.Longitude ?? 0,
                     Street = currentAdrress.Address.Street1,
                     StreetNumber = currentAdrress.Address.StreetNumber,
-                    StateCode= currentAdrress.Address.StateCode,
+                    StateCode = currentAdrress.Address.StateCode,
                 };
                 if (currentAdrress.Address.UserIdCreated.HasValue)
                 {
@@ -181,31 +181,20 @@ namespace TransApp.Domain.Services.Addresses
                 StreetNumber = currentAdrress.Location.StreetNumber
             };
 
-
-            var availabilities =
-                Mapper.Map<List<AddressAvailabilityModel>, List<AddressAvailability>>(
-                    currentAdrress.Availabilities);
-            var facilities =
-                Mapper.Map<List<AddressFacilityModel>, List<AddressFacility>>(
-                    currentAdrress.Facilities);
-            var requirements =
-                Mapper.Map<List<AddressRequirementModel>, List<AddressRequirement>>(
-                    currentAdrress.Requirements);
-            var trucks =
-                Mapper.Map<List<AddressTruckModel>, List<AddressTruck>>(
-                    currentAdrress.Trucks);
-
             var transaction = _unitOfWork.BeginTransaction();
             await _unitOfWork.AddressesRepository.SaveAddress(dest, transaction);
-            if (availabilities != null)
+            currentAdrress.Id = dest.Id;
+            if (currentAdrress.Availabilities != null)
             {
-                List<AddressAvailability> currentAddressAvailabilities = availabilities;
-                foreach (AddressAvailability aAvailability in currentAddressAvailabilities)
+                foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
                 {
+                    AddressAvailability aAvailability =
+                        Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
                     if (aAvailability.Id <= 0)
                     {
                         aAvailability.AddressId = dest.Id;
-                        await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
+                        aAvailabilityModel.Id =
+                            await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
                     }
                     else
                     {
@@ -213,15 +202,15 @@ namespace TransApp.Domain.Services.Addresses
                     }
                 }
             }
-            if (facilities != null)
+            if (currentAdrress.Facilities != null)
             {
-                List<AddressFacility> currentAddressFacilities = facilities;
-                foreach (AddressFacility aFacility in currentAddressFacilities)
+                foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
                 {
+                    AddressFacility aFacility = Mapper.Map<AddressFacilityModel, AddressFacility>(aFacilityModel);
                     if (aFacility.Id <= 0)
                     {
                         aFacility.AddressId = dest.Id;
-                        await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
+                        aFacilityModel.Id = await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
                     }
                     else
                     {
@@ -229,15 +218,17 @@ namespace TransApp.Domain.Services.Addresses
                     }
                 }
             }
-            if (requirements != null)
+            if (currentAdrress.Requirements != null)
             {
-                List<AddressRequirement> currentAddressRequirements = requirements;
-                foreach (AddressRequirement aRequirement in currentAddressRequirements)
+                foreach (AddressRequirementModel aRequirementModel in currentAdrress.Requirements)
                 {
+                    AddressRequirement aRequirement =
+                        Mapper.Map<AddressRequirementModel, AddressRequirement>(aRequirementModel);
                     if (aRequirement.Id <= 0)
                     {
                         aRequirement.AddressId = dest.Id;
-                        await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
+                        aRequirementModel.Id =
+                            await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
                     }
                     else
                     {
@@ -245,15 +236,15 @@ namespace TransApp.Domain.Services.Addresses
                     }
                 }
             }
-            if (trucks != null)
+            if (currentAdrress.Trucks != null)
             {
-                List<AddressTruck> currentAddressTrucks = trucks;
-                foreach (AddressTruck aTruck in currentAddressTrucks)
+                foreach (AddressTruckModel aTruckModel in currentAdrress.Trucks)
                 {
+                    AddressTruck aTruck = Mapper.Map<AddressTruckModel, AddressTruck>(aTruckModel);
                     if (aTruck.Id <= 0)
                     {
                         aTruck.AddressId = dest.Id;
-                        await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
+                        aTruckModel.Id = await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
                     }
                     else
                     {

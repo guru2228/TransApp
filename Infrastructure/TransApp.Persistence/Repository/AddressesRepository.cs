@@ -137,7 +137,14 @@ namespace TransApp.Persistence.Repository
             {
                 if (currentAddress.Id <= 0)
                 {
-                    await AddAsync(currentAddress, transaction);
+                    try
+                    {
+                        currentAddress.Id = await AddAsync(currentAddress, transaction);
+                    }
+                    catch (Exception ex)
+                    {
+                        
+                    }
                 }
                 else
                 {

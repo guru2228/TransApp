@@ -77,6 +77,7 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("getAddressFiltered/{CustomerId}")]
         public async Task<Domain.Addresses.AddressModel> GetAddressFiltered(int customerId)
         {
+            //d
             var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
             var result = await queryHandler.Retrieve(new QueryAddress
             {

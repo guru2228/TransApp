@@ -74,11 +74,11 @@ namespace TransApp.Persistence.UnitOfWork
                     transaction = null;
                 }
 
-                if (_connection != null)
-                {
-                    _connection.Dispose();
-                    _connection = null;
-                }
+               // if (_connection != null)
+               // {
+                  //  _connection.Dispose();
+                 //   _connection = null;
+              //  }
             }
         }
 
@@ -258,7 +258,7 @@ namespace TransApp.Persistence.UnitOfWork
             {
                 if (this._addressAvailabilitiesRepository == null)
                 {
-                    this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailabilities", _dataBaseConfig.Value.DefaultConnectionString);
+                    this._addressAvailabilitiesRepository = new GenericRepository<AddressAvailability>("AddressAvailability", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _addressAvailabilitiesRepository;
             }

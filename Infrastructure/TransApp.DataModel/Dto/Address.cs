@@ -49,8 +49,6 @@ namespace TransApp.DataModel.Dto
 
         public string StateCode { get; set; }
 
-        public string Street { get; set; }
-
         public int StreetNumber { get; set; }
     }
 }
