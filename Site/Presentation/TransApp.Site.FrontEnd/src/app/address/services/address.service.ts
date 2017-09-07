@@ -10,7 +10,7 @@ import { AddressModel } from "app/address/models/address-model";
 @Injectable()
 export class AddressService {
 
-    private serviceUrl = Constants.serverUrl + 'api/Address/';
+    private serviceUrl = Constants.serverUrl + 'api/Addresses/';
 
     constructor(public http:HttpService, private errorHandler: GlobalErrorHandler) { }
 
@@ -42,6 +42,7 @@ export class AddressService {
         return this.http.post(this.serviceUrl + 'save',
                 data,
                 { headers })
-            .map(response => (response).json());
+            .map(response => (response).json())
+            .catch(this.errorHandler.throwError);
     }
 }

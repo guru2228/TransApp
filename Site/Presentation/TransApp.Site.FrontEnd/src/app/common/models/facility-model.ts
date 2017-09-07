@@ -1,4 +1,5 @@
 export class FacilityModel {
+    public id: number;
     public code: string;
     public dictionaryId: number;
     public image: number[];

@@ -16,6 +16,9 @@ import { TruckModel } from "app/common/models/truck-model";
 import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
 import { AddressLocationModel } from "app/address/models/address-location-model";
 import { ParametersDataService } from "app/common/services/parameters-data.service";
+import { AddressFacilityModel } from "app/address/models/address-facility-model";
+import { AuthenticationService } from "app/authentication/services/authentication.service";
+import { ApplicationUser } from "app/authentication/viewmodels/application-user";
 
 declare var require: any
 declare var google: any;
@@ -34,21 +37,19 @@ export class AddressSaveComponent {
     /** component state : display, add or edit */
     componentState: ComponentStateType;
 
-    //// models for each option panes are generated
-    facilities: any[];
-    requirements: any[];
-    truks: any[];
-
     public searchControl: FormControl;
 
-     @ViewChild("searchElement")
-     public searchElementRef: ElementRef;
+    @ViewChild("searchElement")
+    public searchElementRef: ElementRef;
 
+    currentUser:ApplicationUser;
+    
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private mapsAPILoader: MapsAPILoader,
         private ngZone: NgZone,
+        private authenticationService:AuthenticationService,
         private helperService: HelperService,
         private addressService: AddressService,
         private parametersDataService: ParametersDataService,
@@ -58,57 +59,76 @@ export class AddressSaveComponent {
 
     ngOnInit() {
         debugger;
-              //create search FormControl
-              this.searchControl = new FormControl();
+        this.currentUser = this.authenticationService.getCurrentUser();
+
+        //create search FormControl
+        this.searchControl = new FormControl();
 
         // get component state
         this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
-        
-        if (this.componentState == ComponentStateType.add) {
-            this.componentModel = new AddressModel();
-            this.componentModel.id = -1;
-            this.componentModel.location  = new AddressLocationModel();
-        }
-        else {
-            let addressId = 0;
-            this.route.params.forEach((params: Params) => {
-                addressId = params['id'];
-                this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
-                    this.componentModel = result;
-                }, error => {
-                    this.errorHandler.handleError(error);
-                })
-            });
-        }
 
         // load required data
-        this.loadRequiredData().subscribe(executed => {
-            debugger;
-            var self = this;
-            if (executed) {
-            self.initDatetimePicker();
-            self.initSelectionSlider();
-            self.register_googleMapsPlaceHandler();
+        this.loadComponentModel(this.componentState).subscribe(modelLoaded => {
+            if (modelLoaded) {
+                this.loadParamsData().subscribe(paramsDataLoaded => {
+                    if (paramsDataLoaded) {
+                        this.initDatetimePicker();
+                        this.initSelectionSlider();
+                        this.register_googleMapsPlaceHandler();
+                    }
+                })
             }
         });
     }
 
     /**
+     * Load component model, or create a new one if component state is = Add
+     * @param componentState 
+     */
+    private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
+        return Observable.create(observer => {
+            if (componentState == ComponentStateType.add) {
+                debugger;
+                this.componentModel = new AddressModel();
+                this.componentModel.id = -1;
+                this.componentModel.customerId  = this.currentUser.customerId;
+                this.componentModel.location = new AddressLocationModel();
+                this.componentModel.facilities = [];
+                this.componentModel.requirements = [];
+                this.componentModel.trucks = [];
+                observer.next(true);
+            }
+            else {
+                let addressId = 0;
+                this.route.params.forEach((params: Params) => {
+                    addressId = params['id'];
+                    this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
+                        this.componentModel = result;
+                        observer.next(true);
+                    }, error => {
+                        this.errorHandler.handleError(error);
+                        observer.next(false);
+                    })
+                });
+            }
+        });
+    }
+    /**
      * Load required data used to render form
      */
-    private loadRequiredData(): Observable<boolean> {
+    private loadParamsData(): Observable<boolean> {
         return Observable.create(observer => {
             // return new Promise((resolve, reject) => {
             Observable.forkJoin([
-                this.parametersDataService.getFacilities(this.translateService.currentLanguage), 
-                this.parametersDataService.getTruks(this.translateService.currentLanguage),
+                this.parametersDataService.getFacilities(this.translateService.currentLanguage),
                 this.parametersDataService.getRequirements(this.translateService.currentLanguage),
+                this.parametersDataService.getTruks(this.translateService.currentLanguage),
             ])
                 .subscribe(data => {
-                    debugger;
-                    this.facilities = data[0];
-                    this.truks = data[1] ,
-                    this.requirements = data[2]
+                    this.updateModelWithFacilities(data[0] as any);
+                    this.updateModelWithRequirements(data[1] as any);
+                    this.updateModelWithTrucks(data[2] as any);
+
                     observer.next(true);
                     //   resolve(true);
                 }), error => {
@@ -125,9 +145,7 @@ export class AddressSaveComponent {
      * When palce is changed, handler to update model is registered
      */
     private register_googleMapsPlaceHandler() {
-  
         //set current position
-        debugger;
         this.getLocationCurrentPosition();
         //load Places Autocomplete
         this.mapsAPILoader.load().then(() => {
@@ -138,9 +156,7 @@ export class AddressSaveComponent {
             });
             // init place change listener
             addressesAutocomplete.addListener("place_changed", () => {
-                debugger;
                 this.ngZone.run(() => {
-                    debugger;
                     //get the place result
                     let place = addressesAutocomplete.getPlace();
                     //verify result
@@ -149,7 +165,7 @@ export class AddressSaveComponent {
                     }
                     //set latitude, longitude and zoom
                     this.updateLocationModel(place);
-                    
+
                     this.createMap();
 
                     this.componentModel.location.latitudeStr = this.componentModel.location.latitude.toFixed(2);
@@ -211,18 +227,149 @@ export class AddressSaveComponent {
             }
         }
 
-        debugger;
         if (place.formatted_phone_number) {
             this.componentModel.location.phone = place.formatted_phone_number;
         }
 
         if (place.opening_hours) {
-            this.componentModel.location.openNow = place.opening_hours.open_now ?'open':'closed';
+            this.componentModel.location.openNow = place.opening_hours.open_now ? 'open' : 'closed';
             let opening_hours = place.opening_hours.weekday_text;
             this.componentModel.location.openingHours = place.formatted_phone_number;
             this.componentModel.location.openingHours = opening_hours.join('<br> ')
         }
     }
+
+
+    /**
+     * Get current position
+     */
+    private getLocationCurrentPosition() {
+        this.componentModel.location.latitude = 50.82;
+        this.componentModel.location.longitude = 3.26;
+
+        if ("geolocation" in navigator) {
+            navigator.geolocation.getCurrentPosition((position) => {
+                this.componentModel.location.latitude = position.coords.latitude;
+                this.componentModel.location.longitude = position.coords.longitude;
+            }, function () {
+                this.componentModel.location.latitude = -34.397;
+                this.componentModel.location.longitude = 150.644;
+            });
+        }
+
+    }
+
+    /**
+     * Create map based on address model
+     */
+    private createMap() {
+        var myLatlng = new google.maps.LatLng(this.componentModel.location.latitude, this.componentModel.location.longitude);
+        var mapOptions = {
+            zoom: this.componentModel.location.mapZoom,
+            center: myLatlng,
+            scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
+        }
+
+        var map = new google.maps.Map(document.getElementById("regularMap"), mapOptions);
+
+        var marker = new google.maps.Marker({
+            position: myLatlng,
+            title: "Map"
+        });
+
+        marker.setMap(map);
+    }
+
+    /**
+     * update component model with facilities
+     * @param paramsList 
+     */
+    private updateModelWithFacilities(paramsList: FacilityModel[]) {
+        ///// remove facilities from address that are no longer in facility params list
+        this.componentModel.facilities = this.componentModel.facilities.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+
+        // update component model facilities
+        for (let i = 0; i < paramsList.length; i++) {
+            let existModel = this.componentModel.facilities.find(item => item.id == paramsList[i].id);
+            let modelItem=null;
+            if (existModel) {
+                modelItem = existModel[0];
+                modelItem.description = paramsList[i].description
+                modelItem.iconName = paramsList[i].iconName
+            }
+            else {
+                modelItem = new AddressFacilityModel();
+                modelItem.id = -1;
+                modelItem.addressId = this.componentModel.id;
+                modelItem.facilityId = paramsList[i].id;
+                modelItem.active = false;
+                modelItem.description = paramsList[i].description;
+                modelItem.iconName =paramsList[i].iconName;
+                this.componentModel.facilities.push(modelItem);
+            }
+        }
+    }
+
+    /**
+     * update component model with requirments
+     * @param paramsList 
+     */
+    private updateModelWithRequirements(paramsList: RequirementModel[]) {
+        ///// remove facilities from address that are no longer in facility params list
+        this.componentModel.requirements = this.componentModel.requirements.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+
+        // update component model requirements
+        for (let i = 0; i < paramsList.length; i++) {
+            let existModel = this.componentModel.requirements.find(item => item.id == paramsList[i].id);
+            let modelItem=null;
+            if (existModel) {
+                modelItem = existModel[0];
+                modelItem.description = paramsList[i].description;
+                modelItem.iconName = paramsList[i].iconName;
+            }
+            else {
+                modelItem = new RequirementModel();
+                modelItem.id = -1;
+                modelItem.addressId = this.componentModel.id;
+                modelItem.requirementId = paramsList[i].id;
+                modelItem.active = false;
+                modelItem.description = paramsList[i].description;
+                modelItem.iconName =paramsList[i].iconName;
+                this.componentModel.requirements.push(modelItem);
+            }
+        }
+    }
+
+    /**
+     * update component model with truks
+     * @param paramsList 
+     */
+    private updateModelWithTrucks(paramsList: TruckModel[]) {
+        ///// remove facilities from address that are no longer in facility params list
+        this.componentModel.trucks = this.componentModel.trucks.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+
+        // update component model trucks
+        for (let i = 0; i < paramsList.length; i++) {
+            let existModel = this.componentModel.trucks.find(item => item.id == paramsList[i].id);
+            let modelItem=null;
+            if (existModel) {
+                modelItem = existModel[0];
+                modelItem.description = paramsList[i].description;
+                modelItem.iconName = paramsList[i].iconName;
+            }
+            else {
+                modelItem = new TruckModel();
+                modelItem.id = -1;
+                modelItem.addressId = this.componentModel.id;
+                modelItem.truckId = paramsList[i].id;
+                modelItem.active = false;
+                modelItem.description = paramsList[i].description;
+                modelItem.iconName =paramsList[i].iconName;
+                this.componentModel.trucks.push(modelItem);
+            }
+        }
+    }
+
 
     /**
      * Init datetime picker
@@ -264,53 +411,9 @@ export class AddressSaveComponent {
         });
     }
 
-    /**
-     * Get current position
-     */
-    private getLocationCurrentPosition() {
-        debugger;
-        this.componentModel.location.latitude = 50.82;
-        this.componentModel.location.longitude = 3.26;
-
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                this.componentModel.location.latitude = position.coords.latitude;
-                this.componentModel.location.longitude = position.coords.longitude;
-            }, function() {
-                this.componentModel.location.latitude = -34.397;
-                this.componentModel.location.longitude = 150.644;
-              });
-        }
-        
-    }
-
-/**
- * Create map based on address model
- */
-    private createMap() {
-        var myLatlng = new google.maps.LatLng(this.componentModel.location.latitude, this.componentModel.location.longitude);
-        var mapOptions = {
-            zoom: this.componentModel.location.mapZoom,
-            center: myLatlng,
-            scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-        }
-
-        var map = new google.maps.Map(document.getElementById("regularMap"), mapOptions);
-
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title: "Map"
-        });
-
-        marker.setMap(map);
-    }
-
-   
-
     save() {
         // call API to save customer
         console.log(this.componentModel);
-        debugger;
         this.addressService.save(this.componentModel).subscribe(result => {
             alert("saved");
         }, error => {

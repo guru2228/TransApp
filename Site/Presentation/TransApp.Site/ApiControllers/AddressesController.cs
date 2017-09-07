@@ -59,7 +59,7 @@ namespace TransApp.Site.ApiControllers
         /// <param name="addressModel"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpPost("save/")]
+        [HttpPost("save")]
         public async Task<int> Save([FromBody]AddressModel addressModel)
         {
             //// get customer from user

@@ -4,6 +4,7 @@ namespace TransApp.Domain.Common
 {
     public class FacilityModel 
     {
+        public int Id { get; set; }
         public string Code { get; set; }
 
         public int? DictionaryId { get; set; }

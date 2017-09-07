@@ -97,7 +97,12 @@ export class AuthenticationService {
         if (localStorage.getItem('current_user')) {
             let user = new ApplicationUser();
             const userData = JSON.parse(localStorage.getItem('current_user'));
+            user.id = userData.Id;
             user.login = userData.Login;
+            user.firstName = userData.FirstName;
+            user.name = userData.Name;
+            user.customerId = userData.CustomerId;
+
             return user;
         }
         return null;

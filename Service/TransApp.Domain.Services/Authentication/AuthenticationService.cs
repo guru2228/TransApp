@@ -34,7 +34,6 @@ namespace TransApp.Domain.Services.Authentication
                     Login = user.Login,
                     FirstName = user.FirstName,
                     Name = user.LastName,
-                    Password = user.Password,
                     CustomerId = customerUser?.CustomerId
                 };
             }

@@ -173,15 +173,15 @@
 
                         <!-- Facilities -->
                         <h3>Facilities</h3>
-                        <div class="input-group" *ngFor="let facility of facilities">
+                        <div class="input-group" *ngFor="let facility of componentModel.facilities">
                             <span class="input-group-addon">
                                         <i class="material-icons">{{facility.iconName}}</i>
-                                    </span>
+                            </span>
                             <div class="form-group label-floating">
                                 <div class="togglebutton">
                                     <label>
-                                                <input type="checkbox" checked> {{facility.description}}
-                                            </label>
+                                       <input type="checkbox"  [(ngModel)]="facility.active"  [checked]="facility.active"> {{facility.description}}
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -199,30 +199,30 @@
                         </div>
                         <!-- Truck -->
                         <h3>Truck</h3>
-                        <div class="input-group" *ngFor="let truck of truks">
+                        <div class="input-group" *ngFor="let truck of componentModel.trucks">
                             <span class="input-group-addon">
                                         <i class="material-icons">{{truck.iconName}}</i>
-                                    </span>
+                            </span>
                             <div class="form-group label-floating">
                                 <div class="togglebutton">
                                     <label>
-                                                <input type="checkbox" checked> {{truck.description}}
-                                            </label>
+                                         <input type="checkbox"  [(ngModel)]="truck.active"  [checked]="truck.active"> {{truck.description}}
+                                    </label>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Transport requirments -->
                         <h3>Transport requirments</h3>
-                        <div class="input-group" *ngFor="let requirement of requirements">
+                        <div class="input-group" *ngFor="let requirement of componentModel.requirements">
                             <span class="input-group-addon">
                                         <i class="material-icons">{{requirement.iconName}}</i>
-                                    </span>
+                            </span>
                             <div class="form-group label-floating">
                                 <div class="togglebutton">
                                     <label>
-                                                <input type="checkbox" checked> {{requirement.description}}
-                                            </label>
+                                       <input type="checkbox"  [(ngModel)]="requirement.active"  [checked]="requirement.active"> {{requirement.description}}
+                                    </label>
                                 </div>
                             </div>
                         </div>

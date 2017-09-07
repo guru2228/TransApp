@@ -9,4 +9,5 @@ export class TruckModel {
     public userIdModified: number;
     public dateModified: Date;
     public active: boolean;
+    public description: string;
 }
