@@ -36,6 +36,10 @@ namespace TransApp.Domain.Services
             CreateMap<AddressFacilityModel, AddressFacility>();
             CreateMap<AddressRequirementModel, AddressRequirement>();
             CreateMap<AddressTruckModel, AddressTruck>();
+            CreateMap<AddressAvailability, AddressAvailabilityModel>();
+            CreateMap<AddressFacility, AddressFacilityModel>();
+            CreateMap<AddressRequirement, AddressRequirementModel>();
+            CreateMap<AddressTruck, AddressTruckModel>();
         }
     }
 }

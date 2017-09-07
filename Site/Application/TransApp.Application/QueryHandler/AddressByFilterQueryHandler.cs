@@ -1,14 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using TransApp.Application.Query;
 using TransApp.Core.Cqrs;
 using TransApp.DataModel.Dto;
+using TransApp.Domain.Addresses;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Framework.Filter;
 
 namespace TransApp.Application.QueryHandler
 {
-    public class AddressByFilterQueryHandler : IQueryHandler<QueryAddress, Domain.Addresses.AddressModel>
+    public class AddressByFilterQueryHandler : IQueryHandlerList<QueryAddress, Domain.Addresses.AddressModel>
     {
         /// <summary>
         /// AddressesService
@@ -26,7 +28,7 @@ namespace TransApp.Application.QueryHandler
             _accountService = accountService;
         }
 
-        public async Task<Domain.Addresses.AddressModel> Retrieve(QueryAddress query)
+        public async Task<List<AddressModel>> RetrieveList(QueryAddress query)
         {
             FilterAddress filter = new FilterAddress();
             filter.CustomerId = query.CustomerId;

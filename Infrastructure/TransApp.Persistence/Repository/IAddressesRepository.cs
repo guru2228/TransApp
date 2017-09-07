@@ -17,9 +17,10 @@ namespace TransApp.Persistence.Repository
         /// <param name="id"></param>
         Task<AddressDto> GetFullAddressById(int id);
 
-        Task<AddressDto> GetFullAddressFiltered(FilterAddress filter);
+        Task<List<AddressDto>> GetFullAddressFiltered(FilterAddress filter);
 
         Task SaveAddress(Address address, IDbTransaction transaction = null);
 
+        Task DeleteAddress(Address address, IDbTransaction transaction);
     }
 }

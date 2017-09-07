@@ -61,13 +61,19 @@ namespace TransApp.Domain.Services.Addresses
                 {
                     var userCreated =
                         _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdCreated.Value);
-                    result.UserCreated = userCreated.FirstName + ' ' + userCreated.LastName;
+                    if (userCreated != null)
+                    {
+                        result.UserCreated = userCreated.FirstName + ' ' + userCreated.LastName;
+                    }
                 }
                 if (currentAdrress.Address.UserIdModified.HasValue)
                 {
                     var userModified =
                         _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdModified.Value);
-                    result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
+                    if (userModified != null)
+                    {
+                        result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
+                    }
                 }
                 result.Availabilities =
                     Mapper.Map<List<AddressAvailability>, List<AddressAvailabilityModel>>(
@@ -88,68 +94,77 @@ namespace TransApp.Domain.Services.Addresses
             return new AddressModel();
         }
 
-        public async Task<AddressModel> GetAddressFiltered(FilterAddress filter)
+        public async Task<List<AddressModel>> GetAddressFiltered(FilterAddress filter)
         {
-            var currentAdrress =
+            var addresses =
                 await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
-            if (currentAdrress != null)
+            List<AddressModel> result = new List<AddressModel>();
+            if (addresses != null)
             {
-                AddressModel result = new AddressModel
+                foreach (AddressDto currentAdrress in addresses)
                 {
-                    Id = currentAdrress.Address.Id,
-                    Name = currentAdrress.Address.Name,
-                    CustomerId = currentAdrress.Address.CustomerId,
-                    ContactPerson = currentAdrress.Address.ContactPerson,
-                    Email = currentAdrress.Address.Email,
-                    Phone = currentAdrress.Address.Phone,
-                    Remark = currentAdrress.Address.Remark,
-                    UserIdCreated = currentAdrress.Address.UserIdCreated,
-                    DateCreated = currentAdrress.Address.DateCreated,
-                    UserIdModified = currentAdrress.Address.UserIdModified,
-                    DateModified = currentAdrress.Address.DateModified,
+                    AddressModel address = new AddressModel
+                    {
+                        Id = currentAdrress.Address.Id,
+                        Name = currentAdrress.Address.Name,
+                        CustomerId = currentAdrress.Address.CustomerId,
+                        ContactPerson = currentAdrress.Address.ContactPerson,
+                        Email = currentAdrress.Address.Email,
+                        Phone = currentAdrress.Address.Phone,
+                        Remark = currentAdrress.Address.Remark,
+                        UserIdCreated = currentAdrress.Address.UserIdCreated,
+                        DateCreated = currentAdrress.Address.DateCreated,
+                        UserIdModified = currentAdrress.Address.UserIdModified,
+                        DateModified = currentAdrress.Address.DateModified,
 
-                };
-                result.Location = new AddressLocationModel
-                {
-                    City = currentAdrress.Address.City,
-                    CityCode = currentAdrress.Address.CityCode,
-                    Country = currentAdrress.Address.Country,
-                    CountryCode = currentAdrress.Address.CountryCode,
-                    Latitude = currentAdrress.Address.Latitude ?? 0,
-                    Longitude = currentAdrress.Address.Longitude ?? 0,
-                    Street = currentAdrress.Address.Street1,
-                    StreetNumber = currentAdrress.Address.StreetNumber,
-                    StateCode = currentAdrress.Address.StateCode,
-                };
-                if (currentAdrress.Address.UserIdCreated.HasValue)
-                {
-                    var userCreated =
-                        _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdCreated.Value);
-                    result.UserCreated = userCreated.FirstName + ' ' + userCreated.LastName;
+                    };
+                    address.Location = new AddressLocationModel
+                    {
+                        City = currentAdrress.Address.City,
+                        CityCode = currentAdrress.Address.CityCode,
+                        Country = currentAdrress.Address.Country,
+                        CountryCode = currentAdrress.Address.CountryCode,
+                        Latitude = currentAdrress.Address.Latitude ?? 0,
+                        Longitude = currentAdrress.Address.Longitude ?? 0,
+                        Street = currentAdrress.Address.Street1,
+                        StreetNumber = currentAdrress.Address.StreetNumber,
+                        StateCode = currentAdrress.Address.StateCode,
+                    };
+                    if (currentAdrress.Address.UserIdCreated.HasValue)
+                    {
+                        var userCreated =
+                            _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdCreated.Value);
+                        if (userCreated != null)
+                        {
+                            address.UserCreated = userCreated.FirstName + ' ' + userCreated.LastName;
+                        }
+                    }
+                    if (currentAdrress.Address.UserIdModified.HasValue)
+                    {
+                        var userModified =
+                            _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdModified.Value);
+                        if (userModified != null)
+                        {
+                            address.UserModified = userModified.FirstName + ' ' + userModified.LastName;
+                        }
+                    }
+                    address.Availabilities =
+                        Mapper.Map<List<AddressAvailability>, List<AddressAvailabilityModel>>(
+                            currentAdrress.AddressAvailabilities);
+                    address.Facilities =
+                        Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
+                            currentAdrress.AddressFacilities);
+                    address.Requirements =
+                        Mapper.Map<List<AddressRequirement>, List<AddressRequirementModel>>(
+                            currentAdrress.AddressRequirements);
+                    address.Trucks =
+                        Mapper.Map<List<AddressTruck>, List<AddressTruckModel>>(
+                            currentAdrress.AddressTrucks);
+                    result.Add(address);
                 }
-                if (currentAdrress.Address.UserIdModified.HasValue)
-                {
-                    var userModified =
-                        _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdModified.Value);
-                    result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
-                }
-                result.Availabilities =
-                    Mapper.Map<List<AddressAvailability>, List<AddressAvailabilityModel>>(
-                        currentAdrress.AddressAvailabilities);
-                result.Facilities =
-                    Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
-                        currentAdrress.AddressFacilities);
-                result.Requirements =
-                    Mapper.Map<List<AddressRequirement>, List<AddressRequirementModel>>(
-                        currentAdrress.AddressRequirements);
-                result.Trucks =
-                    Mapper.Map<List<AddressTruck>, List<AddressTruckModel>>(
-                        currentAdrress.AddressTrucks);
-
                 return result;
-
             }
-            return new AddressModel();
+            return new List<AddressModel>();
         }
 
         public async Task SaveAddress(AddressModel currentAdrress)
@@ -171,6 +186,7 @@ namespace TransApp.Domain.Services.Addresses
                 DateCreated = currentAdrress.DateCreated,
                 UserIdModified = currentAdrress.UserIdModified,
                 DateModified = currentAdrress.DateModified,
+                CommonAvailability = currentAdrress.CommonAvailability,
                 City = currentAdrress.Location.City,
                 Country = currentAdrress.Location.Country,
                 Latitude = currentAdrress.Location.Latitude,
@@ -178,7 +194,11 @@ namespace TransApp.Domain.Services.Addresses
                 CityCode = currentAdrress.Location.CityCode,
                 CountryCode = currentAdrress.Location.CountryCode,
                 StateCode = currentAdrress.Location.StateCode,
-                StreetNumber = currentAdrress.Location.StreetNumber
+                StreetNumber = currentAdrress.Location.StreetNumber,
+                ZipCode = currentAdrress.Location.ZipCode,
+                Street1 = currentAdrress.Location.Street,
+                Street2 = currentAdrress.Location.Street,
+
             };
 
             var transaction = _unitOfWork.BeginTransaction();
@@ -186,19 +206,37 @@ namespace TransApp.Domain.Services.Addresses
             currentAdrress.Id = dest.Id;
             if (currentAdrress.Availabilities != null)
             {
+                bool deleteRemainingWhenCommon = false;
                 foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
                 {
                     AddressAvailability aAvailability =
                         Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
-                    if (aAvailability.Id <= 0)
+                    if (aAvailability != null)
                     {
-                        aAvailability.AddressId = dest.Id;
-                        aAvailabilityModel.Id =
-                            await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
-                    }
-                    else
-                    {
-                        await _unitOfWork.AddressAvailabilitiesRepository.UpdateAsync(aAvailability, transaction);
+                        if (deleteRemainingWhenCommon && aAvailability.Id > 0)
+                        {
+                            await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
+                        }
+                        aAvailability.DateModified = DateTime.Now;
+                        if (aAvailability.Id <= 0)
+                        {
+                            if (currentAdrress.CommonAvailability)
+                            {
+                                aAvailability.Day = 0;
+                            }
+                            aAvailability.DateCreated = DateTime.Now;
+                            aAvailability.AddressId = dest.Id;
+                            aAvailabilityModel.Id =
+                                await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
+                            if (currentAdrress.CommonAvailability)
+                            {
+                                deleteRemainingWhenCommon = true;
+                            }
+                        }
+                        else
+                        {
+                            await _unitOfWork.AddressAvailabilitiesRepository.UpdateAsync(aAvailability, transaction);
+                        }
                     }
                 }
             }
@@ -207,14 +245,20 @@ namespace TransApp.Domain.Services.Addresses
                 foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
                 {
                     AddressFacility aFacility = Mapper.Map<AddressFacilityModel, AddressFacility>(aFacilityModel);
-                    if (aFacility.Id <= 0)
+                    if (aFacility != null)
                     {
-                        aFacility.AddressId = dest.Id;
-                        aFacilityModel.Id = await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
-                    }
-                    else
-                    {
-                        await _unitOfWork.AddressFacilityRepository.UpdateAsync(aFacility, transaction);
+                        aFacility.DateModified = DateTime.Now;
+                        if (aFacility.Id <= 0)
+                        {
+                            aFacility.DateCreated = DateTime.Now;
+                            aFacility.AddressId = dest.Id;
+                            aFacilityModel.Id =
+                                await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
+                        }
+                        else
+                        {
+                            await _unitOfWork.AddressFacilityRepository.UpdateAsync(aFacility, transaction);
+                        }
                     }
                 }
             }
@@ -224,15 +268,20 @@ namespace TransApp.Domain.Services.Addresses
                 {
                     AddressRequirement aRequirement =
                         Mapper.Map<AddressRequirementModel, AddressRequirement>(aRequirementModel);
-                    if (aRequirement.Id <= 0)
+                    if (aRequirement != null)
                     {
-                        aRequirement.AddressId = dest.Id;
-                        aRequirementModel.Id =
-                            await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
-                    }
-                    else
-                    {
-                        await _unitOfWork.AddressRequirementRepository.UpdateAsync(aRequirement, transaction);
+                        aRequirement.DateModified = DateTime.Now;
+                        if (aRequirement.Id <= 0)
+                        {
+                            aRequirement.DateCreated = DateTime.Now;
+                            aRequirement.AddressId = dest.Id;
+                            aRequirementModel.Id =
+                                await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
+                        }
+                        else
+                        {
+                            await _unitOfWork.AddressRequirementRepository.UpdateAsync(aRequirement, transaction);
+                        }
                     }
                 }
             }
@@ -241,19 +290,86 @@ namespace TransApp.Domain.Services.Addresses
                 foreach (AddressTruckModel aTruckModel in currentAdrress.Trucks)
                 {
                     AddressTruck aTruck = Mapper.Map<AddressTruckModel, AddressTruck>(aTruckModel);
-                    if (aTruck.Id <= 0)
+                    if (aTruck != null)
                     {
-                        aTruck.AddressId = dest.Id;
-                        aTruckModel.Id = await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
-                    }
-                    else
-                    {
-                        await _unitOfWork.AddressTruckRepository.UpdateAsync(aTruck, transaction);
+                        aTruck.DateModified = DateTime.Now;
+                        if (aTruck.Id <= 0)
+                        {
+                            aTruck.DateCreated = DateTime.Now;
+                            aTruck.AddressId = dest.Id;
+                            aTruckModel.Id = await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
+                        }
+                        else
+                        {
+                            await _unitOfWork.AddressTruckRepository.UpdateAsync(aTruck, transaction);
+                        }
                     }
                 }
             }
 
             _unitOfWork.Commit(transaction);
         }
+
+        public async Task DeleteAddress(AddressModel currentAdrress)
+        {
+            if (currentAdrress != null)
+            {
+                var transaction = _unitOfWork.BeginTransaction();
+                Address dest = new Address
+                {
+                    Id = currentAdrress.Id
+                };
+                await _unitOfWork.AddressesRepository.DeleteAddress(dest, transaction);
+
+                if (currentAdrress.Availabilities != null)
+                {
+                    foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
+                    {
+                        AddressAvailability aAvailability =
+                            Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
+                        if (aAvailability != null)
+                        {
+                                await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
+                        }
+                    }
+                }
+                if (currentAdrress.Facilities != null)
+                {
+                    foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
+                    {
+                        AddressFacility aFacility = Mapper.Map<AddressFacilityModel, AddressFacility>(aFacilityModel);
+                        if (aFacility != null)
+                        {
+                            await _unitOfWork.AddressFacilityRepository.DeleteAsync(aFacility, transaction);
+                        }
+                    }
+                }
+                if (currentAdrress.Requirements != null)
+                {
+                    foreach (AddressRequirementModel aRequirementModel in currentAdrress.Requirements)
+                    {
+                        AddressRequirement aRequirement =
+                            Mapper.Map<AddressRequirementModel, AddressRequirement>(aRequirementModel);
+                        if (aRequirement != null)
+                        {
+                            await _unitOfWork.AddressRequirementRepository.DeleteAsync(aRequirement, transaction);
+                        }
+                    }
+                }
+                if (currentAdrress.Trucks != null)
+                {
+                    foreach (AddressTruckModel aTruckModel in currentAdrress.Trucks)
+                    {
+                        AddressTruck aTruck = Mapper.Map<AddressTruckModel, AddressTruck>(aTruckModel);
+                        if (aTruck != null)
+                        {
+                            await _unitOfWork.AddressTruckRepository.DeleteAsync(aTruck, transaction);
+                        }
+                    }
+                }
+                _unitOfWork.Commit(transaction);
+            }
+        }
     }
 }
+

@@ -14,7 +14,7 @@ using static Dapper.SqlMapper;
 
 namespace TransApp.Persistence.Repository
 {
-    public class AddressesRepository:GenericRepository<Address>, IAddressesRepository
+    public class AddressesRepository : GenericRepository<Address>, IAddressesRepository
     {
         public AddressesRepository(string tableName, string connectionString) : base(tableName, connectionString)
         {
@@ -23,6 +23,7 @@ namespace TransApp.Persistence.Repository
         public async Task<AddressDto> GetFullAddressById(int id)
         {
             var lookup = new Dictionary<int, AddressDto>();
+            var lookupAddress = new Dictionary<int, List<int>>();
             var lookupAvailability = new Dictionary<int, List<int>>();
             var lookupFacility = new Dictionary<int, List<int>>();
             var lookupRequirement = new Dictionary<int, List<int>>();
@@ -32,53 +33,76 @@ namespace TransApp.Persistence.Repository
             {
                 cn.Open();
                 var item =
-                    await cn.QueryAsync<AddressDto, AddressAvailability, AddressFacility, AddressRequirement, AddressTruck, AddressDto >(GetQuery(id),
-                        (address, addressAvailability, addressFacility, addressRequirement, addressTruck) =>
-                        {
-                            AddressDto entity;
-                            if (!lookup.TryGetValue(address.Address.Id, out entity))
-                            {
-                                lookup.Add(address.Address.Id, entity = address);
-                            }
+                    await
+                        cn
+                            .QueryAsync
+                            <Address, AddressAvailability, AddressFacility, AddressRequirement, AddressTruck, AddressDto
+                            >(GetQuery(id),
+                                (address, addressAvailability, addressFacility, addressRequirement, addressTruck) =>
+                                {
+                                    AddressDto entity;
 
-                            if (!lookupAvailability.ExistsList(entity.Address.Id, addressAvailability.Id))
-                            {
-                                if (entity.AddressAvailabilities == null)
-                                    entity.AddressAvailabilities = new List<AddressAvailability>();
-                                entity.AddressAvailabilities.Add(addressAvailability);
-                            }
+                                    if (!lookup.TryGetValue(address.Id, out entity))
+                                    {
+                                        lookup.Add(address.Id, entity = new AddressDto());
+                                        entity.Address = address;
+                                    }
 
-                            if (!lookupRequirement.ExistsList(entity.Address.Id, addressFacility.Id))
-                            {
-                                if (entity.AddressFacilities == null)
-                                    entity.AddressFacilities = new List<AddressFacility>();
-                                entity.AddressFacilities.Add(addressFacility);
-                            }
+                                    if (!lookupAddress.ExistsList(entity.Address.Id, address.Id))
+                                    {
+                                        if (entity.Address == null)
+                                            entity.Address = new Address();
+                                        entity.Address = address;
+                                    }
 
-                            if (!lookupFacility.ExistsList(entity.Address.Id, addressRequirement.Id))
-                            {
-                                if (entity.AddressRequirements == null)
-                                    entity.AddressRequirements = new List<AddressRequirement>();
-                                entity.AddressRequirements.Add(addressRequirement);
-                            }
-
-                            if (!lookupTruck.ExistsList(entity.Address.Id, addressTruck.Id))
-                            {
-                                if (entity.AddressTrucks == null)
-                                    entity.AddressTrucks = new List<AddressTruck>();
-                                entity.AddressTrucks.Add(addressTruck);
-                            }
-
-                            return address;
-                        }, "SplitOn");
+                                    if (addressAvailability != null)
+                                    {
+                                        if (
+                                            !lookupAvailability.ExistsList(entity.Address.Id, addressAvailability.Id))
+                                        {
+                                            if (entity.AddressAvailabilities == null)
+                                                entity.AddressAvailabilities = new List<AddressAvailability>();
+                                            entity.AddressAvailabilities.Add(addressAvailability);
+                                        }
+                                    }
+                                    if (addressFacility != null)
+                                    {
+                                        if (!lookupFacility.ExistsList(entity.Address.Id, addressFacility.Id))
+                                        {
+                                            if (entity.AddressFacilities == null)
+                                                entity.AddressFacilities = new List<AddressFacility>();
+                                            entity.AddressFacilities.Add(addressFacility);
+                                        }
+                                    }
+                                    if (addressRequirement != null)
+                                    {
+                                        if (!lookupRequirement.ExistsList(entity.Address.Id, addressRequirement.Id))
+                                        {
+                                            if (entity.AddressRequirements == null)
+                                                entity.AddressRequirements = new List<AddressRequirement>();
+                                            entity.AddressRequirements.Add(addressRequirement);
+                                        }
+                                    }
+                                    if (addressTruck != null)
+                                    {
+                                        if (!lookupTruck.ExistsList(entity.Address.Id, addressTruck.Id))
+                                        {
+                                            if (entity.AddressTrucks == null)
+                                                entity.AddressTrucks = new List<AddressTruck>();
+                                            entity.AddressTrucks.Add(addressTruck);
+                                        }
+                                    }
+                                    return entity;
+                                }, "SplitAvailability,SplitFacility,SplitRequirement,SplitTruck");
             }
             return lookup.Values.FirstOrDefault();
         }
 
 
-        public async Task<AddressDto> GetFullAddressFiltered(FilterAddress filter)
+        public async Task<List<AddressDto>> GetFullAddressFiltered(FilterAddress filter)
         {
             var lookup = new Dictionary<int, AddressDto>();
+            var lookupAddress = new Dictionary<int, List<int>>();
             var lookupAvailability = new Dictionary<int, List<int>>();
             var lookupFacility = new Dictionary<int, List<int>>();
             var lookupRequirement = new Dictionary<int, List<int>>();
@@ -87,63 +111,89 @@ namespace TransApp.Persistence.Repository
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
+
                 var item =
-                    await cn.QueryAsync<AddressDto, AddressAvailability, AddressFacility, AddressRequirement, AddressTruck, AddressDto>(GetQueryFiltered(filter),
-                        (address, addressAvailability, addressFacility, addressRequirement, addressTruck) =>
-                        {
-                            AddressDto entity;
-                            if (!lookup.TryGetValue(address.Address.Id, out entity))
-                            {
-                                lookup.Add(address.Address.Id, entity = address);
-                            }
+                    await
+                        cn
+                            .QueryAsync
+                            <Address, AddressAvailability, AddressFacility, AddressRequirement, AddressTruck,
+                                AddressDto>(GetQueryFiltered(filter),
+                                (address, addressAvailability, addressFacility, addressRequirement, addressTruck) =>
+                                {
+                                    AddressDto entity;
 
-                            if (!lookupAvailability.ExistsList(entity.Address.Id, addressAvailability.Id))
-                            {
-                                if (entity.AddressAvailabilities == null)
-                                    entity.AddressAvailabilities = new List<AddressAvailability>();
-                                entity.AddressAvailabilities.Add(addressAvailability);
-                            }
+                                    if (!lookup.TryGetValue(address.Id, out entity))
+                                    {
+                                        lookup.Add(address.Id, entity = new AddressDto());
+                                        entity.Address = address;
+                                    }
 
-                            if (!lookupRequirement.ExistsList(entity.Address.Id, addressFacility.Id))
-                            {
-                                if (entity.AddressFacilities == null)
-                                    entity.AddressFacilities = new List<AddressFacility>();
-                                entity.AddressFacilities.Add(addressFacility);
-                            }
+                                    if (!lookupAddress.ExistsList(entity.Address.Id, address.Id))
+                                    {
+                                        if (entity.Address == null)
+                                            entity.Address = new Address();
+                                        entity.Address = address;
+                                    }
 
-                            if (!lookupFacility.ExistsList(entity.Address.Id, addressRequirement.Id))
-                            {
-                                if (entity.AddressRequirements == null)
-                                    entity.AddressRequirements = new List<AddressRequirement>();
-                                entity.AddressRequirements.Add(addressRequirement);
-                            }
+                                    if (addressAvailability != null)
+                                    {
+                                        if (
+                                            !lookupAvailability.ExistsList(entity.Address.Id, addressAvailability.Id))
+                                        {
+                                            if (entity.AddressAvailabilities == null)
+                                                entity.AddressAvailabilities = new List<AddressAvailability>();
+                                            entity.AddressAvailabilities.Add(addressAvailability);
+                                        }
+                                    }
+                                    if (addressFacility != null)
+                                    {
+                                        if (!lookupFacility.ExistsList(entity.Address.Id, addressFacility.Id))
+                                        {
+                                            if (entity.AddressFacilities == null)
+                                                entity.AddressFacilities = new List<AddressFacility>();
+                                            entity.AddressFacilities.Add(addressFacility);
+                                        }
+                                    }
+                                    if (addressRequirement != null)
+                                    {
+                                        if (!lookupRequirement.ExistsList(entity.Address.Id, addressRequirement.Id))
+                                        {
+                                            if (entity.AddressRequirements == null)
+                                                entity.AddressRequirements = new List<AddressRequirement>();
+                                            entity.AddressRequirements.Add(addressRequirement);
+                                        }
+                                    }
+                                    if (addressTruck != null)
+                                    {
+                                        if (!lookupTruck.ExistsList(entity.Address.Id, addressTruck.Id))
+                                        {
+                                            if (entity.AddressTrucks == null)
+                                                entity.AddressTrucks = new List<AddressTruck>();
+                                            entity.AddressTrucks.Add(addressTruck);
+                                        }
+                                    }
+                                    return entity;
+                                }, "SplitAvailability,SplitFacility,SplitRequirement,SplitTruck");
 
-                            if (!lookupTruck.ExistsList(entity.Address.Id, addressTruck.Id))
-                            {
-                                if (entity.AddressTrucks == null)
-                                    entity.AddressTrucks = new List<AddressTruck>();
-                                entity.AddressTrucks.Add(addressTruck);
-                            }
-
-                            return address;
-                        }, "SplitOn");
             }
-            return lookup.Values.FirstOrDefault();
+            return lookup.Values.ToList();
         }
 
         public async Task SaveAddress(Address currentAddress, IDbTransaction transaction = null)
         {
             if (currentAddress != null)
             {
+                currentAddress.DateModified = DateTime.Now;
                 if (currentAddress.Id <= 0)
                 {
                     try
                     {
+                        currentAddress.DateCreated = DateTime.Now;
                         currentAddress.Id = await AddAsync(currentAddress, transaction);
                     }
                     catch (Exception ex)
                     {
-                        
+
                     }
                 }
                 else
@@ -153,13 +203,75 @@ namespace TransApp.Persistence.Repository
             }
         }
 
+        public async Task DeleteAddress(Address address, IDbTransaction transaction)
+        {
+            await DeleteAsync(address, transaction);
+        }
+
         private string GetQuery(int id)
         {
             var sb = new StringBuilder();
-            sb.Append(@"select Address.*,SplitOn='',AddressAvailabilities.*,SplitOn='',AddressFacility.*,
-SplitOn='',AddressRequirement.*,SplitOn='',AddressTruck.*
+            sb.Append(@"select 
+[Address].[Id]
+      ,[Address].[CustomerId]
+      ,[Address].[Name]
+      ,[Address].[Street1]
+      ,[Address].[Street2]
+      ,[Address].[ZipCode]
+      ,[Address].[City]
+      ,[Address].[Country]
+      ,[Address].[ContactPerson]
+      ,[Address].[Email]
+      ,[Address].[Phone]
+      ,[Address].[Remark]
+      ,[Address].[UserIdCreated]
+      ,[Address].[DateCreated]
+      ,[Address].[UserIdModified]
+      ,[Address].[DateModified]
+      ,[Address].[Latitude]
+      ,[Address].[Longitude]
+      ,[Address].[CountryCode]
+      ,[Address].[CityCode]
+      ,[Address].[StateCode]
+      ,[Address].[StreetNumber],
+SplitAvailability='',[AddressAvailability].[Id]
+      ,[AddressAvailability].[AddressId]
+      ,[AddressAvailability].[Day]
+      ,[AddressAvailability].[AmStart]
+      ,[AddressAvailability].[AmStop]
+      ,[AddressAvailability].[PmStart]
+      ,[AddressAvailability].[PmStop]
+      ,[AddressAvailability].[UserIdCreated]
+      ,[AddressAvailability].[DateCreated]
+      ,[AddressAvailability].[UserIdModified]
+      ,[AddressAvailability].[DateModified],
+SplitFacility='',[AddressFacility].[Id]
+      ,[AddressFacility].[AddressId]
+      ,[AddressFacility].[FacilityId]
+      ,[AddressFacility].[Active]
+      ,[AddressFacility].[UserIdCreated]
+      ,[AddressFacility].[DateCreated]
+      ,[AddressFacility].[UserIdModified]
+      ,[AddressFacility].[DateModified],
+SplitRequirement='',[AddressRequirement].[Id]
+      ,[AddressRequirement].[AddressId]
+      ,[AddressRequirement].[RequirementId]
+      ,[AddressRequirement].[Active]
+      ,[AddressRequirement].[UserIdCreated]
+      ,[AddressRequirement].[DateCreated]
+      ,[AddressRequirement].[UserIdModified]
+      ,[AddressRequirement].[DateModified]
+      ,[AddressRequirement].[AmountInsurance],
+SplitTruck='',[AddressTruck].[Id]
+      ,[AddressTruck].[AddressId]
+      ,[AddressTruck].[TruckId]
+      ,[AddressTruck].[Active]
+      ,[AddressTruck].[UserIdCreated]
+      ,[AddressTruck].[DateCreated]
+      ,[AddressTruck].[UserIdModified]
+      ,[AddressTruck].[DateModified]
 from Address left outer
-join AddressAvailabilities on AddressAvailabilities.AddressId = Address.Id
+join AddressAvailability on AddressAvailability.AddressId = Address.Id
 left outer
 join AddressFacility on AddressFacility.AddressId = Address.Id
 left outer
@@ -174,10 +286,67 @@ where Address.Id = " + id);
         private string GetQueryFiltered(FilterAddress filter)
         {
             var sb = new StringBuilder();
-            sb.Append(@"select Address.*,SplitOn='',AddressAvailabilities.*,SplitOn='',AddressFacility.*,
-SplitOn='',AddressRequirement.*,SplitOn='',AddressTruck.*
+            sb.Append(@"select 
+       [Address].[Id]
+      ,[Address].[CustomerId]
+      ,[Address].[Name]
+      ,[Address].[Street1]
+      ,[Address].[Street2]
+      ,[Address].[ZipCode]
+      ,[Address].[City]
+      ,[Address].[Country]
+      ,[Address].[ContactPerson]
+      ,[Address].[Email]
+      ,[Address].[Phone]
+      ,[Address].[Remark]
+      ,[Address].[UserIdCreated]
+      ,[Address].[DateCreated]
+      ,[Address].[UserIdModified]
+      ,[Address].[DateModified]
+      ,[Address].[Latitude]
+      ,[Address].[Longitude]
+      ,[Address].[CountryCode]
+      ,[Address].[CityCode]
+      ,[Address].[StateCode]
+      ,[Address].[StreetNumber],
+SplitAvailability='',[AddressAvailability].[Id]
+      ,[AddressAvailability].[AddressId]
+      ,[AddressAvailability].[Day]
+      ,[AddressAvailability].[AmStart]
+      ,[AddressAvailability].[AmStop]
+      ,[AddressAvailability].[PmStart]
+      ,[AddressAvailability].[PmStop]
+      ,[AddressAvailability].[UserIdCreated]
+      ,[AddressAvailability].[DateCreated]
+      ,[AddressAvailability].[UserIdModified]
+      ,[AddressAvailability].[DateModified],
+SplitFacility='',[AddressFacility].[Id]
+      ,[AddressFacility].[AddressId]
+      ,[AddressFacility].[FacilityId]
+      ,[AddressFacility].[Active]
+      ,[AddressFacility].[UserIdCreated]
+      ,[AddressFacility].[DateCreated]
+      ,[AddressFacility].[UserIdModified]
+      ,[AddressFacility].[DateModified],
+SplitRequirement='',[AddressRequirement].[Id]
+      ,[AddressRequirement].[AddressId]
+      ,[AddressRequirement].[RequirementId]
+      ,[AddressRequirement].[Active]
+      ,[AddressRequirement].[UserIdCreated]
+      ,[AddressRequirement].[DateCreated]
+      ,[AddressRequirement].[UserIdModified]
+      ,[AddressRequirement].[DateModified]
+      ,[AddressRequirement].[AmountInsurance],
+SplitTruck='',[AddressTruck].[Id]
+      ,[AddressTruck].[AddressId]
+      ,[AddressTruck].[TruckId]
+      ,[AddressTruck].[Active]
+      ,[AddressTruck].[UserIdCreated]
+      ,[AddressTruck].[DateCreated]
+      ,[AddressTruck].[UserIdModified]
+      ,[AddressTruck].[DateModified]
 from Address left outer
-join AddressAvailabilities on AddressAvailabilities.AddressId = Address.Id
+join AddressAvailability on AddressAvailability.AddressId = Address.Id
 left outer
 join AddressFacility on AddressFacility.AddressId = Address.Id
 left outer

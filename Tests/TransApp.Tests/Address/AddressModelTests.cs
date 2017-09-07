@@ -11,6 +11,7 @@ using TransApp.Core.CacheService;
 using TransApp.Domain.Addresses;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
+using TransApp.Framework.Filter;
 using TransApp.Persistence;
 using TransApp.Persistence.Repository;
 using TransApp.Persistence.UnitOfWork;
@@ -81,6 +82,7 @@ namespace TransApp.Tests.Address
             currentAdrress.Remark = "Saved by Unit Test";
             currentAdrress.UserIdCreated = 100000;
             currentAdrress.UserIdModified = 999;
+            currentAdrress.CommonAvailability = true;
 
             //location
             AddressLocationModel location = new AddressLocationModel();
@@ -104,6 +106,7 @@ namespace TransApp.Tests.Address
             availability.AmStop = new TimeSpan(12, 00, 00);
             availability.PmStart = new TimeSpan(15, 00, 00);
             availability.PmStop = new TimeSpan(16, 00, 00);
+            availability.Day = 1;
             availability.UserIdCreated = 100000;
             availability.UserIdModified = 999;
             listAvailabilityModels.Add(availability);
@@ -158,6 +161,53 @@ namespace TransApp.Tests.Address
             {
                 Assert.IsTrue(false);
             }
+        }
+
+        [TestMethod]
+        public async Task Test_GetAddressFiltered_Is_Ok()
+        {
+            try
+            {
+                List<AddressModel> currentAddressModel =
+                    await _addressesService.GetAddressFiltered(new FilterAddress {CustomerId = 1});
+            }
+            catch 
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_GetAddressById_Is_Ok()
+        {
+            try
+            {
+                AddressModel currentAddressModel =
+                    await _addressesService.Get(22);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_DeleteAddress_Is_Ok()
+        {
+            try
+            {
+                AddressModel currentAddressModel =
+                    await _addressesService.Get(22);
+
+                await _addressesService.DeleteAddress(currentAddressModel);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
         }
     }
 }

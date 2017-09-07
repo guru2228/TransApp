@@ -40,5 +40,7 @@ namespace TransApp.Domain.Addresses
         public string UserModified { get; set; }
 
         public DateTime? DateModified { get; set; }
+
+        public bool CommonAvailability { get; set; }
     }
 }

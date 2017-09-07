@@ -339,9 +339,10 @@ namespace TransApp.Persistence.Repository.Generic
         public async Task DeleteAsync(TEntity entity, IDbTransaction transaction = null)
         {
             var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE Id=@ID", new { ID = entity.Id });
-
             if (transaction != null)
+            {
                 await transaction.Connection.ExecuteAsync(sqlCommand, transaction);
+            }
             else
             {
                 using (IDbConnection cn = new SqlConnection(ConnectionString))
