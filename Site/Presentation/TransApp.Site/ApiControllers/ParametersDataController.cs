@@ -11,7 +11,7 @@ namespace TransApp.Site.ApiControllers
 {
 
     [Route("api/[controller]")]
-    public class ParametersDataController
+    public class ParametersDataController : Controller
     {
         /// <summary>
         /// AddressesService

@@ -80,6 +80,23 @@ export class AddressSaveComponent {
             }
         });
     }
+    
+    /**
+     * save an address
+     */
+    save() {
+        // call API to save customer
+        console.log(this.componentModel);
+        this.addressService.save(this.componentModel).subscribe(result => {
+            alert("saved");
+            if(this.componentState == ComponentStateType.add){
+ this.router.navigate(['/address-overview']);
+            }
+        }, error => {
+
+        });
+    }
+
 
     /**
      * Load component model, or create a new one if component state is = Add
@@ -409,18 +426,5 @@ export class AddressSaveComponent {
                 max: 24
             }
         });
-    }
-
-    save() {
-        // call API to save customer
-        console.log(this.componentModel);
-        this.addressService.save(this.componentModel).subscribe(result => {
-            alert("saved");
-        }, error => {
-
-        });
-    }
-    onSubmit(value: any): void {
-
     }
 }

@@ -6,6 +6,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TransApp.Application.Query;
 using TransApp.Application.QueryHandler;
 using TransApp.DataModel.Dto;
@@ -17,7 +18,7 @@ namespace TransApp.Site.ApiControllers
 {
 
     [Route("api/[controller]")]
-    public class AddressesController
+    public class AddressesController : Controller
     {
         /// <summary>
         /// AddressesService
@@ -27,12 +28,12 @@ namespace TransApp.Site.ApiControllers
         /// <summary>
         /// IAccountService
         /// </summary>
-        private readonly IAuthenticationService _accountService;
+        private readonly IAuthenticationService _authenticationService;
 
         public AddressesController(IAddressesService addressesService, IAuthenticationService accountService)
         {
             _addressesService = addressesService;
-            _accountService = accountService;
+            _authenticationService = accountService;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("get/{addressid}")]
         public async Task<Domain.Addresses.AddressModel> Get(int addressid)
         {
-            var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
+            var queryHandler = new AddressByIdQueryHandler(_addressesService, _authenticationService);
             var result = await queryHandler.Retrieve(new QueryAddress
             {
                Id = addressid
@@ -62,28 +63,36 @@ namespace TransApp.Site.ApiControllers
         [HttpPost("save")]
         public async Task<int> Save([FromBody]AddressModel addressModel)
         {
-            //// get customer from user
-            /// save address based on customer
-            //// return address id
-            return 1;
+            var currentUser = _authenticationService.GetUser(User.Identity.Name);
+            var addressId = await _addressesService.SaveAddress(currentUser.Id, addressModel);
+            return addressId;
         }
 
-
         /// <summary>
-        /// Get address
+        /// Get all addresses for a customer.
+        /// Retrive address based on page number and page size
         /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="startItem"></param>
+        /// <param name="numberOfRetrievedItems"></param>
+        /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getAddressFiltered/{CustomerId}")]
-        public async Task<Domain.Addresses.AddressModel> GetAddressFiltered(int customerId)
+        [HttpGet("getAll/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        public async Task<IEnumerable<AddressModel>> GetAll(int customerId, int startItem, int numberOfRetrievedItems, int language)
         {
-            //d
-            var queryHandler = new AddressByIdQueryHandler(_addressesService, _accountService);
-            var result = await queryHandler.Retrieve(new QueryAddress
-            {
-                CustomerId = customerId
-            });
-            return result;
+            //TODO Bogdan implement this
+        
+            return new List<AddressModel>();
+        }
+
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("search/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        public async Task<IEnumerable<AddressModel>> Search(int customerId, int startItem, int numberOfRetrievedItems, int language, [FromQuery]string searchTerm)
+        {
+            //TODO Bogdan implement this
+
+            return new List<AddressModel>();
         }
     }
 }
