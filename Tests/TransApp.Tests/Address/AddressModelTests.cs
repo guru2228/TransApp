@@ -169,7 +169,7 @@ namespace TransApp.Tests.Address
             try
             {
                 List<AddressModel> currentAddressModel =
-                    await _addressesService.GetAddressFiltered(new FilterAddress {CustomerId = 1});
+                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1});
             }
             catch 
             {

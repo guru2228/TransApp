@@ -32,7 +32,7 @@ namespace TransApp.Application.QueryHandler
         {
             FilterAddress filter = new FilterAddress();
             filter.CustomerId = query.CustomerId;
-            var currentAddress = await _addressesService.GetAddressFiltered(filter);
+            var currentAddress = await _addressesService.GetAll(filter);
             return currentAddress;
         }
     }

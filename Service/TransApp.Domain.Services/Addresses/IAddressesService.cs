@@ -22,7 +22,7 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        Task<List<AddressModel>> GetAddressFiltered(FilterAddress filter);
+        Task<List<AddressModel>> GetAll(FilterAddress filter);
 
         /// <summary>
         /// Save Full Address

@@ -94,7 +94,7 @@ namespace TransApp.Domain.Services.Addresses
             return new AddressModel();
         }
 
-        public async Task<List<AddressModel>> GetAddressFiltered(FilterAddress filter)
+        public async Task<List<AddressModel>> GetAll(FilterAddress filter)
         {
             var addresses =
                 await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
@@ -314,13 +314,13 @@ namespace TransApp.Domain.Services.Addresses
         {
             if (currentAdrress != null)
             {
-                var transaction = _unitOfWork.BeginTransaction();
+                
                 Address dest = new Address
                 {
                     Id = currentAdrress.Id
                 };
-                await _unitOfWork.AddressesRepository.DeleteAddress(dest, transaction);
-
+               
+                var transaction = _unitOfWork.BeginTransaction();
                 if (currentAdrress.Availabilities != null)
                 {
                     foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
@@ -367,6 +367,7 @@ namespace TransApp.Domain.Services.Addresses
                         }
                     }
                 }
+                await _unitOfWork.AddressesRepository.DeleteAddress(dest, transaction);
                 _unitOfWork.Commit(transaction);
             }
         }
