@@ -27,9 +27,10 @@ namespace TransApp.Domain.Services.Addresses
         /// <summary>
         /// Save Full Address
         /// </summary>
+        /// <param name="userId"></param>
         /// <param name="address"></param>
         /// <returns></returns>
-        Task SaveAddress(AddressModel address);
+        Task<int> SaveAddress(int userId, AddressModel address);
 
         /// <summary>
         /// 

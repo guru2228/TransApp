@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
+using TransApp.Core.Exceptions;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Addresses;
@@ -167,12 +169,13 @@ namespace TransApp.Domain.Services.Addresses
             return new List<AddressModel>();
         }
 
-        public async Task SaveAddress(AddressModel currentAdrress)
+        public async Task<int> SaveAddress(int userId, AddressModel currentAdrress)
         {
             if (currentAdrress == null)
             {
-                return;
+             throw  new HttpResponseException(HttpStatusCode.InternalServerError, "Error on save, model is null");
             }
+
             Address dest = new Address
             {
                 Id = currentAdrress.Id,
@@ -182,7 +185,7 @@ namespace TransApp.Domain.Services.Addresses
                 Email = currentAdrress.Email,
                 Phone = currentAdrress.Phone,
                 Remark = currentAdrress.Remark,
-                UserIdCreated = currentAdrress.UserIdCreated,
+                UserIdCreated = userId,
                 DateCreated = currentAdrress.DateCreated,
                 UserIdModified = currentAdrress.UserIdModified,
                 DateModified = currentAdrress.DateModified,
@@ -308,6 +311,8 @@ namespace TransApp.Domain.Services.Addresses
             }
 
             _unitOfWork.Commit(transaction);
+
+            return currentAdrress.Id;
         }
 
         public async Task DeleteAddress(AddressModel currentAdrress)
