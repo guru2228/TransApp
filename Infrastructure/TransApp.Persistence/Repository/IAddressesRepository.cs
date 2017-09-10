@@ -19,7 +19,7 @@ namespace TransApp.Persistence.Repository
 
         Task<List<AddressDto>> GetFullAddressFiltered(FilterAddress filter);
 
-        Task SaveAddress(Address address, IDbTransaction transaction = null);
+        Task SaveAddress(int currentUserId, Address address, IDbTransaction transaction = null);
 
         Task DeleteAddress(Address address, IDbTransaction transaction);
     }

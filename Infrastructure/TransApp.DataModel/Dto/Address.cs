@@ -52,6 +52,8 @@ namespace TransApp.DataModel.Dto
         public int StreetNumber { get; set; }
 
         public bool CommonAvailability { get; set; }
+
+
     }
 }
 

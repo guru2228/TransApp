@@ -52,11 +52,12 @@ namespace TransApp.Tests.Address
             currentAdrress.UserIdCreated = 100000;
             currentAdrress.UserIdModified = 999;
             currentAdrress.Location=new AddressLocationModel();
+            currentAdrress.Location.Street = "Iași";
            // currentAdrress.Availabilities=new EditableList<AddressAvailabilityModel>();
            // currentAdrress.Trucks=new EditableList<AddressTruckModel>();
            // currentAdrress.Requirements=new EditableList<AddressRequirementModel>();
            // currentAdrress.Facilities=new EditableList<AddressFacilityModel>();
-            await _addressesService.SaveAddress(currentAdrress);
+            await _addressesService.SaveAddress(1000,currentAdrress);
             if (currentAdrress.Id > 0 )
             {
                 Assert.IsTrue(true);
@@ -144,7 +145,7 @@ namespace TransApp.Tests.Address
 
             try
             {
-              await _addressesService.SaveAddress(currentAdrress);
+              await _addressesService.SaveAddress(1000,currentAdrress);
             }
             catch (Exception ex)
             {
@@ -169,7 +170,7 @@ namespace TransApp.Tests.Address
             try
             {
                 List<AddressModel> currentAddressModel =
-                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1});
+                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1,StartItem = 1,Amount = 1});
             }
             catch 
             {

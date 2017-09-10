@@ -179,16 +179,18 @@ namespace TransApp.Persistence.Repository
             return lookup.Values.ToList();
         }
 
-        public async Task SaveAddress(Address currentAddress, IDbTransaction transaction = null)
+        public async Task SaveAddress(int currentUserId, Address currentAddress, IDbTransaction transaction = null)
         {
             if (currentAddress != null)
             {
                 currentAddress.DateModified = DateTime.Now;
+                currentAddress.UserIdModified = currentUserId;
                 if (currentAddress.Id <= 0)
                 {
                     try
                     {
                         currentAddress.DateCreated = DateTime.Now;
+                        currentAddress.UserIdCreated = currentUserId;
                         currentAddress.Id = await AddAsync(currentAddress, transaction);
                     }
                     catch (Exception ex)
@@ -358,8 +360,7 @@ where 1=1");
             {
                 sb.Append(" and Address.CustomerId=" + filter.CustomerId.Value);
             }
-
-            return sb.ToString();
+           return sb.ToString();
         }
     }
 }

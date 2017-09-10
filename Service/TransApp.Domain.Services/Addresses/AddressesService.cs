@@ -205,7 +205,7 @@ namespace TransApp.Domain.Services.Addresses
             };
 
             var transaction = _unitOfWork.BeginTransaction();
-            await _unitOfWork.AddressesRepository.SaveAddress(dest, transaction);
+            await _unitOfWork.AddressesRepository.SaveAddress(userId, dest, transaction);
             currentAdrress.Id = dest.Id;
             if (currentAdrress.Availabilities != null)
             {
@@ -221,6 +221,7 @@ namespace TransApp.Domain.Services.Addresses
                             await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
                         }
                         aAvailability.DateModified = DateTime.Now;
+                        aAvailability.UserIdModified = userId;
                         if (aAvailability.Id <= 0)
                         {
                             if (currentAdrress.CommonAvailability)
@@ -228,6 +229,7 @@ namespace TransApp.Domain.Services.Addresses
                                 aAvailability.Day = 0;
                             }
                             aAvailability.DateCreated = DateTime.Now;
+                            aAvailability.UserIdCreated = userId;
                             aAvailability.AddressId = dest.Id;
                             aAvailabilityModel.Id =
                                 await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
@@ -251,10 +253,12 @@ namespace TransApp.Domain.Services.Addresses
                     if (aFacility != null)
                     {
                         aFacility.DateModified = DateTime.Now;
+                        aFacility.UserIdModified = userId;
                         if (aFacility.Id <= 0)
                         {
                             aFacility.DateCreated = DateTime.Now;
                             aFacility.AddressId = dest.Id;
+                            aFacility.UserIdCreated = userId;
                             aFacilityModel.Id =
                                 await _unitOfWork.AddressFacilityRepository.AddAsync(aFacility, transaction);
                         }
@@ -274,10 +278,12 @@ namespace TransApp.Domain.Services.Addresses
                     if (aRequirement != null)
                     {
                         aRequirement.DateModified = DateTime.Now;
+                        aRequirement.UserIdModified = userId;
                         if (aRequirement.Id <= 0)
                         {
                             aRequirement.DateCreated = DateTime.Now;
                             aRequirement.AddressId = dest.Id;
+                            aRequirement.UserIdCreated = userId;
                             aRequirementModel.Id =
                                 await _unitOfWork.AddressRequirementRepository.AddAsync(aRequirement, transaction);
                         }
@@ -296,10 +302,12 @@ namespace TransApp.Domain.Services.Addresses
                     if (aTruck != null)
                     {
                         aTruck.DateModified = DateTime.Now;
+                        aTruck.UserIdModified = userId;
                         if (aTruck.Id <= 0)
                         {
                             aTruck.DateCreated = DateTime.Now;
                             aTruck.AddressId = dest.Id;
+                            aTruck.UserIdCreated = userId;
                             aTruckModel.Id = await _unitOfWork.AddressTruckRepository.AddAsync(aTruck, transaction);
                         }
                         else
