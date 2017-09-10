@@ -14,7 +14,7 @@ export class HelperService {
             return ComponentStateType.add;
         }
         else if (url.indexOf('-edit') >= 0) {
-            return ComponentStateType.add;
+            return ComponentStateType.edit;
         }
         else if (url.indexOf('-edit') >= 0) {
             return ComponentStateType.display;

@@ -58,6 +58,7 @@ namespace TransApp.Domain.Services.Addresses
                     Street = currentAdrress.Address.Street1,
                     StreetNumber = currentAdrress.Address.StreetNumber,
                     StateCode = currentAdrress.Address.StateCode,
+                    ZipCode = currentAdrress.Address.ZipCode
                 };
                 if (currentAdrress.Address.UserIdCreated.HasValue)
                 {

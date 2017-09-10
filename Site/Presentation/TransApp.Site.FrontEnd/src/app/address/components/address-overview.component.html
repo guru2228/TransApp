@@ -1,4 +1,4 @@
-<div class="main-content">
+<div #maincontent class="main-content">
     <div class="container-fluid">
 
         <div class="row">
@@ -16,7 +16,7 @@
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary">(+) Create new address</button>
+        <button class="btn btn-primary" [routerLink]="['/address-add']">(+) Create a new address</button>
 
         <div class="row">
             <div class="col-md-12">
@@ -35,25 +35,25 @@
                                 </thead>
                                 <tbody>
 
-                                    <ng-container *ngFor="let addressRow of addressModel; let rowindex = index">
+                                    <ng-container *ngFor="let addressRow of componentModel; let rowindex = index">
                                         <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
                                             <td>{{addressRow.address.name}}</td>
-                                            <td>{{addressRow.address.userCreated}}</td>
+                                            <td>{{addressRow.address.createdBy}}</td>
                                             <td>{{addressRow.address.phone}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="addressRow.viewActions">
                                             <td id="actionsRowContent" colspan="3" align="center">
-                                                <button class="btn" (click)="onClickEditAddress(addressRow)">
+                                                <button class="btn btn-warning" (click)="onClickEditAddress(addressRow)">
                                                             <span class="btn-label">
-                                                                <i class="material-icons">keyboard_arrow_left</i>
+                                                                <i class="material-icons">border_color</i>
                                                             </span>
-                                                            Edit address
+                                                            Edit shipment
                                                         </button>
-                                                <button class="btn">
+                                                <button class="btn btn-danger" (click)="onClickDeleteAddress(addressRow.address.id)">
                                                             Delete address
                                                             <span class="btn-label btn-label-right">
-                                                                <i class="material-icons">keyboard_arrow_right</i>
+                                                                <i class="material-icons">delete_forever</i>
                                                             </span>
                                                         </button>
                                             </td>

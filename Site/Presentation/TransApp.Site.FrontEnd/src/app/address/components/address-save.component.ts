@@ -1,5 +1,5 @@
-import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
-import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { Component, OnInit, ViewChild, ElementRef, NgZone, AfterViewInit } from '@angular/core';
+import { NgForm , FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 
 import { Observable } from "rxjs/Rx";
 
@@ -30,7 +30,8 @@ declare var $: any;
     templateUrl: './address-save.component.html'
 })
 
-export class AddressSaveComponent {
+export class AddressSaveComponent implements OnInit, AfterViewInit {
+
 
     /** main component model */
     componentModel: AddressModel;
@@ -44,6 +45,17 @@ export class AddressSaveComponent {
 
     currentUser:ApplicationUser;
     
+    /** 
+     * used to set map zoom mode 
+     *  1: World
+        5: Landmass/continent
+        10: City
+        15: Streets
+        20: Buildings
+     * 
+    */
+    private zoomLevel = 15;
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
@@ -58,7 +70,6 @@ export class AddressSaveComponent {
     ) { }
 
     ngOnInit() {
-        debugger;
         this.currentUser = this.authenticationService.getCurrentUser();
 
         //create search FormControl
@@ -66,7 +77,6 @@ export class AddressSaveComponent {
 
         // get component state
         this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
-
         // load required data
         this.loadComponentModel(this.componentState).subscribe(modelLoaded => {
             if (modelLoaded) {
@@ -74,28 +84,32 @@ export class AddressSaveComponent {
                     if (paramsDataLoaded) {
                         this.initDatetimePicker();
                         this.initSelectionSlider();
-                        this.register_googleMapsPlaceHandler();
+                        this.register_googleMapsPlaceSearchHandler();
                     }
                 })
             }
         });
     }
-    
-    /**
-     * save an address
-     */
-    save() {
-        // call API to save customer
-        console.log(this.componentModel);
-        this.addressService.save(this.componentModel).subscribe(result => {
-            alert("saved");
-            if(this.componentState == ComponentStateType.add){
- this.router.navigate(['/address-overview']);
-            }
-        }, error => {
 
-        });
+    ngAfterViewInit(): void {
+        
     }
+    
+    save(model: AddressModel, isValid: boolean) {
+        debugger;
+        // call API to save customer
+        console.log(model, isValid);
+        if (isValid) {
+            this.addressService.save(this.componentModel).subscribe(result => {
+                alert("saved");
+                if(this.componentState == ComponentStateType.add){
+                    this.router.navigate(['/address-overview']);
+                }
+            }, error => {
+    
+            });
+        }
+      }
 
 
     /**
@@ -104,8 +118,8 @@ export class AddressSaveComponent {
      */
     private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
         return Observable.create(observer => {
+            debugger
             if (componentState == ComponentStateType.add) {
-                debugger;
                 this.componentModel = new AddressModel();
                 this.componentModel.id = -1;
                 this.componentModel.customerId  = this.currentUser.customerId;
@@ -114,13 +128,23 @@ export class AddressSaveComponent {
                 this.componentModel.requirements = [];
                 this.componentModel.trucks = [];
                 observer.next(true);
+
+                        //set current position
+                this.setMapCurrentLocation();
             }
             else {
                 let addressId = 0;
                 this.route.params.forEach((params: Params) => {
                     addressId = params['id'];
                     this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
-                        this.componentModel = result;
+                        debugger;
+                        this.componentModel = result as AddressModel;
+                        var self = this;
+                        // settimeout used to let angular template engine to render map element (everything is displayed only when component model )
+                    setTimeout(function() {
+                        self.createMap(self.componentModel.location.latitude, self.componentModel.location.longitude);
+                    }, 500);
+
                         observer.next(true);
                     }, error => {
                         this.errorHandler.handleError(error);
@@ -142,6 +166,7 @@ export class AddressSaveComponent {
                 this.parametersDataService.getTruks(this.translateService.currentLanguage),
             ])
                 .subscribe(data => {
+                    debugger;
                     this.updateModelWithFacilities(data[0] as any);
                     this.updateModelWithRequirements(data[1] as any);
                     this.updateModelWithTrucks(data[2] as any);
@@ -161,13 +186,10 @@ export class AddressSaveComponent {
      * Register google maps place handler.
      * When palce is changed, handler to update model is registered
      */
-    private register_googleMapsPlaceHandler() {
-        //set current position
-        this.getLocationCurrentPosition();
+    private register_googleMapsPlaceSearchHandler() {
         //load Places Autocomplete
         this.mapsAPILoader.load().then(() => {
             // create map
-            this.createMap();
             let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
                 // types: ["address"]
             });
@@ -183,16 +205,17 @@ export class AddressSaveComponent {
                     //set latitude, longitude and zoom
                     this.updateLocationModel(place);
 
-                    this.createMap();
+                    this.createMap(this.componentModel.location.latitude, this.componentModel.location.longitude);
 
-                    this.componentModel.location.latitudeStr = this.componentModel.location.latitude.toFixed(2);
-                    this.componentModel.location.longitudeStr = this.componentModel.location.longitude.toFixed(2);
+                    //this.componentModel.location.latitudeStr = this.componentModel.location.latitude.toFixed(2);
+                    //this.componentModel.location.longitudeStr = this.componentModel.location.longitude.toFixed(2);
 
                 });
             });
 
         });
     }
+
 
     /**
      *Get each component of the address from the place details
@@ -246,6 +269,7 @@ export class AddressSaveComponent {
 
         if (place.formatted_phone_number) {
             this.componentModel.location.phone = place.formatted_phone_number;
+            this.componentModel.phone = place.formatted_phone_number;
         }
 
         if (place.opening_hours) {
@@ -260,41 +284,46 @@ export class AddressSaveComponent {
     /**
      * Get current position
      */
-    private getLocationCurrentPosition() {
-        this.componentModel.location.latitude = 50.82;
-        this.componentModel.location.longitude = 3.26;
+    private setMapCurrentLocation() {
+        let latitude = 50.82;
+        let longitude = 3.26;
 
         if ("geolocation" in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
-                this.componentModel.location.latitude = position.coords.latitude;
-                this.componentModel.location.longitude = position.coords.longitude;
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
             }, function () {
-                this.componentModel.location.latitude = -34.397;
-                this.componentModel.location.longitude = 150.644;
+                latitude = -34.397;
+                longitude = 150.644;
             });
         }
+
+        this.createMap(latitude, longitude);
+        
 
     }
 
     /**
      * Create map based on address model
      */
-    private createMap() {
-        var myLatlng = new google.maps.LatLng(this.componentModel.location.latitude, this.componentModel.location.longitude);
-        var mapOptions = {
-            zoom: this.componentModel.location.mapZoom,
-            center: myLatlng,
-            scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
-        }
+    private createMap(latitude:number, longitude:number) {
+        this.mapsAPILoader.load().then(() => {
+            var myLatlng = new google.maps.LatLng(latitude, longitude);
+            var mapOptions = {
+                zoom: this.zoomLevel,
+                center: myLatlng,
+                scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
+            }
 
-        var map = new google.maps.Map(document.getElementById("regularMap"), mapOptions);
+            var map = new google.maps.Map(document.getElementById("regularMap"), mapOptions);
 
-        var marker = new google.maps.Marker({
-            position: myLatlng,
-            title: "Map"
+            var marker = new google.maps.Marker({
+                position: myLatlng,
+                title: "Map"
+            });
+
+            marker.setMap(map);
         });
-
-        marker.setMap(map);
     }
 
     /**
@@ -302,15 +331,15 @@ export class AddressSaveComponent {
      * @param paramsList 
      */
     private updateModelWithFacilities(paramsList: FacilityModel[]) {
-        ///// remove facilities from address that are no longer in facility params list
-        this.componentModel.facilities = this.componentModel.facilities.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+        ///// remove items from address that are no longer in facility params list
+        this.componentModel.facilities = this.componentModel.facilities.filter(item => paramsList.filter(paramitem => paramitem.id == item.facilityId).length > 0);
 
-        // update component model facilities
+        // update component model 
         for (let i = 0; i < paramsList.length; i++) {
-            let existModel = this.componentModel.facilities.find(item => item.id == paramsList[i].id);
+            let paramModel = this.componentModel.facilities.find(item => item.facilityId == paramsList[i].id);
             let modelItem=null;
-            if (existModel) {
-                modelItem = existModel[0];
+            if (paramModel) {
+                modelItem = paramModel;
                 modelItem.description = paramsList[i].description
                 modelItem.iconName = paramsList[i].iconName
             }
@@ -333,14 +362,14 @@ export class AddressSaveComponent {
      */
     private updateModelWithRequirements(paramsList: RequirementModel[]) {
         ///// remove facilities from address that are no longer in facility params list
-        this.componentModel.requirements = this.componentModel.requirements.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+        this.componentModel.requirements = this.componentModel.requirements.filter(item => paramsList.filter(paramitem => paramitem.id == item.requirementId).length > 0);
 
         // update component model requirements
         for (let i = 0; i < paramsList.length; i++) {
-            let existModel = this.componentModel.requirements.find(item => item.id == paramsList[i].id);
+            let paramModel = this.componentModel.requirements.find(item => item.requirementId == paramsList[i].id);
             let modelItem=null;
-            if (existModel) {
-                modelItem = existModel[0];
+            if (paramModel) {
+                modelItem = paramModel;
                 modelItem.description = paramsList[i].description;
                 modelItem.iconName = paramsList[i].iconName;
             }
@@ -363,14 +392,14 @@ export class AddressSaveComponent {
      */
     private updateModelWithTrucks(paramsList: TruckModel[]) {
         ///// remove facilities from address that are no longer in facility params list
-        this.componentModel.trucks = this.componentModel.trucks.filter(adritem => paramsList.filter(paramitem => paramitem.id == adritem.id).length > 0);
+        this.componentModel.trucks = this.componentModel.trucks.filter(item => paramsList.filter(paramitem => paramitem.id == item.truckId).length > 0);
 
         // update component model trucks
         for (let i = 0; i < paramsList.length; i++) {
-            let existModel = this.componentModel.trucks.find(item => item.id == paramsList[i].id);
+            let paramModel = this.componentModel.trucks.find(item => item.truckId == paramsList[i].id);
             let modelItem=null;
-            if (existModel) {
-                modelItem = existModel[0];
+            if (paramModel) {
+                modelItem = paramModel;
                 modelItem.description = paramsList[i].description;
                 modelItem.iconName = paramsList[i].iconName;
             }

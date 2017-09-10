@@ -1,6 +1,7 @@
 
 export enum ComponentStateType{
-    display = 0,
-    add =1,
-    edit =2
+    add =0,
+    edit =1,
+    display = 2
+    
 }

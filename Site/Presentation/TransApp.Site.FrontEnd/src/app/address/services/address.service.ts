@@ -22,8 +22,8 @@ export class AddressService {
     get(id: number, language: string): Observable<AddressModel> {
         return this.http.get(this.serviceUrl +
             'get' +
-            '/' +
-            language)
+            '/' + id + 
+            '/' + language)
             .map((res: Response) => res.json())
             .catch(this.errorHandler.throwError);
     }
@@ -47,7 +47,7 @@ export class AddressService {
     }
 
     /**
-     * Save biometrics
+     * Save address
      * @param medicalEncryptedData 
      * @param componentName 
      * @param language 
@@ -62,5 +62,19 @@ export class AddressService {
             { headers })
             .map(response => (response).json())
             .catch(this.errorHandler.throwError);
+    }
+
+     /**
+     * Delete address
+     * @param medicalEncryptedData 
+     * @param componentName 
+     * @param language 
+     * @param clinicalNote 
+     */
+    delete(addressId: number) {
+        let headers = new Headers({ 'Content-Type': 'application/json' });
+
+        return this.http.delete(this.serviceUrl + 'delete/' + addressId)
+            .map(response => (response).json());
     }
 }
