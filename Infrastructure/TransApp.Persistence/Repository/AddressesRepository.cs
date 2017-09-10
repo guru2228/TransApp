@@ -184,12 +184,12 @@ namespace TransApp.Persistence.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<List<Address>> GetAll(FilterAddress filter)
+        public async Task<List<AddressSigleDto>> GetAll(FilterAddress filter)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                return (await cn.QueryAsync<Address>(GetAddressQueryFiltered(filter))).ToList();
+                return (await cn.QueryAsync<AddressSigleDto>(GetAddressQueryFiltered(filter))).ToList();
             }
         }
 
@@ -419,7 +419,12 @@ where 1=1");
       ,[Address].[CountryCode]
       ,[Address].[CityCode]
       ,[Address].[StateCode]
-      ,[Address].[StreetNumber] from Address 
+      ,[Address].[StreetNumber] 
+      ,isnull(UserCreatedTable.FirstName,'') + ' '+isnull(UserCreatedTable.LastName,'') as UserCreated
+	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
+from Address 
+left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Address.UserIdCreated
+left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Address.UserIdModified
 where 1=1");
             if (filter.CustomerId.HasValue)
             {

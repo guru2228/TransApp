@@ -176,7 +176,7 @@ namespace TransApp.Domain.Services.Addresses
             List<AddressModel> result = new List<AddressModel>();
             if (addresses != null)
             {
-                foreach (Address currentAdrress in addresses)
+                foreach (AddressSigleDto currentAdrress in addresses)
                 {
                     AddressModel address = new AddressModel
                     {
@@ -191,7 +191,8 @@ namespace TransApp.Domain.Services.Addresses
                         DateCreated = currentAdrress.DateCreated,
                         UserIdModified = currentAdrress.UserIdModified,
                         DateModified = currentAdrress.DateModified,
-
+                        UserCreated  = currentAdrress.UserCreated,
+                        UserModified = currentAdrress.UserModified,
                     };
                     address.Location = new AddressLocationModel
                     {
