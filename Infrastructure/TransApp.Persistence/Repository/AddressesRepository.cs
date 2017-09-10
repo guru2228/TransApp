@@ -179,6 +179,27 @@ namespace TransApp.Persistence.Repository
             return lookup.Values.ToList();
         }
 
+        /// <summary>
+        /// Data from Address table filtered
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public async Task<List<Address>> GetAll(FilterAddress filter)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                cn.Open();
+                return (await cn.QueryAsync<Address>(GetAddressQueryFiltered(filter))).ToList();
+            }
+        }
+
+        /// <summary>
+        /// Save
+        /// </summary>
+        /// <param name="currentUserId"></param>
+        /// <param name="currentAddress"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
         public async Task SaveAddress(int currentUserId, Address currentAddress, IDbTransaction transaction = null)
         {
             if (currentAddress != null)
@@ -288,7 +309,7 @@ where Address.Id = " + id);
         private string GetQueryFiltered(FilterAddress filter)
         {
             var sb = new StringBuilder();
-            sb.Append(@"select 
+            sb.Append(@" select 
        [Address].[Id]
       ,[Address].[CustomerId]
       ,[Address].[Name]
@@ -360,7 +381,66 @@ where 1=1");
             {
                 sb.Append(" and Address.CustomerId=" + filter.CustomerId.Value);
             }
-           return sb.ToString();
+
+            return sb.ToString();
+        }
+
+        private string GetAddressQueryFiltered(FilterAddress filter)
+        {
+            if (filter.StartItem < 0)
+            {
+                filter.StartItem = 0;
+            }
+            if (filter.Amount < 0)
+            {
+                filter.Amount = 9999;
+            }
+            var sb = new StringBuilder();
+            sb.Append(@"SELECT  RowConstrainedResult.* from (select  ROW_NUMBER() OVER 
+( ORDER BY Address.Name ) AS RowNum
+      ,[Address].[Id]
+      ,[Address].[CustomerId]
+      ,[Address].[Name]
+      ,[Address].[Street1]
+      ,[Address].[Street2]
+      ,[Address].[ZipCode]
+      ,[Address].[City]
+      ,[Address].[Country]
+      ,[Address].[ContactPerson]
+      ,[Address].[Email]
+      ,[Address].[Phone]
+      ,[Address].[Remark]
+      ,[Address].[UserIdCreated]
+      ,[Address].[DateCreated]
+      ,[Address].[UserIdModified]
+      ,[Address].[DateModified]
+      ,[Address].[Latitude]
+      ,[Address].[Longitude]
+      ,[Address].[CountryCode]
+      ,[Address].[CityCode]
+      ,[Address].[StateCode]
+      ,[Address].[StreetNumber] from Address 
+where 1=1");
+            if (filter.CustomerId.HasValue)
+            {
+                sb.Append(" and Address.CustomerId=" + filter.CustomerId.Value);
+            }
+            if (!string.IsNullOrEmpty(filter.CustomFilter))
+            {
+                sb.Append(" AND (Address.Name like '%" + filter.CustomFilter + "%'");
+                sb.Append(" OR Address.[Street1] like '%" + filter.CustomFilter + "%'");
+                sb.Append(" OR Address.[Street2] like '%" + filter.CustomFilter + "%'");
+                sb.Append(" OR Address.City like '%" + filter.CustomFilter + "%'");
+                sb.Append(" OR Address.Country like '%" + filter.CustomFilter + "%'");
+                sb.Append(" OR Address.Phone like '%" + filter.CustomFilter + "%')");
+            }
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                sb.Append(" and Address.Name like '%" + filter.Name + "%'");
+            }
+            sb.Append(@" ) AS RowConstrainedResult
+WHERE  RowNum between " + filter.StartItem + @" and " + filter.StartItem + filter.Amount + @" ORDER BY RowNum ");
+            return sb.ToString();
         }
     }
 }
