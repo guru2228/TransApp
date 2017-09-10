@@ -16,8 +16,8 @@ namespace TransApp.Domain.Services.Shipment
         /// </summary>
         /// <param name="ShipmentId"></param>
         /// <returns></returns>
-        Task<ShipmentFullModel> Get(int id);
+        Task<ShipmentModel> Get(int id);
 
-        Task<ShipmentFullModel> GetShipmentFiltered(FilterAddress filter);
+        Task<ShipmentModel> GetShipmentFiltered(FilterAddress filter);
     }
 }

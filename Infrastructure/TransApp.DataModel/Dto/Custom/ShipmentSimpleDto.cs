@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace TransApp.Domain.Shipment
+namespace TransApp.DataModel.Dto.Custom
 {
-    public class ShipmentModel
+    public class ShipmentSimpleDto
     {
         public int Id { get; set; }
 
@@ -69,18 +69,8 @@ namespace TransApp.Domain.Shipment
 
         public int? UserIdModified { get; set; }
 
-        public string UserModified { get; set; }
-
-        public string UserCreated { get; set; }
-
         public DateTime? DateModified { get; set; }
-        public List<ShipmentDetailModel> ShipmentDetails { get; set; }
-        public List<ShipmentReceiverFacilityModel> ShipmentReceiverFacilities { get; set; }
-        public List<ShipmentReceiverRequirementModel> ShipmentReceiverRequirements { get; set; }
-        public List<ShipmentReceiverTruckModel> ShipmentReceiverTrucks { get; set; }
-        public List<ShipmentSenderFacilityModel> ShipmentSenderFacilities { get; set; }
-        public List<ShipmentSenderRequirementModel> ShipmentSenderRequirements { get; set; }
-        public List<ShipmentSenderTruckModel> ShipmentSenderTrucks { get; set; }
-        public List<ShipmentTransporterModel> ShipmentTransporters { get; set; }
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
     }
 }

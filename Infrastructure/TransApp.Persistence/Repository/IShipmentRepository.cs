@@ -17,7 +17,7 @@ namespace TransApp.Persistence.Repository
         /// <param name="id"></param>
         Task<ShipmentDto> GetShipmentById(int id);
 
-        Task<ShipmentDto> GetShipmentFiltered(FilterShipment filter);
+        Task<List<ShipmentSimpleDto>> GetShipmentFiltered(FilterShipment filter);
 
         Task SaveShipment(Shipment address, IDbTransaction transaction = null);
 

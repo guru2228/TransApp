@@ -25,7 +25,7 @@ namespace TransApp.Domain.Services.Shipment
             _cacheService = cacheService;
         }
 
-        public async Task<ShipmentFullModel> Get(int addressId)
+        public async Task<ShipmentModel> Get(int addressId)
         {
             //var currentShipment =
             //    await _unitOfWork.AddressesRepository.GetFullAddressById(addressId);
@@ -33,10 +33,10 @@ namespace TransApp.Domain.Services.Shipment
             //{
             //    return Mapper.Map<ShipmentDto, ShipmentFullModel>(currentShipment);
             //}
-            return new ShipmentFullModel();
+            return new ShipmentModel();
         }
 
-        public async Task<ShipmentFullModel> GetShipmentFiltered(FilterAddress filter)
+        public async Task<ShipmentModel> GetShipmentFiltered(FilterAddress filter)
         {
             //var currentAdrress =
             //    await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
@@ -44,7 +44,7 @@ namespace TransApp.Domain.Services.Shipment
             //{
             //    return Mapper.Map<ShipmentDto, ShipmentFullModel>(currentAdrress);
             //}
-            return new ShipmentFullModel();
+            return new ShipmentModel();
         }
 
         public async Task SaveShipment(AddressLocationModel address)
