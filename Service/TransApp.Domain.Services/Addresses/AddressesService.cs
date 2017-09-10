@@ -96,7 +96,7 @@ namespace TransApp.Domain.Services.Addresses
             return new AddressModel();
         }
 
-        public async Task<List<AddressModel>> GetAll(FilterAddress filter)
+        public async Task<List<AddressModel>> GetAllOld(FilterAddress filter)
         {
             var addresses =
                 await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
@@ -162,6 +162,49 @@ namespace TransApp.Domain.Services.Addresses
                     address.Trucks =
                         Mapper.Map<List<AddressTruck>, List<AddressTruckModel>>(
                             currentAdrress.AddressTrucks);
+                    result.Add(address);
+                }
+                return result;
+            }
+            return new List<AddressModel>();
+        }
+
+        public async Task<List<AddressModel>> GetAll(FilterAddress filter)
+        {
+            var addresses =
+                await _unitOfWork.AddressesRepository.GetAll(filter);
+            List<AddressModel> result = new List<AddressModel>();
+            if (addresses != null)
+            {
+                foreach (Address currentAdrress in addresses)
+                {
+                    AddressModel address = new AddressModel
+                    {
+                        Id = currentAdrress.Id,
+                        Name = currentAdrress.Name,
+                        CustomerId = currentAdrress.CustomerId,
+                        ContactPerson = currentAdrress.ContactPerson,
+                        Email = currentAdrress.Email,
+                        Phone = currentAdrress.Phone,
+                        Remark = currentAdrress.Remark,
+                        UserIdCreated = currentAdrress.UserIdCreated,
+                        DateCreated = currentAdrress.DateCreated,
+                        UserIdModified = currentAdrress.UserIdModified,
+                        DateModified = currentAdrress.DateModified,
+
+                    };
+                    address.Location = new AddressLocationModel
+                    {
+                        City = currentAdrress.City,
+                        CityCode = currentAdrress.CityCode,
+                        Country = currentAdrress.Country,
+                        CountryCode = currentAdrress.CountryCode,
+                        Latitude = currentAdrress.Latitude ?? 0,
+                        Longitude = currentAdrress.Longitude ?? 0,
+                        Street = currentAdrress.Street1,
+                        StreetNumber = currentAdrress.StreetNumber,
+                        StateCode = currentAdrress.StateCode,
+                    };
                     result.Add(address);
                 }
                 return result;

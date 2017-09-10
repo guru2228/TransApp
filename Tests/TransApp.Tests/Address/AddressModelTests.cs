@@ -131,6 +131,12 @@ namespace TransApp.Tests.Address
             requirement.UserIdCreated = 100000;
             requirement.UserIdModified = 999;
             listreRequirementModels.Add(requirement);
+            AddressRequirementModel requirement2 = new AddressRequirementModel();
+            requirement2.Active = true;
+            requirement2.RequirementId = 9;
+            requirement2.UserIdCreated = 100000;
+            requirement2.UserIdModified = 999;
+            listreRequirementModels.Add(requirement2);
             currentAdrress.Requirements = listreRequirementModels;
 
             //facilities
@@ -170,7 +176,7 @@ namespace TransApp.Tests.Address
             try
             {
                 List<AddressModel> currentAddressModel =
-                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1,StartItem = 1,Amount = 1});
+                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1,StartItem = 0,Amount = 5,CustomFilter = "stra"});
             }
             catch 
             {
