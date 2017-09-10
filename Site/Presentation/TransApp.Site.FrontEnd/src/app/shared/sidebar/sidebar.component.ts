@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentInit } from '@angular/core';
 import { ROUTES } from "app/shared/sidebar/sidebar-routes.config";
 import { AuthenticationService } from "app/authentication/services/authentication.service";
+import { Router, ActivatedRoute } from '@angular/router';
 
 
 declare var $:any;
@@ -15,7 +16,7 @@ var sidebarTimer;
 export class SidebarComponent implements OnInit{
     public menuItems: any[];
 
-    constructor(private authenticationService: AuthenticationService){
+    constructor(private authenticationService: AuthenticationService, private router:Router){
 
     }
     isNotMobileMenu(){
@@ -23,6 +24,18 @@ export class SidebarComponent implements OnInit{
             return false;
         }
         return true;
+    }
+
+    scroll() {
+        debugger;
+       // $("html, body").animate({ scrollTop: 0 }, "slow");
+
+     //  $('.main-content').scrollTop(0);
+  //   $('.main-content').perfectScrollbar('update');
+
+  //$('#mainPanel').perfectScrollbar(); 
+
+  //$('#mainPanel').scrollTop = 0;
     }
 
     ngOnInit() {

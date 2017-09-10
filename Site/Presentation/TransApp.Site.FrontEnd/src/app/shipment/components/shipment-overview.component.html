@@ -19,7 +19,7 @@
             </div>
             <div class="col-lg-3 col-md-6 col-sm-6 filterpanels ">
                 <div class="card card-stats">
-                    <div class="card-header" data-background-color="gray">
+                    <div class="card-header" data-background-color="red">
                         <i class="material-icons">equalizer</i>
                     </div>
                     <div class="card-content">
@@ -133,27 +133,27 @@
 
                                         <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
                                             <td id="actionsRowContent" colspan="7" align="center">
-                                                <button class="btn" (click)="onClickEditShipment(shipmentRow)">
+                                                <button class="btn btn-warning" (click)="onClickEditShipment(shipmentRow)">
                                                             <span class="btn-label">
-                                                                <i class="material-icons">keyboard_arrow_left</i>
+                                                                <i class="material-icons">border_color</i>
                                                             </span>
                                                             Edit shipment
                                                         </button>
-                                                <button class="btn">
+                                                <button class="btn btn-danger">
                                                             Delete shipment
                                                             <span class="btn-label btn-label-right">
-                                                                <i class="material-icons">keyboard_arrow_right</i>
+                                                                <i class="material-icons">delete_forever</i>
                                                             </span>
-                                                        </button>
-                                                <button class="btn btn-info">
-                                                            <span class="btn-label">
-                                                                <i class="material-icons">priority_high</i>
-                                                            </span>
-                                                            Assign to open market
                                                         </button>
                                                 <button class="btn btn-success">
                                                             <span class="btn-label">
-                                                                <i class="material-icons">check</i>
+                                                                <i class="material-icons">assignment_returned</i>
+                                                            </span>
+                                                            Assign to open market
+                                                        </button>
+                                                <button class="btn btn-info">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">assignment_turned_in</i>
                                                             </span>
                                                             Assign to haulier
                                                         </button>

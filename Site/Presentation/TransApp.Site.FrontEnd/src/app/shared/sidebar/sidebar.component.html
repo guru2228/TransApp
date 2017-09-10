@@ -114,7 +114,7 @@
     <div class="nav-container">
         <ul class="nav">
             <li *ngFor="let menuItem of menuItems" routerLinkActive="active">
-                <a [routerLink]="[menuItem.path]">
+                <a [routerLink]="[menuItem.path]" (click)="scroll()">
                     <i class="material-icons">{{menuItem.icon}}</i>
                     <p>{{menuItem.title}}</p>
                 </a>
