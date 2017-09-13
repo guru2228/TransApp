@@ -25,6 +25,7 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<PublicTranslationResource> _publicTranslationResourceRepository;
         private GenericRepository<Dictionary> _dictionaryRepository;
         private IAddressesRepository _addressesRepository;
+        private IShipmentRepository _shipmentRepository;
         private GenericRepository<AddressAvailability> _addressAvailabilitiesRepository;
         private GenericRepository<AddressFacility> _addressFacilityRepository;
         private GenericRepository<AddressRequirement> _addressRequirementRepository;
@@ -36,6 +37,14 @@ namespace TransApp.Persistence.UnitOfWork
         private IShipmentStatusRepository _shipmentStatusRepository;
         private ITruckRepository _truckRepository;
         private IPackTypeRepository _packTypeRepository;
+        private GenericRepository<ShipmentDetail> _shipmentDetailRepository;
+        private GenericRepository<ShipmentReceiverFacility> _shipmentReceiverFacilityRepository;
+        private GenericRepository<ShipmentReceiverRequirement> _shipmentReceiverRequirementRepository;
+        private GenericRepository<ShipmentReceiverTruck> _shipmentReceiverTruckRepository;
+        private GenericRepository<ShipmentSenderFacility> _shipmentSenderFacilityRepository;
+        private GenericRepository<ShipmentSenderRequirement> _shipmentSenderRequirementRepository;
+        private GenericRepository<ShipmentSenderTruck> _shipmentSenderTruckRepository;
+        private GenericRepository<ShipmentTransporter> _shipmentTransporterRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -329,6 +338,110 @@ namespace TransApp.Persistence.UnitOfWork
                     this._customerUserRepository = new GenericRepository<CustomerUser>("CustomerUser", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _customerUserRepository;
+            }
+        }
+
+        /// <summary>
+        /// AddressesRepository
+        /// </summary>
+        public IShipmentRepository ShipmentRepository
+        {
+            get
+            {
+                if (this._shipmentRepository == null)
+                {
+                    this._shipmentRepository = new ShipmentRepository("Shipment", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentRepository;
+            }
+        }
+
+        public GenericRepository<ShipmentDetail> ShipmentDetailRepository
+        {
+            get
+            {
+                if (this._shipmentDetailRepository == null)
+                {
+                    this._shipmentDetailRepository =  new GenericRepository<ShipmentDetail>("ShipmentDetail", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentDetailRepository;
+            }
+        }
+        public GenericRepository<ShipmentReceiverFacility> ShipmentReceiverFacilityRepository
+        {
+            get
+            {
+                if (this._shipmentReceiverFacilityRepository == null)
+                {
+                    this._shipmentReceiverFacilityRepository = new GenericRepository<ShipmentReceiverFacility>("ShipmentReceiverFacility", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentReceiverFacilityRepository;
+            }
+        }
+        public GenericRepository<ShipmentReceiverRequirement> ShipmentReceiverRequirementRepository
+        {
+            get
+            {
+                if (this._shipmentReceiverRequirementRepository == null)
+                {
+                    this._shipmentReceiverRequirementRepository = new GenericRepository<ShipmentReceiverRequirement>("ShipmentReceiverRequirement", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentReceiverRequirementRepository;
+            }
+        }
+        public GenericRepository<ShipmentReceiverTruck> ShipmentReceiverTruckRepository
+        {
+            get
+            {
+                if (this._shipmentReceiverTruckRepository == null)
+                {
+                    this._shipmentReceiverTruckRepository = new GenericRepository<ShipmentReceiverTruck>("ShipmentReceiverTruck", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentReceiverTruckRepository;
+            }
+        }
+        public GenericRepository<ShipmentSenderFacility> ShipmentSenderFacilityRepository
+        {
+            get
+            {
+                if (this._shipmentSenderFacilityRepository == null)
+                {
+                    this._shipmentSenderFacilityRepository = new GenericRepository<ShipmentSenderFacility>("ShipmentSenderFacility", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentSenderFacilityRepository;
+            }
+        }
+        public GenericRepository<ShipmentSenderRequirement> ShipmentSenderRequirementRepository
+        {
+            get
+            {
+                if (this._shipmentSenderRequirementRepository == null)
+                {
+                    this._shipmentSenderRequirementRepository = new GenericRepository<ShipmentSenderRequirement>("ShipmentSenderRequirement", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentSenderRequirementRepository;
+            }
+        }
+        public GenericRepository<ShipmentSenderTruck> ShipmentSenderTruckRepository
+        {
+            get
+            {
+                if (this._shipmentSenderTruckRepository == null)
+                {
+                    this._shipmentSenderTruckRepository = new GenericRepository<ShipmentSenderTruck>("ShipmentSenderTruck", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentSenderTruckRepository;
+            }
+        }
+        public GenericRepository<ShipmentTransporter> ShipmentTransporterRepository
+        {
+            get
+            {
+                if (this._shipmentTransporterRepository == null)
+                {
+                    this._shipmentTransporterRepository = new GenericRepository<ShipmentTransporter>("ShipmentTransporter", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentTransporterRepository;
             }
         }
     }

@@ -214,7 +214,7 @@ namespace TransApp.Persistence.Repository
             }
         }
 
-        public async Task SaveShipment(Shipment currentAddress, IDbTransaction transaction = null)
+        public async Task SaveShipment(int userId,Shipment currentShipment, IDbTransaction transaction = null)
         {
 
         }

@@ -19,7 +19,7 @@ namespace TransApp.Persistence.Repository
 
         Task<List<ShipmentSimpleDto>> GetShipmentFiltered(FilterShipment filter);
 
-        Task SaveShipment(Shipment address, IDbTransaction transaction = null);
+        Task SaveShipment(int userId, Shipment currentShipment, IDbTransaction transaction = null);
 
     }
 }

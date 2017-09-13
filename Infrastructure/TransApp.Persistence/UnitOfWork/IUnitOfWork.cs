@@ -99,6 +99,27 @@ namespace TransApp.Persistence.UnitOfWork
         /// </summary>
         GenericRepository<CustomerUser> CustomerUserRepository { get; }
 
+        /// <summary>
+        /// ShipmentRepository
+        /// </summary>
+        IShipmentRepository ShipmentRepository { get; }
+
+        GenericRepository<ShipmentDetail> ShipmentDetailRepository { get; }
+
+        GenericRepository<ShipmentReceiverFacility> ShipmentReceiverFacilityRepository { get; }
+
+        GenericRepository<ShipmentReceiverRequirement> ShipmentReceiverRequirementRepository { get; }
+
+        GenericRepository<ShipmentReceiverTruck> ShipmentReceiverTruckRepository { get; }
+
+        GenericRepository<ShipmentSenderFacility> ShipmentSenderFacilityRepository { get; }
+
+        GenericRepository<ShipmentSenderRequirement> ShipmentSenderRequirementRepository { get; }
+
+        GenericRepository<ShipmentSenderTruck> ShipmentSenderTruckRepository { get; }
+
+        GenericRepository<ShipmentTransporter> ShipmentTransporterRepository { get; }
+
         #endregion
 
     }

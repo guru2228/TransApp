@@ -18,6 +18,19 @@ namespace TransApp.Domain.Services.Shipment
         /// <returns></returns>
         Task<ShipmentModel> Get(int id);
 
-        Task<ShipmentModel> GetShipmentFiltered(FilterAddress filter);
+        /// <summary>
+        /// Get all shipments based on filter - only from main object
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<List<ShipmentModel>> GetAll(FilterShipment filter);
+
+        /// <summary>
+        /// Save currentShipment
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="currentShipment"></param>
+        /// <returns></returns>
+        Task<int> SaveShipment(int userId, ShipmentModel currentShipment);
     }
 }
