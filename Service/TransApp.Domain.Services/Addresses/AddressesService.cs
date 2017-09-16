@@ -276,18 +276,6 @@ namespace TransApp.Domain.Services.Addresses
                 {
                     _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id);
                 }
-                //else
-                //{
-                //    var countExistentAvailabilities =
-                //        (await _unitOfWork.AddressAvailabilitiesRepository.GetAllAsync("AddressId=" + currentAdrress.Id))
-                //            .Count();
-
-                //    if ((currentAdrress.CommonAvailability && countExistentAvailabilities != 1) ||
-                //        (!currentAdrress.CommonAvailability && countExistentAvailabilities != 7))
-                //    {
-                //        _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id);
-                //    }
-                //}
 
                 foreach (var aAvailabilityModel in currentAdrress.Availabilities)
                 {

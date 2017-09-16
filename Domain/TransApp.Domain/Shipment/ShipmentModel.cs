@@ -27,13 +27,13 @@ namespace TransApp.Domain.Shipment
 
         public string SenderRemark { get; set; }
 
-        public TimeSpan? SenderAmStart { get; set; }
+        public string SenderAmStart { get; set; }
 
-        public TimeSpan? SenderAmStop { get; set; }
+        public string SenderAmStop { get; set; }
 
-        public TimeSpan? SenderPmStart { get; set; }
+        public string SenderPmStart { get; set; }
 
-        public TimeSpan? SenderPmStop { get; set; }
+        public string SenderPmStop { get; set; }
 
         public int? ReceiverAddressId { get; set; }
 
@@ -43,13 +43,13 @@ namespace TransApp.Domain.Shipment
 
         public string ReceiverRemark { get; set; }
 
-        public TimeSpan? ReceiverAmStart { get; set; }
+        public string ReceiverAmStart { get; set; }
 
-        public TimeSpan? ReceiverAmStop { get; set; }
+        public string ReceiverAmStop { get; set; }
 
-        public TimeSpan? ReceiverPmStart { get; set; }
+        public string ReceiverPmStart { get; set; }
 
-        public TimeSpan? ReceiverPmStop { get; set; }
+        public string ReceiverPmStop { get; set; }
 
         public decimal? TotalPrice { get; set; }
 
@@ -59,7 +59,7 @@ namespace TransApp.Domain.Shipment
 
         public decimal? TotalWeight { get; set; }
 
-        public int? StatusId { get; set; }
+        public int? ShipmentStatusId { get; set; }
 
         public int? TransporterId { get; set; }
 

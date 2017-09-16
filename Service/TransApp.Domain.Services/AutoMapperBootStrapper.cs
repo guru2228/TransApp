@@ -40,6 +40,23 @@ namespace TransApp.Domain.Services
             CreateMap<AddressFacility, AddressFacilityModel>();
             CreateMap<AddressRequirement, AddressRequirementModel>();
             CreateMap<AddressTruck, AddressTruckModel>();
+
+            CreateMap<ShipmentDetailModel, ShipmentDetail>();
+            CreateMap<ShipmentDetail, ShipmentDetailModel>();
+            CreateMap<ShipmentTransporterModel, ShipmentTransporter>();
+            CreateMap<ShipmentTransporter, ShipmentTransporterModel>();
+            CreateMap<ShipmentReceiverFacilityModel, ShipmentReceiverFacility>();
+            CreateMap<ShipmentReceiverFacility, ShipmentReceiverFacilityModel>();
+            CreateMap<ShipmentReceiverRequirementModel, ShipmentReceiverRequirement>();
+            CreateMap<ShipmentReceiverRequirement, ShipmentReceiverRequirementModel>();
+            CreateMap<ShipmentReceiverTruckModel, ShipmentReceiverTruck>();
+            CreateMap<ShipmentReceiverTruck, ShipmentReceiverTruckModel>();
+            CreateMap<ShipmentSenderFacilityModel, ShipmentSenderFacility>();
+            CreateMap<ShipmentSenderFacility, ShipmentSenderFacilityModel>();
+            CreateMap<ShipmentSenderRequirementModel, ShipmentSenderRequirement>();
+            CreateMap<ShipmentSenderRequirement, ShipmentSenderRequirementModel>();
+            CreateMap<ShipmentSenderTruckModel, ShipmentSenderTruck>();
+            CreateMap<ShipmentSenderTruck, ShipmentSenderTruckModel>();
         }
     }
 }

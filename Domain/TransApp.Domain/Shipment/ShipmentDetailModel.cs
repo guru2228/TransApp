@@ -13,7 +13,7 @@ namespace TransApp.Domain.Shipment
 
         public decimal? Quantity { get; set; }
 
-        public int? TypeId { get; set; }
+        public int? PackTypeId { get; set; }
 
         public int? Length { get; set; }
 

@@ -1,19 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Dapper;
 using Microsoft.Extensions.Options;
-using TransApp.Application.SeedData;
-using TransApp.Core.CacheService;
 using TransApp.Domain.Addresses;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Framework.Filter;
 using TransApp.Persistence;
-using TransApp.Persistence.Repository;
 using TransApp.Persistence.UnitOfWork;
 
 namespace TransApp.Tests.Address
@@ -53,10 +48,6 @@ namespace TransApp.Tests.Address
             currentAdrress.UserIdModified = 999;
             currentAdrress.Location=new AddressLocationModel();
             currentAdrress.Location.Street = "Iași";
-           // currentAdrress.Availabilities=new EditableList<AddressAvailabilityModel>();
-           // currentAdrress.Trucks=new EditableList<AddressTruckModel>();
-           // currentAdrress.Requirements=new EditableList<AddressRequirementModel>();
-           // currentAdrress.Facilities=new EditableList<AddressFacilityModel>();
             await _addressesService.SaveAddress(1000,currentAdrress);
             if (currentAdrress.Id > 0 )
             {

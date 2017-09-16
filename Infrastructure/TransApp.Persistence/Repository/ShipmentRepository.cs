@@ -158,7 +158,7 @@ namespace TransApp.Persistence.Repository
                         cn
                             .QueryAsync
                             <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentDto
-                            >(GetQuery(id),
+                            >(GetQueryExtra(id),
                                 (shipment, shipmentSenderTruck, shipmentTransporter) =>
                                 {
                                     ShipmentDto entity;
@@ -214,9 +214,30 @@ namespace TransApp.Persistence.Repository
             }
         }
 
-        public async Task SaveShipment(int userId,Shipment currentShipment, IDbTransaction transaction = null)
+        public async Task SaveShipment(int currentUserId, Shipment currentShipment, IDbTransaction transaction = null)
         {
+            if (currentShipment != null)
+            {
+                currentShipment.DateModified = DateTime.Now;
+                currentShipment.UserIdModified = currentUserId;
+                if (currentShipment.Id <= 0)
+                {
+                    try
+                    {
+                        currentShipment.DateCreated = DateTime.Now;
+                        currentShipment.UserIdCreated = currentUserId;
+                        currentShipment.Id = await AddAsync(currentShipment, transaction);
+                    }
+                    catch (Exception ex)
+                    {
 
+                    }
+                }
+                else
+                {
+                    await UpdateAsync(currentShipment, transaction);
+                }
+            }
         }
 
         private string GetQuery(int id)

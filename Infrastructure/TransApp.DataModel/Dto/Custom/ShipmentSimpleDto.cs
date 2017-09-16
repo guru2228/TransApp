@@ -27,13 +27,13 @@ namespace TransApp.DataModel.Dto.Custom
 
         public string SenderRemark { get; set; }
 
-        public TimeSpan? SenderAmStart { get; set; }
+        public TimeSpan SenderAmStart { get; set; }
 
-        public TimeSpan? SenderAmStop { get; set; }
+        public TimeSpan SenderAmStop { get; set; }
 
-        public TimeSpan? SenderPmStart { get; set; }
+        public TimeSpan SenderPmStart { get; set; }
 
-        public TimeSpan? SenderPmStop { get; set; }
+        public TimeSpan SenderPmStop { get; set; }
 
         public int? ReceiverAddressId { get; set; }
 
@@ -43,13 +43,13 @@ namespace TransApp.DataModel.Dto.Custom
 
         public string ReceiverRemark { get; set; }
 
-        public TimeSpan? ReceiverAmStart { get; set; }
+        public TimeSpan ReceiverAmStart { get; set; }
 
-        public TimeSpan? ReceiverAmStop { get; set; }
+        public TimeSpan ReceiverAmStop { get; set; }
 
-        public TimeSpan? ReceiverPmStart { get; set; }
+        public TimeSpan ReceiverPmStart { get; set; }
 
-        public TimeSpan? ReceiverPmStop { get; set; }
+        public TimeSpan ReceiverPmStop { get; set; }
 
         public decimal? TotalPrice { get; set; }
 
