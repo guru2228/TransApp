@@ -171,8 +171,8 @@ namespace TransApp.Domain.Services.Shipment
 
                         result.Add(shipmentModel);
                     }
-                    return result;
                 }
+                return result;
             }
             return new List<ShipmentModel>();
         }

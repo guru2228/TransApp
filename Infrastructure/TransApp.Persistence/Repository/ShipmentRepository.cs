@@ -431,7 +431,7 @@ where [Shipment].Id =  " + id);
             }
             var sb = new StringBuilder();
             sb.Append(@"SELECT  RowConstrainedResult.* from (select  ROW_NUMBER() OVER 
-( ORDER BY Address.Name ) AS RowNum
+( ORDER BY Shipment.Id ) AS RowNum
       ,[Shipment].[Id]
       ,[Shipment].[Reference]
       ,[Shipment].[PoNumber]

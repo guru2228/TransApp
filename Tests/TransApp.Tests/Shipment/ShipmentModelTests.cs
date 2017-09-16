@@ -10,6 +10,7 @@ using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Shipment;
 using TransApp.Domain.Shipment;
+using TransApp.Framework.Filter;
 using TransApp.Persistence;
 using TransApp.Persistence.UnitOfWork;
 
@@ -224,6 +225,54 @@ namespace TransApp.Tests.Shipment
             {
                 
             }
+        }
+
+        [TestMethod]
+        public async Task Test_GetShipmentById_Is_Ok()
+        {
+            try
+            {
+                ShipmentModel currentShipmentModel =
+                    await _shipmentService.Get(14);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_GetShipmentAll_Is_Ok()
+        {
+            try
+            {
+                List<ShipmentModel> currentAddressModel =
+                    await _shipmentService.GetAll(new FilterShipment { CustomerId = 1, StartItem = 0, Amount = 5 });
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_DeleteShipment_Is_Ok()
+        {
+            try
+            {
+
+                ShipmentModel currentShipmentModel =
+                    await _shipmentService.Get(14);
+
+             //   await _shipmentService.(currentAddressModel);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
         }
     }
 }

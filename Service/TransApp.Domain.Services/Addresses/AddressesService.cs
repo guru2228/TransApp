@@ -85,10 +85,23 @@ namespace TransApp.Domain.Services.Addresses
                     {
                         Id = availability.Id,
                         AddressId = availability.AddressId,
-                        AmStart = new DateTime(availability.AmStart.Ticks).ToString("HH:mm"),
-                        AmStop = new DateTime(availability.AmStop.Ticks).ToString("HH:mm"),
-                        PmStart = new DateTime(availability.PmStart.Ticks).ToString("HH:mm"),
-                        PmStop = new DateTime(availability.PmStop.Ticks).ToString("HH:mm"),
+                        IsClosed = availability.IsClosed,
+                        AmStart =
+                            availability.AmStart.HasValue
+                                ? new DateTime(availability.AmStart.Value.Ticks).ToString("HH:mm")
+                                : string.Empty,
+                        AmStop =
+                            availability.AmStop.HasValue
+                                ? new DateTime(availability.AmStop.Value.Ticks).ToString("HH:mm")
+                                : string.Empty,
+                        PmStart =
+                            availability.PmStart.HasValue
+                                ? new DateTime(availability.PmStart.Value.Ticks).ToString("HH:mm")
+                                : string.Empty,
+                        PmStop =
+                            availability.PmStop.HasValue
+                                ? new DateTime(availability.PmStop.Value.Ticks).ToString("HH:mm")
+                                : string.Empty,
                         Day = availability.Day,
                         DateCreated = availability.DateCreated,
                         DateModified = availability.DateModified,
@@ -235,7 +248,7 @@ namespace TransApp.Domain.Services.Addresses
         {
             if (currentAdrress == null)
             {
-             throw  new HttpResponseException(HttpStatusCode.InternalServerError, "Error on save, model is null");
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Error on save, model is null");
             }
 
             var dest = new Address
@@ -283,17 +296,17 @@ namespace TransApp.Domain.Services.Addresses
                     {
                         Id = aAvailabilityModel.Id,
                         AddressId = aAvailabilityModel.AddressId,
-                        AmStart = TimeSpan.Parse(aAvailabilityModel.AmStart),
-                        AmStop = TimeSpan.Parse(aAvailabilityModel.AmStop),
-                        PmStart = TimeSpan.Parse(aAvailabilityModel.PmStart),
-                        PmStop = TimeSpan.Parse(aAvailabilityModel.PmStop),
                         Day = aAvailabilityModel.Day,
-                        DateCreated = aAvailabilityModel.DateCreated,
-                        DateModified = aAvailabilityModel.DateModified,
-                        UserIdCreated = aAvailabilityModel.UserIdCreated,
-                        UserIdModified = aAvailabilityModel.UserIdModified
+                        IsClosed = aAvailabilityModel.IsClosed,
                     };
-
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStart))
+                        aAvailability.AmStart = TimeSpan.Parse(aAvailabilityModel.AmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStop))
+                        aAvailability.AmStop = TimeSpan.Parse(aAvailabilityModel.AmStop);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStart))
+                        aAvailability.PmStart = TimeSpan.Parse(aAvailabilityModel.PmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStop))
+                        aAvailability.PmStop = TimeSpan.Parse(aAvailabilityModel.PmStop);
                     aAvailability.DateModified = DateTime.Now;
                     aAvailability.UserIdModified = userId;
                     if (aAvailability.Id <= 0)
@@ -397,12 +410,12 @@ namespace TransApp.Domain.Services.Addresses
         {
             if (currentAdrress != null)
             {
-                
+
                 Address dest = new Address
                 {
                     Id = currentAdrress.Id
                 };
-               
+
                 var transaction = _unitOfWork.BeginTransaction();
                 if (currentAdrress.Availabilities != null)
                 {
@@ -412,7 +425,7 @@ namespace TransApp.Domain.Services.Addresses
                             Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
                         if (aAvailability != null)
                         {
-                                await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
+                            await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
                         }
                     }
                 }

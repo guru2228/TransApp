@@ -11,6 +11,7 @@ namespace TransApp.Domain.Addresses
         public int Id { get; set; }
 
         public int? AddressId { get; set; }
+        public bool IsClosed { get; set; }
 
         public int? Day { get; set; }
 
