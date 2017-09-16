@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -45,7 +46,7 @@ namespace TransApp.Domain.Services.Addresses
                     DateCreated = currentAdrress.Address.DateCreated,
                     UserIdModified = currentAdrress.Address.UserIdModified,
                     DateModified = currentAdrress.Address.DateModified,
-
+                    CommonAvailability = currentAdrress.Address.CommonAvailability
                 };
                 result.Location = new AddressLocationModel
                 {
@@ -78,9 +79,23 @@ namespace TransApp.Domain.Services.Addresses
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
+
                 result.Availabilities =
-                    Mapper.Map<List<AddressAvailability>, List<AddressAvailabilityModel>>(
-                        currentAdrress.AddressAvailabilities);
+                    currentAdrress.AddressAvailabilities.Select(availability => new AddressAvailabilityModel
+                    {
+                        Id = availability.Id,
+                        AddressId = availability.AddressId,
+                        AmStart = new DateTime(availability.AmStart.Ticks).ToString("HH:mm"),
+                        AmStop = new DateTime(availability.AmStop.Ticks).ToString("HH:mm"),
+                        PmStart = new DateTime(availability.PmStart.Ticks).ToString("HH:mm"),
+                        PmStop = new DateTime(availability.PmStop.Ticks).ToString("HH:mm"),
+                        Day = availability.Day,
+                        DateCreated = availability.DateCreated,
+                        DateModified = availability.DateModified,
+                        UserIdCreated = availability.UserIdCreated,
+                        UserIdModified = availability.UserIdModified
+                    }).ToList();
+
                 result.Facilities =
                     Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
                         currentAdrress.AddressFacilities);
@@ -188,24 +203,26 @@ namespace TransApp.Domain.Services.Addresses
                         Email = currentAdrress.Email,
                         Phone = currentAdrress.Phone,
                         Remark = currentAdrress.Remark,
+                        Location = new AddressLocationModel
+                        {
+                            City = currentAdrress.City,
+                            CityCode = currentAdrress.CityCode,
+                            Country = currentAdrress.Country,
+                            CountryCode = currentAdrress.CountryCode,
+                            Latitude = currentAdrress.Latitude ?? 0,
+                            Longitude = currentAdrress.Longitude ?? 0,
+                            Street = currentAdrress.Street1,
+                            StreetNumber = currentAdrress.StreetNumber,
+                            StateCode = currentAdrress.StateCode,
+                            ZipCode = currentAdrress.ZipCode
+                        },
+
                         UserIdCreated = currentAdrress.UserIdCreated,
                         DateCreated = currentAdrress.DateCreated,
                         UserIdModified = currentAdrress.UserIdModified,
                         DateModified = currentAdrress.DateModified,
-                        UserCreated  = currentAdrress.UserCreated,
+                        UserCreated = currentAdrress.UserCreated,
                         UserModified = currentAdrress.UserModified,
-                    };
-                    address.Location = new AddressLocationModel
-                    {
-                        City = currentAdrress.City,
-                        CityCode = currentAdrress.CityCode,
-                        Country = currentAdrress.Country,
-                        CountryCode = currentAdrress.CountryCode,
-                        Latitude = currentAdrress.Latitude ?? 0,
-                        Longitude = currentAdrress.Longitude ?? 0,
-                        Street = currentAdrress.Street1,
-                        StreetNumber = currentAdrress.StreetNumber,
-                        StateCode = currentAdrress.StateCode,
                     };
                     result.Add(address);
                 }
@@ -221,7 +238,7 @@ namespace TransApp.Domain.Services.Addresses
              throw  new HttpResponseException(HttpStatusCode.InternalServerError, "Error on save, model is null");
             }
 
-            Address dest = new Address
+            var dest = new Address
             {
                 Id = currentAdrress.Id,
                 Name = currentAdrress.Name,
@@ -254,42 +271,62 @@ namespace TransApp.Domain.Services.Addresses
             currentAdrress.Id = dest.Id;
             if (currentAdrress.Availabilities != null)
             {
-                bool deleteRemainingWhenCommon = false;
-                foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
+                //// if all passed model has no id set, then clean existing availabilities
+                if (currentAdrress.Availabilities.All(item => item.Id == -1))
                 {
-                    AddressAvailability aAvailability =
-                        Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
-                    if (aAvailability != null)
+                    _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id);
+                }
+                //else
+                //{
+                //    var countExistentAvailabilities =
+                //        (await _unitOfWork.AddressAvailabilitiesRepository.GetAllAsync("AddressId=" + currentAdrress.Id))
+                //            .Count();
+
+                //    if ((currentAdrress.CommonAvailability && countExistentAvailabilities != 1) ||
+                //        (!currentAdrress.CommonAvailability && countExistentAvailabilities != 7))
+                //    {
+                //        _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id);
+                //    }
+                //}
+
+                foreach (var aAvailabilityModel in currentAdrress.Availabilities)
+                {
+                    var aAvailability = new AddressAvailability
                     {
-                        if (deleteRemainingWhenCommon && aAvailability.Id > 0)
+                        Id = aAvailabilityModel.Id,
+                        AddressId = aAvailabilityModel.AddressId,
+                        AmStart = TimeSpan.Parse(aAvailabilityModel.AmStart),
+                        AmStop = TimeSpan.Parse(aAvailabilityModel.AmStop),
+                        PmStart = TimeSpan.Parse(aAvailabilityModel.PmStart),
+                        PmStop = TimeSpan.Parse(aAvailabilityModel.PmStop),
+                        Day = aAvailabilityModel.Day,
+                        DateCreated = aAvailabilityModel.DateCreated,
+                        DateModified = aAvailabilityModel.DateModified,
+                        UserIdCreated = aAvailabilityModel.UserIdCreated,
+                        UserIdModified = aAvailabilityModel.UserIdModified
+                    };
+
+                    aAvailability.DateModified = DateTime.Now;
+                    aAvailability.UserIdModified = userId;
+                    if (aAvailability.Id <= 0)
+                    {
+                        if (currentAdrress.CommonAvailability)
                         {
-                            await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
+                            aAvailability.Day = 0;
                         }
-                        aAvailability.DateModified = DateTime.Now;
-                        aAvailability.UserIdModified = userId;
-                        if (aAvailability.Id <= 0)
-                        {
-                            if (currentAdrress.CommonAvailability)
-                            {
-                                aAvailability.Day = 0;
-                            }
-                            aAvailability.DateCreated = DateTime.Now;
-                            aAvailability.UserIdCreated = userId;
-                            aAvailability.AddressId = dest.Id;
-                            aAvailabilityModel.Id =
-                                await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
-                            if (currentAdrress.CommonAvailability)
-                            {
-                                deleteRemainingWhenCommon = true;
-                            }
-                        }
-                        else
-                        {
-                            await _unitOfWork.AddressAvailabilitiesRepository.UpdateAsync(aAvailability, transaction);
-                        }
+                        aAvailability.DateCreated = DateTime.Now;
+                        aAvailability.UserIdCreated = userId;
+                        aAvailability.AddressId = dest.Id;
+                        aAvailabilityModel.Id =
+                            await _unitOfWork.AddressAvailabilitiesRepository.AddAsync(aAvailability, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.AddressAvailabilitiesRepository.UpdateAsync(aAvailability, transaction);
                     }
                 }
             }
+
             if (currentAdrress.Facilities != null)
             {
                 foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
@@ -431,4 +468,6 @@ namespace TransApp.Domain.Services.Addresses
         }
     }
 }
+
+
 

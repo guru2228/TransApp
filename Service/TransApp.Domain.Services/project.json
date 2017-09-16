@@ -3,7 +3,8 @@
 
   "dependencies": {
     "AutoMapper": "5.1.1",
-    "NETStandard.Library": "1.6.0",
+    "NETStandard.Library": "1.6.1",
+    "System.Linq": "4.3.0",
     "TransApp.Core": "1.0.0-*",
     "TransApp.Domain": "1.0.0-*",
     "TransApp.Persistence": "1.0.0-*"

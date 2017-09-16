@@ -1,5 +1,5 @@
 ﻿import { Injectable } from '@angular/core';
-import { ComponentStateType } from "app/common/helper/component-state-type";
+import { ComponentStateType } from "app/shared/common/helper/component-state-type";
 
 @Injectable()
 export class HelperService {

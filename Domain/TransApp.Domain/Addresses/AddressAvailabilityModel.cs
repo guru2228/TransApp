@@ -14,13 +14,13 @@ namespace TransApp.Domain.Addresses
 
         public int? Day { get; set; }
 
-        public TimeSpan? AmStart { get; set; }
+        public string AmStart { get; set; }
 
-        public TimeSpan? AmStop { get; set; }
+        public string AmStop { get; set; }
 
-        public TimeSpan? PmStart { get; set; }
+        public string PmStart { get; set; }
 
-        public TimeSpan? PmStop { get; set; }
+        public string PmStop { get; set; }
 
         public int? UserIdCreated { get; set; }
 

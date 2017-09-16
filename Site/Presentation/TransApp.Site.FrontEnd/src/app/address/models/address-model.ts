@@ -1,14 +1,14 @@
-import { AddressAvailabilityModel } from "app/address/models/address-availability-model";
 import { AddressFacilityModel } from "app/address/models/address-facility-model";
 import { AddressRequirementModel } from "app/address/models/address-requirment-model";
 import { AddressTruckModel } from "app/address/models/address-truck-model";
 import { AddressLocationModel } from "app/address/models/address-location-model";
+import { AddressAvailabilityModel } from "app/shared/common/models/address-availability-model";
 
 export class AddressModel {
     public id: number;
     public customerId: number;
     public name: string;
-    public location: AddressLocationModel ;
+    public location: AddressLocationModel;
     public contactPerson: string;
     public email: string;
     public phone: string;
@@ -23,4 +23,5 @@ export class AddressModel {
     public facilities: Array<AddressFacilityModel>;
     public requirements: Array<AddressRequirementModel>;
     public trucks: Array<AddressTruckModel>;
+    public commonAvailability : boolean;
 }

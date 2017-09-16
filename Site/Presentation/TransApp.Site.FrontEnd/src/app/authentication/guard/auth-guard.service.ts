@@ -1,7 +1,7 @@
 ﻿import { Injectable }       from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, CanActivateChild } from '@angular/router';
 import { AuthenticationService } from "app/authentication/services/authentication.service";
-import { TranslateService } from "app/common/services/localization/translate.service";
+import { TranslateService } from "app/shared/common/services/localization/translate.service";
 
 
 /**

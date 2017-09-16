@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, AfterViewChecked, AfterContentInit } 
 import { ROUTES } from "app/shared/sidebar/sidebar-routes.config";
 import { AuthenticationService } from "app/authentication/services/authentication.service";
 import { Router, ActivatedRoute } from '@angular/router';
+import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
 
 
 declare var $:any;
@@ -16,6 +17,8 @@ var sidebarTimer;
 export class SidebarComponent implements OnInit{
     public menuItems: any[];
 
+currentUser: ApplicationUser;
+
     constructor(private authenticationService: AuthenticationService, private router:Router){
 
     }
@@ -27,7 +30,8 @@ export class SidebarComponent implements OnInit{
     }
 
     scroll() {
-        debugger;
+        var $main_panel = $('.main-panel');
+        $main_panel.scrollTop(100).perfectScrollbar('update');
        // $("html, body").animate({ scrollTop: 0 }, "slow");
 
      //  $('.main-content').scrollTop(0);
@@ -39,6 +43,8 @@ export class SidebarComponent implements OnInit{
     }
 
     ngOnInit() {
+        this.currentUser = this.authenticationService.getCurrentUser();
+        
         var isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
         if (isWindows){
            // if we are on windows OS we activate the perfectScrollbar function

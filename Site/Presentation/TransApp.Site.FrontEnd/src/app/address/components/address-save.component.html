@@ -158,7 +158,7 @@
                                 <label for="" class="control-label">
                                             Phone
                                         </label>
-                                <input type="text" required class="form-control" [(ngModel)]="componentModel.phone" id="phone" name="phone">
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.phone" id="phone" name="phone">
                             </div>
 
                             <div class="form-group label-floating">
@@ -171,7 +171,18 @@
                             <!-- Opening hours -->
                             <h3>Opening hours</h3>
                             <div class="form-group label-floating">
-                                <div id="sliderDouble" class="slider slider-info"></div>
+                                <div class="togglebutton">
+                                    <label>
+                                 <input type="checkbox" (click)="onCommonAvailabilityClick()"  [(ngModel)]="componentModel.commonAvailability"   name="commonAvailability" > Set the same interval for all week days
+                            </label>
+                                </div>
+                            </div>
+                            <div class="form-group label-floating" *ngFor="let availability of componentModel.availabilities">
+                                <span>
+                                           {{getDay(availability.day)}}
+                                </span>
+                                <!-- <div id="sliderDouble" class="slider slider-info"></div> -->
+                                <address-availability-slider [availability]="availability"></address-availability-slider>
                             </div>
 
                             <!-- Facilities -->
@@ -180,10 +191,11 @@
                                 <span class="input-group-addon">
                                         <i class="material-icons">{{facility.iconName}}</i>
                             </span>
+
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                       <input type="checkbox"  [(ngModel)]="facility.active"  [checked]="facility.active" name="facilityactive" > {{facility.description}}
+                                       <input type="checkbox"  [(ngModel)]="facility.active"  [checked]="facility.active" name="facilityactive_{{facility.facilityId}}" > {{facility.description}}
                                     </label>
                                     </div>
                                 </div>
@@ -209,7 +221,7 @@
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                         <input type="checkbox"  [(ngModel)]="truck.active"  [checked]="truck.active" name="truckactive" > {{truck.description}}
+                                         <input type="checkbox"  [(ngModel)]="truck.active"  [checked]="truck.active==true" name="truckactive_{{truck.truckId}}" > {{truck.description}}
                                     </label>
                                     </div>
                                 </div>
@@ -224,7 +236,7 @@
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                       <input type="checkbox"  [(ngModel)]="requirement.active"  [checked]="requirement.active" name="requirementactive"> {{requirement.description}}
+                                       <input type="checkbox"  [(ngModel)]="requirement.active"  [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
                                     </label>
                                     </div>
                                 </div>

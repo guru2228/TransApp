@@ -4,9 +4,9 @@ import 'rxjs/add/operator/toPromise';
 import { Observable }     from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { HttpService } from "app/common/services/httpService";
-import { Constants } from "app/common/constants";
-import { TranslationResource } from "app/common/services/localization/translationResource";
+import { HttpService } from "app/shared/common/services/httpService";
+import { Constants } from "app/shared/common/constants";
+import { TranslationResource } from "app/shared/common/services/localization/translationResource";
 
 @Injectable()
 export class TranslateService {

@@ -2,10 +2,11 @@ export class AddressAvailabilityModel {
     public id: number;
     public addressId: number;
     public day: number;
-    public amStart: Date;
-    public amStop: Date;
-    public pmStart: Date;
-    public pmStop: Date;
+    public amStart: string;
+    public amStop: string;
+    public pmStart: string;
+    public pmStop: string;
+
     public userIdCreated: number;
     public dateCreated: Date;
     public userIdModified: number;

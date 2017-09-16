@@ -15,7 +15,8 @@ import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
 
 
 import { MdModule } from "app/shared/md/md.module";
-import { CommonAppModule } from "app/common/common-app.module";
+import { CommonAppModule } from "app/shared/common/common-app.module";
+
 
 import { AuthenticationModule } from "app/authentication/authentication.module";
 import { FooterModule } from "app/shared/footer/footer.module";
@@ -35,7 +36,7 @@ import { AddressModule } from "app/address/address.module";
     AppRoutingModule,
     BrowserAnimationsModule,
 
-    CommonAppModule,
+
     AuthenticationModule,
     
     FooterModule,
@@ -43,6 +44,7 @@ import { AddressModule } from "app/address/address.module";
     SidebarModule,
     ShipmentModule,
     AddressModule,
+    CommonAppModule
   ],
   declarations: [
     AppComponent,

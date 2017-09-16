@@ -1,12 +1,12 @@
 ﻿import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Headers, Http, Response, RequestOptions } from '@angular/http';
-import { HttpService } from "app/common/services/httpService";
-import { Constants } from "app/common/constants";
-import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
-import { FacilityModel } from "app/common/models/facility-model";
-import { TruckModel } from "app/common/models/truck-model";
-import { RequirementModel } from "app/common/models/requirement-model";
+import { HttpService } from "app/shared/common/services/httpService";
+import { Constants } from "app/shared/common/constants";
+import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandler";
+import { FacilityModel } from "app/shared/common/models/facility-model";
+import { TruckModel } from "app/shared/common/models/truck-model";
+import { RequirementModel } from "app/shared/common/models/requirement-model";
 
 
 @Injectable()

@@ -1,10 +1,11 @@
 ﻿import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Headers, Http, Response, RequestOptions } from '@angular/http';
-import { HttpService } from "app/common/services/httpService";
-import { Constants } from "app/common/constants";
-import { GlobalErrorHandler } from "app/common/services/globalErrorHandler";
+import { HttpService } from "app/shared/common/services/httpService";
+import { Constants } from "app/shared/common/constants";
+import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandler";
 import { AddressModel } from "app/address/models/address-model";
+import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 
 
 @Injectable()
@@ -14,6 +15,16 @@ export class AddressService {
 
     constructor(public http: HttpService, private errorHandler: GlobalErrorHandler) { }
 
+        private addressModel = new BehaviorSubject<AddressModel>(null);
+        addressModelReceivedHandler$ = this.addressModel.asObservable();
+        sendAddressModel(value) {
+            this.addressModel.next(value);
+        }
+        // don't forget to reset handler
+        resetSendAddressModelHandler(){
+            this.addressModel.next(null);
+        }
+        
     /**
      * get biometrics
      * @param employeeEncryptedData 

@@ -66,7 +66,7 @@ namespace TransApp.Site.ApiControllers
         [HttpPost("save")]
         public async Task<int> Save([FromBody] AddressModel addressModel)
         {
-            var currentUser = _authenticationService.GetUser(User.Identity.Name);
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
             var addressId = await _addressesService.SaveAddress(currentUser.Id, addressModel);
             return addressId;
         }
@@ -80,7 +80,7 @@ namespace TransApp.Site.ApiControllers
         [HttpDelete("delete/{addressId}")]
         public async Task<bool> Delete(int addressId)
         {
-            var currentUser = _authenticationService.GetUser(User.Identity.Name);
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
             try
             {
                 var address = await this.Get(addressId, "EN");
@@ -111,7 +111,9 @@ namespace TransApp.Site.ApiControllers
             //TODO Bogdan implement this
             var addresses = await _addressesService.GetAll(new FilterAddress
             {
-                CustomerId = customerId
+                CustomerId = customerId,
+                StartItem = startItem,
+                Amount = numberOfRetrievedItems
             });
             return addresses;
         }

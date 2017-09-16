@@ -100,6 +100,13 @@ namespace TransApp.Persistence.Repository.Generic
         /// <summary> 
         /// Delete entity
         /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="transaction"></param>
+        void Delete(string predicate, IDbTransaction transaction = null);
+
+        /// <summary> 
+        /// Delete entity
+        /// </summary>
         /// <param name="entity"></param>
         /// <param name="transaction"></param>
         Task DeleteAsync(TEntity entity, IDbTransaction transaction = null);

@@ -9,7 +9,7 @@ import { RegisterComponent } from "app/authentication/components/register.compon
 import { AuthenticationService } from "app/authentication/services/authentication.service";
 import { AuthenticationObserver } from "app/authentication/services/authentication.observer";
 import { AuthGuard } from "app/authentication/guard/auth-guard.service";
-import { HttpService } from "app/common/services/httpService";
+import { HttpService } from "app/shared/common/services/httpService";
 
 @NgModule({
     imports: [

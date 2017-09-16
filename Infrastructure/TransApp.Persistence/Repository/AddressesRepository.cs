@@ -256,7 +256,8 @@ namespace TransApp.Persistence.Repository
       ,[Address].[CountryCode]
       ,[Address].[CityCode]
       ,[Address].[StateCode]
-      ,[Address].[StreetNumber],
+      ,[Address].[StreetNumber]
+      ,[Address].[CommonAvailability],
 SplitAvailability='',[AddressAvailability].[Id]
       ,[AddressAvailability].[AddressId]
       ,[AddressAvailability].[Day]

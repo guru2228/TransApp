@@ -1,7 +1,4 @@
-﻿
-
-
-using Dapper;
+﻿using Dapper;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
@@ -332,6 +329,26 @@ namespace TransApp.Persistence.Repository.Generic
                 {
                     cn.Open();
                     cn.Execute(sqlCommand, parameterValues);
+                }
+            }
+        }
+
+        /// <summary> 
+        /// Delete entity
+        /// </summary>
+        /// <param name="predicate"></param>
+        /// <param name="transaction"></param>
+        public void Delete(string predicate, IDbTransaction transaction = null)
+        {
+            var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE " + predicate);
+            if (transaction != null)
+                transaction.Connection.Execute(sqlCommand, transaction);
+            else
+            {
+                using (IDbConnection cn = new SqlConnection(ConnectionString))
+                {
+                    cn.Open();
+                    cn.Execute(sqlCommand);
                 }
             }
         }

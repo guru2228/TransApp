@@ -103,10 +103,10 @@ namespace TransApp.Tests.Address
             //avalability
             List<AddressAvailabilityModel> listAvailabilityModels = new EditableList<AddressAvailabilityModel>();
             AddressAvailabilityModel availability= new AddressAvailabilityModel();
-            availability.AmStart = new TimeSpan(11, 00, 00);
-            availability.AmStop = new TimeSpan(12, 00, 00);
-            availability.PmStart = new TimeSpan(15, 00, 00);
-            availability.PmStop = new TimeSpan(16, 00, 00);
+           // availability.AmStart = new TimeSpan(11, 00, 00);
+           // availability.AmStop = new TimeSpan(12, 00, 00);
+           // availability.PmStart = new TimeSpan(15, 00, 00);
+           // availability.PmStop = new TimeSpan(16, 00, 00);
             availability.Day = 1;
             availability.UserIdCreated = 100000;
             availability.UserIdModified = 999;

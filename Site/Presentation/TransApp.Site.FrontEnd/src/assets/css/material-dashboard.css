@@ -13267,9 +13267,6 @@ footer .btn {
         padding-left: 15px;
         padding-top: 8px;
     }
-    .card .form-horizontal .form-group {
-        margin-top: 0px;
-    }
     .card .form-horizontal .checkbox-radios {
         padding-bottom: 15px;
     }
@@ -14338,6 +14335,57 @@ footer .btn {
 
 .nofocusline {
     background-image: none!important;
+}
+
+.noUihandle {
+    border-color: #9c27b0;
+}
+
+.sliderinfo {
+    background-color: #00bcd4;
+}
+
+.slidersuccess {
+    background-color: #4caf50;
+}
+
+.sliderwarning {
+    background-color: #ff9800;
+}
+
+.sliderdanger {
+    background-color: #f44336;
+}
+
+.noUi-tooltip {
+    display: block;
+    position: absolute;
+    border-radius: 3px;
+    color: #000;
+    background: white;
+    padding: 0px;
+    text-align: center;
+}
+
+.noUi-horizontal .noUi-tooltip {
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+    left: 50%;
+    bottom: 120%;
+}
+
+.noUi-vertical .noUi-tooltip {
+    -webkit-transform: translate(0, -50%);
+    transform: translate(0, -50%);
+    top: 50%;
+    right: 120%;
+}
+
+
+/* CHANGED to render correctly in edit mode labels */
+
+.card .form-horizontal .form-group {
+    /*   margin-top: 0px;*/
 }
 
 

@@ -226,7 +226,6 @@ namespace TransApp.Domain.Services.Shipment
             currentShipment.Id = dest.Id;
             if (currentShipment.ShipmentDetails != null)
             {
-                bool deleteRemainingWhenCommon = false;
                 foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails)
                 {
                     ShipmentDetail aShipmentDetail =

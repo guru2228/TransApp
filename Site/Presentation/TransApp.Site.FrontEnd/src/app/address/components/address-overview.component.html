@@ -26,7 +26,7 @@
                     </div> -->
                     <div class="card-content table-full-width">
                         <!--<h4 class="card-title">Regular Table with Colors</h4>-->
-                        <div class="table-responsive">
+                        <div class="table-responsive" id="addresseGrid" *ngIf="componentModel && componentModel.length > 0">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
@@ -36,19 +36,20 @@
                                 <tbody>
 
                                     <ng-container *ngFor="let addressRow of componentModel; let rowindex = index">
-                                        <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
-                                            <td>{{addressRow.address.name}}</td>
-                                            <td>{{addressRow.address.createdBy}}</td>
-                                            <td>{{addressRow.address.phone}}</td>
+                                        <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="(addressRow.viewActions ||addressRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
+                                            <td style="width:30%;">{{addressRow.address.name}}</td>
+                                            <td style="width:15%;">{{addressRow.address.userCreated}}</td>
+                                            <td style="width:15%;">{{addressRow.address.phone}}</td>
+                                            <td style="width:15%;">{{addressRow.address.location.zipCode}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="addressRow.viewActions">
-                                            <td id="actionsRowContent" colspan="3" align="center">
+                                            <td id="actionsRowContent" colspan="4" align="center">
                                                 <button class="btn btn-warning" (click)="onClickEditAddress(addressRow)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">border_color</i>
                                                             </span>
-                                                            Edit shipment
+                                                            Edit address
                                                         </button>
                                                 <button class="btn btn-danger" (click)="onClickDeleteAddress(addressRow.address.id)">
                                                             Delete address
@@ -58,8 +59,8 @@
                                                         </button>
                                             </td>
                                         </tr>
-                                        <tr id="editAddressRow" *ngIf="addressRow.viewActions && addressRow.viewEdit">
-                                            <td colspan="3">
+                                        <tr id="editAddressRow" *ngIf="addressRow.viewEdit">
+                                            <td colspan="4">
                                                 <router-outlet></router-outlet>
                                             </td>
                                         </tr>
@@ -69,7 +70,9 @@
                                 </tbody>
                             </table>
                         </div>
-
+                        <h4 *ngIf="!componentModel || componentModel.length <= 0">
+                            &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
+                        </h4>
 
                     </div>
                 </div>

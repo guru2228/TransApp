@@ -6,9 +6,10 @@ import { Observable } from 'rxjs/Rx';
 import { Subject } from 'rxjs/Subject';
 import { AuthenticationObserver } from "app/authentication/services/authentication.observer";
 import { ApplicationUser } from "app/authentication/viewmodels/application-user";
-import { Constants } from "app/common/constants";
-import { HttpService } from "app/common/services/httpService";
-import { TranslateService } from "app/common/services/localization/translate.service";
+import { Constants } from "app/shared/common/constants";
+import { HttpService } from "app/shared/common/services/httpService";
+import { TranslateService } from "app/shared/common/services/localization/translate.service";
+
 
 @Injectable()
 export class AuthenticationService {

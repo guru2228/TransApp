@@ -4,8 +4,8 @@ import { RouterModule, Routes } from '@angular/router';
 import { AppLayoutComponent } from "app/layouts/admin/app-layout.component";
 import { AuthLayoutComponent } from "app/layouts/auth/auth-layout.component";
 
-import { ErrorComponent } from "app/common/components/error.component";
-import { PageNotFoundComponent } from "app/common/components/pageNotFound.component";
+import { ErrorComponent } from "app/shared/common/components/error.component";
+import { PageNotFoundComponent } from "app/shared/common/components/pageNotFound.component";
 import { LoginComponent } from "app/authentication/components/login.component";
 
 import { AddressSaveComponent } from "app/address/components/address-save.component";
@@ -58,6 +58,10 @@ const routes: Routes = [
             {
                 path: 'shipment-add',
                 component: ShipmentSaveComponent
+            },
+            {
+                path: 'address-edit/:id',
+                component: AddressSaveComponent
             },
             {
                 path: '',
