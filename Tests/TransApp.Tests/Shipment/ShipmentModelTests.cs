@@ -266,7 +266,7 @@ namespace TransApp.Tests.Shipment
                 ShipmentModel currentShipmentModel =
                     await _shipmentService.Get(14);
 
-             //   await _shipmentService.(currentAddressModel);
+                await _shipmentService.DeleteShipment(currentShipmentModel);
             }
             catch (Exception ex)
             {

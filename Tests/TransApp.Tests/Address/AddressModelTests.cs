@@ -197,9 +197,28 @@ namespace TransApp.Tests.Address
             try
             {
                 AddressModel currentAddressModel =
-                    await _addressesService.Get(22);
-
+                    await _addressesService.Get(74);
                 await _addressesService.DeleteAddress(currentAddressModel);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_UpdateAvailability_Is_Ok()
+        {
+            try
+            {
+                AddressModel currentAddressModel =
+                    await _addressesService.Get(74);
+                foreach (var av in currentAddressModel.Availabilities)
+                {
+                    av.Id = -1;
+                }
+                await _addressesService.SaveAddress(1000,currentAddressModel);
             }
             catch (Exception ex)
             {

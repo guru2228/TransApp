@@ -287,7 +287,7 @@ namespace TransApp.Domain.Services.Addresses
                 //// if all passed model has no id set, then clean existing availabilities
                 if (currentAdrress.Availabilities.All(item => item.Id == -1))
                 {
-                    _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id);
+                    _unitOfWork.AddressAvailabilitiesRepository.Delete("AddressId=" + currentAdrress.Id, transaction);
                 }
 
                 foreach (var aAvailabilityModel in currentAdrress.Availabilities)

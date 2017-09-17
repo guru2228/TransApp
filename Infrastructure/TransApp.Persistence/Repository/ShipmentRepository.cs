@@ -348,6 +348,11 @@ where [Shipment].Id =  " + id);
             return sb.ToString();
         }
 
+        public async Task DeleteShipment(Shipment currentShipment, IDbTransaction transaction)
+        {
+            await DeleteAsync(currentShipment, transaction);
+        }
+
         private string GetQueryExtra(int id)
         {
             var sb = new StringBuilder();

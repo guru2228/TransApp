@@ -32,5 +32,7 @@ namespace TransApp.Domain.Services.Shipment
         /// <param name="currentShipment"></param>
         /// <returns></returns>
         Task<int> SaveShipment(int userId, ShipmentModel currentShipment);
+
+        Task DeleteShipment(ShipmentModel currentShipment);
     }
 }

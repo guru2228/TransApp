@@ -342,7 +342,7 @@ namespace TransApp.Persistence.Repository.Generic
         {
             var sqlCommand = string.Format("DELETE FROM " + TableName + " WHERE " + predicate);
             if (transaction != null)
-                transaction.Connection.Execute(sqlCommand, transaction);
+                transaction.Connection.Execute(sqlCommand, transaction: transaction);
             else
             {
                 using (IDbConnection cn = new SqlConnection(ConnectionString))

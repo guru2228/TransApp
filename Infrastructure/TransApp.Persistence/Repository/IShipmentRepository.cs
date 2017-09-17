@@ -21,5 +21,7 @@ namespace TransApp.Persistence.Repository
 
         Task SaveShipment(int userId, Shipment currentShipment, IDbTransaction transaction = null);
 
+        Task DeleteShipment(Shipment currentShipment, IDbTransaction transaction = null);
+
     }
 }

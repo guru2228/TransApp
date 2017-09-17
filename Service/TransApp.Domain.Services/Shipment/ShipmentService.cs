@@ -422,5 +422,61 @@ namespace TransApp.Domain.Services.Shipment
 
             return currentShipment.Id;
         }
+
+        public async Task DeleteShipment(ShipmentModel currentShipment)
+        {
+            if (currentShipment != null)
+            {
+                DataModel.Dto.Shipment dest = new DataModel.Dto.Shipment
+                {
+                    Id = currentShipment.Id
+                };
+
+                var transaction = _unitOfWork.BeginTransaction();
+                if (currentShipment.ShipmentDetails != null)
+                {
+                    _unitOfWork.ShipmentDetailRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentReceiverFacilities != null)
+                {
+                    _unitOfWork.ShipmentReceiverFacilityRepository
+                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentReceiverRequirements != null)
+                {
+                    _unitOfWork.ShipmentReceiverRequirementRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentReceiverTrucks != null)
+                {
+                    _unitOfWork.ShipmentReceiverTruckRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                ///
+                if (currentShipment.ShipmentSenderFacilities != null)
+                {
+                    _unitOfWork.ShipmentSenderFacilityRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentSenderRequirements != null)
+                {
+                    _unitOfWork.ShipmentSenderRequirementRepository
+                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentSenderTrucks != null)
+                {
+                    _unitOfWork.ShipmentSenderTruckRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ShipmentTransporters != null)
+                {
+                    _unitOfWork.ShipmentTransporterRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);
+                _unitOfWork.Commit(transaction);
+            }
+        }
     }
 }
