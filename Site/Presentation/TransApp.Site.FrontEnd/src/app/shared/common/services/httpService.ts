@@ -15,8 +15,8 @@ export class HttpService extends Http {
 
     get(url: string, options?: RequestOptionsArgs): Observable<Response> {
         options = options || {};
-        options.search = new URLSearchParams();
-        options.search.set('timestamp', (new Date()).getTime().toString());
+       // options.search = new URLSearchParams();
+       // options.search.set('timestamp', (new Date()).getTime().toString());
         return super.get(url, options);
     }
 }

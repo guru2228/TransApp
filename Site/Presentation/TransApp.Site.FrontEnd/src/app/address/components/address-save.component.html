@@ -25,72 +25,7 @@
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">Latitude      <span class="star">*</span></label>
-                                                <input type="text" required id="latitudeStr" name="latitudeStr" class="form-control nofocusline" disabled="" value="{{componentModel.location.latitude ? componentModel.location.latitude.toFixed(2) : ''}}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-2">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">Longitude      <span class="star">*</span></label>
-                                                <input type="text" required id="longitudeStr" name="longitudeStr" class="form-control nofocusline" disabled="" value="{{componentModel.location.longitude ? componentModel.location.longitude.toFixed(2) : ''}}">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">Country</label>
-                                                <input type="text" id="country" name="country" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.country">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">Country Code</label>
-                                                <input type="text" id="countryCode" name="countryCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.countryCode">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row">
-                                        <div class="col-md-2">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">City Code</label>
-                                                <input type="text" id="cityCode" name="cityCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.cityCode">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">City</label>
-                                                <input type="text" id="city" name="city" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.city">
-                                            </div>
-                                        </div>
-
-                                        <div class="col-md-2">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">State Code</label>
-                                                <input type="text" id="stateCode" name="stateCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.stateCode">
-                                            </div>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <div class="form-group label-floating is-focused">
-                                                <label for="" class="control-label">State</label>
-                                                <input type="text" id="state" name="state" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.state">
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <div class="col-sm-12">
-                                    <div class="row">
-
-                                        <div class="col-md-6">
+                                        <div class="col-md-8">
                                             <div class="form-group label-floating is-focused">
                                                 <label for="" class="control-label">Straat</label>
                                                 <input type="text" id="street" name="street" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.street">
@@ -105,6 +40,86 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <div [ngClass]="'form-group label-floating ' + (componentModel.location.zipCode  && componentModel.location.zipCode.length > 0 ? '' : 'is-empty')">
+                                                <label for="" class="control-label">
+                                                                        Zipcode
+                                                                        <span class="star">*</span>
+                                                             </label>
+                                                <input type="text" id="zipcode" name="zipCode" class="form-control " [(ngModel)]="componentModel.location.zipCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">City Code</label>
+                                                <input type="text" id="cityCode" name="cityCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.cityCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">City</label>
+                                                <input type="text" id="city" name="city" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.city">
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">State Code</label>
+                                                <input type="text" id="stateCode" name="stateCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.stateCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">State</label>
+                                                <input type="text" id="state" name="state" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.state">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <div class="row">
+                                <div class="col-sm-12">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">Country</label>
+                                                <input type="text" id="country" name="country" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.country">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">Country Code</label>
+                                                <input type="text" id="countryCode" name="countryCode" class="form-control nofocusline" disabled="" [(ngModel)]="componentModel.location.countryCode">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">Latitude      <span class="star">*</span></label>
+                                                <input type="text" required id="latitudeStr" name="latitudeStr" class="form-control nofocusline" disabled="" value="{{componentModel.location.latitude ? componentModel.location.latitude.toFixed(2) : ''}}">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <div class="form-group label-floating is-focused">
+                                                <label for="" class="control-label">Longitude      <span class="star">*</span></label>
+                                                <input type="text" required id="longitudeStr" name="longitudeStr" class="form-control nofocusline" disabled="" value="{{componentModel.location.longitude ? componentModel.location.longitude.toFixed(2) : ''}}">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+
+
                             <div class="row">
                                 <div class="col-sm-12">
                                     <div class="row">
@@ -131,13 +146,7 @@
                                 </div>
                             </div>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.location.zipCode  && componentModel.location.zipCode.length > 0 ? '' : 'is-empty')">
-                                <label for="" class="control-label">
-                                                Zipcode
-                                                <span class="star">*</span>
-                                     </label>
-                                <input type="text" id="zipcode" name="zipCode" class="form-control " [(ngModel)]="componentModel.location.zipCode">
-                            </div>
+
                             <div class="form-group label-floating">
                                 <label for="" class="control-label">
                                         Contactperson
@@ -181,6 +190,7 @@
                                 <span>
                                            {{getDay(availability.day)}}
                                 </span>
+
                                 <!-- <div id="sliderDouble" class="slider slider-info"></div> -->
                                 <address-availability-slider [availability]="availability"></address-availability-slider>
                             </div>

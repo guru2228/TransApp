@@ -19,6 +19,7 @@ import { AddressAvailabilitySliderComponent } from "app/shared/common/components
     imports: [
         CommonModule,
         RouterModule,
+        FormsModule
     ],
     exports: [
         AddressAvailabilitySliderComponent

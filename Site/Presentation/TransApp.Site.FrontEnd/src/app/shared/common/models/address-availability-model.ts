@@ -2,6 +2,9 @@ export class AddressAvailabilityModel {
     public id: number;
     public addressId: number;
     public day: number;
+
+    public isClosed : boolean;
+
     public amStart: string;
     public amStop: string;
     public pmStart: string;

@@ -94,6 +94,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     
     save(model: AddressModel, isValid: boolean) {
         console.log(model, isValid);
+        debugger;
         if (isValid) {
             this.addressService.save(this.componentModel).subscribe(result => {
                 if (this.componentState == ComponentStateType.add) {
@@ -184,8 +185,10 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
                 // types: ["address"]
             });
+            debugger;
             // init place change listener
             addressesAutocomplete.addListener("place_changed", () => {
+                debugger;
                 this.ngZone.run(() => {
                     //get the place result
                     let place = addressesAutocomplete.getPlace();

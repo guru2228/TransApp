@@ -1,4 +1,5 @@
 import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, RouterModule, Router, Routes } from '@angular/router';
 import { AddressAvailabilityModel } from "app/shared/common/models/address-availability-model";
 
@@ -10,7 +11,7 @@ var moment = require('moment/moment');
     templateUrl: './address-availability-slider.component.html'
 }) as any)
 export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit {
-  
+
 
     @Input('availability')
     availability: AddressAvailabilityModel;
@@ -31,8 +32,9 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
 
     ngAfterViewInit(): void {
         var noUiSlider = require('nouislider');
-        
+        if(!this.availability.isClosed){
         this.initSlider(noUiSlider);
+        }
     }
 
     /**
@@ -42,10 +44,17 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
     private initInitialDates() {
         // get closest date by current day
         let date = new Date();
-        if(this.availability.day >0 ){
-         date = moment().isoWeekday(this.availability.day).toDate();
+        if (this.availability.day > 0) {
+            date = moment().isoWeekday(this.availability.day).toDate();
         }
 
+        if (this.availability.isClosed) {
+            this.availability.amStart = '';
+            this.availability.amStop = '';
+            this.availability.pmStart = '';
+            this.availability.pmStop = '';
+        }
+else{
         this.range_min_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0).getTime();
         this.range_max_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 24, 0, 0, 0).getTime();
 
@@ -54,43 +63,55 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
         this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 14, 0, 0, 0).getTime();
         this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 18, 0, 0, 0).getTime();
 
-        if ( this.availability.amStart && this.availability.amStart.length > 0)
-        {
+        if (this.availability.amStart && this.availability.amStart.length > 0) {
             let hoursArray = this.availability.amStart.split(":");
             this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
         }
-        else{
-            this.availability.amStart = this.toFormat( this.amStart_initial_timestamp)
+        else {
+            this.availability.amStart = this.toFormat(this.amStart_initial_timestamp)
         }
 
-        if ( this.availability.amStop && this.availability.amStop.length > 0)
-        {
+        if (this.availability.amStop && this.availability.amStop.length > 0) {
             let hoursArray = this.availability.amStop.split(":");
             this.amStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
         }
-        else{
-            this.availability.amStop = this.toFormat( this.amStop_initial_timestamp)
+        else {
+            this.availability.amStop = this.toFormat(this.amStop_initial_timestamp)
         }
 
-        if ( this.availability.pmStart && this.availability.pmStart.length > 0)
-        {
+        if (this.availability.pmStart && this.availability.pmStart.length > 0) {
             let hoursArray = this.availability.pmStart.split(":");
             this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
         }
-        else{
-            this.availability.pmStart = this.toFormat( this.pmStart_initial_timestamp)
+        else {
+            this.availability.pmStart = this.toFormat(this.pmStart_initial_timestamp)
         }
 
-        if ( this.availability.pmStop && this.availability.pmStop.length > 0)
-        {
+        if (this.availability.pmStop && this.availability.pmStop.length > 0) {
             let hoursArray = this.availability.pmStop.split(":");
             this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
         }
-        else{
-            this.availability.pmStop = this.toFormat( this.pmStop_initial_timestamp)
+        else {
+            this.availability.pmStop = this.toFormat(this.pmStop_initial_timestamp)
         }
     }
+    }
 
+    onClosedDayClick(){
+        debugger;
+        this.availability.isClosed = !this.availability.isClosed;
+        this.initInitialDates();
+
+        if(!this.availability.isClosed){
+            let self = this;
+            setTimeout(function() {
+                var noUiSlider = require('nouislider');
+                
+                self.initSlider(noUiSlider);
+            }, 500);
+           
+        }
+    }
     /**
      * Init selection slider
      */
@@ -98,7 +119,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
 
         let self = this;
         let sliderAvailability = document.getElementById('slider_availability_' + self.availability.day) as any;
-        let itWasInitializedAlready = sliderAvailability.querySelectorAll('.noUi-origin').length > 0;
+        let itWasInitializedAlready = sliderAvailability && sliderAvailability.querySelectorAll('.noUi-origin').length > 0;
         if (!itWasInitializedAlready) {
             noUiSlider.create(sliderAvailability, {
                 // Create two timestamps to define a range.
@@ -134,26 +155,26 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
      * @param values 
      * @param handle 
      */
-    private onSlide (values, handle) {
+    private onSlide(values, handle) {
         let self = this;
-if(self.availability){
-    let selectedDate = values[handle] ;
-    switch (handle) {
-        case 0:
-            self.availability.amStart = selectedDate;
-            break;
-        case 1:
-            self.availability.amStop = selectedDate;
-            break;
-        case 2:
-            self.availability.pmStart = selectedDate;
-            break;
-        case 3:
-            self.availability.pmStop =selectedDate;
-            break;
-    }
-}
-     
+        if (self.availability) {
+            let selectedDate = values[handle];
+            switch (handle) {
+                case 0:
+                    self.availability.amStart = selectedDate;
+                    break;
+                case 1:
+                    self.availability.amStop = selectedDate;
+                    break;
+                case 2:
+                    self.availability.pmStart = selectedDate;
+                    break;
+                case 3:
+                    self.availability.pmStop = selectedDate;
+                    break;
+            }
+        }
+
     }
 
     timestamp(str) {
