@@ -172,7 +172,8 @@ namespace TransApp.Tests.Shipment
             shipmentSenderFacilities.Add(aShipmentSenderFacilityModel);
             currentShipment.ShipmentSenderFacilities = shipmentSenderFacilities;
 
-            List<ShipmentSenderRequirementModel> shipmentSenderRequirements=new EditableList<ShipmentSenderRequirementModel>();
+            List<ShipmentSenderRequirementModel> shipmentSenderRequirements =
+                new EditableList<ShipmentSenderRequirementModel>();
             ShipmentSenderRequirementModel aShipmentSenderRequirementModel = new ShipmentSenderRequirementModel
             {
                 Active = true,
@@ -186,7 +187,7 @@ namespace TransApp.Tests.Shipment
             ShipmentSenderTruckModel aShipmentSenderTruckModel = new ShipmentSenderTruckModel
             {
                 Active = true,
-                TruckId =6
+                TruckId = 6
             };
             shipmentSenderTrucks.Add(aShipmentSenderTruckModel);
             currentShipment.ShipmentSenderTrucks = shipmentSenderTrucks;
@@ -221,9 +222,9 @@ namespace TransApp.Tests.Shipment
                     Assert.IsTrue(false);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                
+
             }
         }
 
@@ -248,7 +249,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 List<ShipmentModel> currentAddressModel =
-                    await _shipmentService.GetAll(new FilterShipment { CustomerId = 1, StartItem = 0, Amount = 5 });
+                    await _shipmentService.GetAll(new FilterShipment {CustomerId = 1, StartItem = 0, Amount = 5});
             }
             catch (Exception ex)
             {
@@ -267,6 +268,56 @@ namespace TransApp.Tests.Shipment
                     await _shipmentService.Get(14);
 
                 await _shipmentService.DeleteShipment(currentShipmentModel);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_UpdateShipmentDetail_Is_Ok()
+        {
+            try
+            {
+
+                ShipmentModel currentShipmentModel =
+                    await _shipmentService.Get(15);
+
+                foreach (var av in currentShipmentModel.ShipmentDetails)
+                {
+                    av.Length = 454545;
+                }
+                foreach (var av in currentShipmentModel.ShipmentReceiverFacilities)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentReceiverRequirements)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentSenderFacilities)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentSenderRequirements)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                {
+                    av.Active = false;
+                }
+                foreach (var av in currentShipmentModel.ShipmentTransporters)
+                {
+                    av.Accepted = false;
+                }
+                await _shipmentService.SaveShipment(1000, currentShipmentModel);
             }
             catch (Exception ex)
             {

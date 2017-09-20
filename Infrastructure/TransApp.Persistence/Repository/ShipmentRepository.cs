@@ -135,11 +135,17 @@ namespace TransApp.Persistence.Repository
                                 "SplitDetail,SplitReceiverFacility,SplitReceiverRequirement,SplitReceiverTruck,SplitSenderFacility,SplitSenderRequirement");
             }
             ShipmentDto result = lookup.Values.FirstOrDefault();
-            ShipmentDto resultExtra = await GetShipmentExtraById(id);
-            if (resultExtra.ShipmentSenderTrucks != null)
-                result.ShipmentSenderTrucks = resultExtra.ShipmentSenderTrucks;
-            if (resultExtra.ShipmentTransporters != null)
-                result.ShipmentTransporters = resultExtra.ShipmentTransporters;
+            if (result != null)
+            {
+                ShipmentDto resultExtra = await GetShipmentExtraById(id);
+                if (resultExtra != null)
+                {
+                    if (resultExtra.ShipmentSenderTrucks != null)
+                        result.ShipmentSenderTrucks = resultExtra.ShipmentSenderTrucks;
+                    if (resultExtra.ShipmentTransporters != null)
+                        result.ShipmentTransporters = resultExtra.ShipmentTransporters;
+                }
+            }
             return result;
         }
 
