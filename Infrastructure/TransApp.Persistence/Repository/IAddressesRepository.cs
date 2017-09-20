@@ -16,9 +16,7 @@ namespace TransApp.Persistence.Repository
         /// </summary>
         /// <param name="id"></param>
         Task<AddressDto> GetFullAddressById(int id);
-
-        Task<List<AddressDto>> GetFullAddressFiltered(FilterAddress filter);
-
+        
         Task<List<AddressSigleDto>> GetAll(FilterAddress filter);
 
         Task SaveAddress(int currentUserId, Address address, IDbTransaction transaction = null);

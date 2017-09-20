@@ -48,6 +48,9 @@ namespace TransApp.Tests.Address
             currentAdrress.UserIdModified = 999;
             currentAdrress.Location=new AddressLocationModel();
             currentAdrress.Location.Street = "Iași";
+            currentAdrress.OpeningHours = "1-1-22";
+            currentAdrress.State = "is-is";
+            currentAdrress.CommonAvailability = true;
             await _addressesService.SaveAddress(1000,currentAdrress);
             if (currentAdrress.Id > 0 )
             {
@@ -167,7 +170,8 @@ namespace TransApp.Tests.Address
             try
             {
                 List<AddressModel> currentAddressModel =
-                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1,StartItem = 0,Amount = 5,CustomFilter = "stra"});
+                    await _addressesService.GetAll(new FilterAddress {CustomerId = 1,StartItem = 0,Amount = 15,
+                        CustomFilter = "Strada Orfelinatului, Iași, Romania" });
             }
             catch 
             {
@@ -182,7 +186,7 @@ namespace TransApp.Tests.Address
             try
             {
                 AddressModel currentAddressModel =
-                    await _addressesService.Get(71);
+                    await _addressesService.Get(77);
             }
             catch (Exception ex)
             {

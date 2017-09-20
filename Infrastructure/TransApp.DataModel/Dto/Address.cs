@@ -53,7 +53,8 @@ namespace TransApp.DataModel.Dto
 
         public bool CommonAvailability { get; set; }
 
-
+        public string StateInfo { get; set; }
+        public string OpeningHours { get; set; }
     }
 }
 

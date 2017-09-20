@@ -42,5 +42,8 @@ namespace TransApp.Domain.Addresses
         public DateTime? DateModified { get; set; }
 
         public bool CommonAvailability { get; set; }
+
+        public string State { get; set; }
+        public string OpeningHours { get; set; }
     }
 }

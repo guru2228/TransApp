@@ -46,7 +46,9 @@ namespace TransApp.Domain.Services.Addresses
                     DateCreated = currentAdrress.Address.DateCreated,
                     UserIdModified = currentAdrress.Address.UserIdModified,
                     DateModified = currentAdrress.Address.DateModified,
-                    CommonAvailability = currentAdrress.Address.CommonAvailability
+                    CommonAvailability = currentAdrress.Address.CommonAvailability,
+                    State = currentAdrress.Address.StateInfo,
+                    OpeningHours = currentAdrress.Address.OpeningHours
                 };
                 result.Location = new AddressLocationModel
                 {
@@ -79,35 +81,35 @@ namespace TransApp.Domain.Services.Addresses
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
-
-                result.Availabilities =
-                    currentAdrress.AddressAvailabilities.Select(availability => new AddressAvailabilityModel
-                    {
-                        Id = availability.Id,
-                        AddressId = availability.AddressId,
-                        IsClosed = availability.IsClosed,
-                        AmStart =
-                            availability.AmStart.HasValue
-                                ? new DateTime(availability.AmStart.Value.Ticks).ToString("HH:mm")
-                                : string.Empty,
-                        AmStop =
-                            availability.AmStop.HasValue
-                                ? new DateTime(availability.AmStop.Value.Ticks).ToString("HH:mm")
-                                : string.Empty,
-                        PmStart =
-                            availability.PmStart.HasValue
-                                ? new DateTime(availability.PmStart.Value.Ticks).ToString("HH:mm")
-                                : string.Empty,
-                        PmStop =
-                            availability.PmStop.HasValue
-                                ? new DateTime(availability.PmStop.Value.Ticks).ToString("HH:mm")
-                                : string.Empty,
-                        Day = availability.Day,
-                        DateCreated = availability.DateCreated,
-                        DateModified = availability.DateModified,
-                        UserIdCreated = availability.UserIdCreated,
-                        UserIdModified = availability.UserIdModified
-                    }).ToList();
+                if (currentAdrress.AddressAvailabilities != null)
+                    result.Availabilities =
+                        currentAdrress.AddressAvailabilities.Select(availability => new AddressAvailabilityModel
+                        {
+                            Id = availability.Id,
+                            AddressId = availability.AddressId,
+                            IsClosed = availability.IsClosed,
+                            AmStart =
+                                availability.AmStart.HasValue
+                                    ? new DateTime(availability.AmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            AmStop =
+                                availability.AmStop.HasValue
+                                    ? new DateTime(availability.AmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStart =
+                                availability.PmStart.HasValue
+                                    ? new DateTime(availability.PmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStop =
+                                availability.PmStop.HasValue
+                                    ? new DateTime(availability.PmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            Day = availability.Day,
+                            DateCreated = availability.DateCreated,
+                            DateModified = availability.DateModified,
+                            UserIdCreated = availability.UserIdCreated,
+                            UserIdModified = availability.UserIdModified
+                        }).ToList();
 
                 result.Facilities =
                     Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
@@ -123,79 +125,6 @@ namespace TransApp.Domain.Services.Addresses
 
             }
             return new AddressModel();
-        }
-
-        public async Task<List<AddressModel>> GetAllOld(FilterAddress filter)
-        {
-            var addresses =
-                await _unitOfWork.AddressesRepository.GetFullAddressFiltered(filter);
-            List<AddressModel> result = new List<AddressModel>();
-            if (addresses != null)
-            {
-                foreach (AddressDto currentAdrress in addresses)
-                {
-                    AddressModel address = new AddressModel
-                    {
-                        Id = currentAdrress.Address.Id,
-                        Name = currentAdrress.Address.Name,
-                        CustomerId = currentAdrress.Address.CustomerId,
-                        ContactPerson = currentAdrress.Address.ContactPerson,
-                        Email = currentAdrress.Address.Email,
-                        Phone = currentAdrress.Address.Phone,
-                        Remark = currentAdrress.Address.Remark,
-                        UserIdCreated = currentAdrress.Address.UserIdCreated,
-                        DateCreated = currentAdrress.Address.DateCreated,
-                        UserIdModified = currentAdrress.Address.UserIdModified,
-                        DateModified = currentAdrress.Address.DateModified,
-
-                    };
-                    address.Location = new AddressLocationModel
-                    {
-                        City = currentAdrress.Address.City,
-                        CityCode = currentAdrress.Address.CityCode,
-                        Country = currentAdrress.Address.Country,
-                        CountryCode = currentAdrress.Address.CountryCode,
-                        Latitude = currentAdrress.Address.Latitude ?? 0,
-                        Longitude = currentAdrress.Address.Longitude ?? 0,
-                        Street = currentAdrress.Address.Street1,
-                        StreetNumber = currentAdrress.Address.StreetNumber,
-                        StateCode = currentAdrress.Address.StateCode,
-                    };
-                    if (currentAdrress.Address.UserIdCreated.HasValue)
-                    {
-                        var userCreated =
-                            _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdCreated.Value);
-                        if (userCreated != null)
-                        {
-                            address.UserCreated = userCreated.FirstName + ' ' + userCreated.LastName;
-                        }
-                    }
-                    if (currentAdrress.Address.UserIdModified.HasValue)
-                    {
-                        var userModified =
-                            _unitOfWork.ApplicationUserRepository.Get(currentAdrress.Address.UserIdModified.Value);
-                        if (userModified != null)
-                        {
-                            address.UserModified = userModified.FirstName + ' ' + userModified.LastName;
-                        }
-                    }
-                    address.Availabilities =
-                        Mapper.Map<List<AddressAvailability>, List<AddressAvailabilityModel>>(
-                            currentAdrress.AddressAvailabilities);
-                    address.Facilities =
-                        Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
-                            currentAdrress.AddressFacilities);
-                    address.Requirements =
-                        Mapper.Map<List<AddressRequirement>, List<AddressRequirementModel>>(
-                            currentAdrress.AddressRequirements);
-                    address.Trucks =
-                        Mapper.Map<List<AddressTruck>, List<AddressTruckModel>>(
-                            currentAdrress.AddressTrucks);
-                    result.Add(address);
-                }
-                return result;
-            }
-            return new List<AddressModel>();
         }
 
         public async Task<List<AddressModel>> GetAll(FilterAddress filter)
@@ -236,6 +165,9 @@ namespace TransApp.Domain.Services.Addresses
                         DateModified = currentAdrress.DateModified,
                         UserCreated = currentAdrress.UserCreated,
                         UserModified = currentAdrress.UserModified,
+                        CommonAvailability = currentAdrress.CommonAvailability,
+                        State = currentAdrress.StateInfo,
+                        OpeningHours = currentAdrress.OpeningHours
                     };
                     result.Add(address);
                 }
@@ -276,7 +208,8 @@ namespace TransApp.Domain.Services.Addresses
                 ZipCode = currentAdrress.Location.ZipCode,
                 Street1 = currentAdrress.Location.Street,
                 Street2 = currentAdrress.Location.Street,
-
+                StateInfo = currentAdrress.State,
+                OpeningHours = currentAdrress.OpeningHours
             };
 
             var transaction = _unitOfWork.BeginTransaction();
