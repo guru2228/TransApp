@@ -46,13 +46,14 @@ export class AddressService {
      * @param numberOfRetrievedItems 
      * @param language 
      */
-    getAll(customerId: number, startItem: number, numberOfRetrievedItems: number, language: string): Observable<AddressModel[]> {
+    getAll(customerId: number,searchTerm:string, startItem: number, numberOfRetrievedItems: number, language: string): Observable<AddressModel[]> {
         return this.http.get(this.serviceUrl +
             'getAll' +
             '/' + customerId +
             '/' + startItem +
             '/' + numberOfRetrievedItems +
-            '/' + language)
+            '/' + language +
+            '?searchTerm='+searchTerm)
             .map((res: Response) => res.json())
             .catch(this.errorHandler.throwError);
     }

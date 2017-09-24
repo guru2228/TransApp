@@ -1,4 +1,4 @@
-﻿<div *ngIf="availability.day>0" class="togglebutton" style="padding-bottom: 10px;">
+﻿<div class="togglebutton" style="padding-bottom: 10px;">
     <label>
             <input type="checkbox" (click)="onClosedDayClick()" [(ngModel)]="availability.isClosed" [checked]="availability.isClosed"  
             name="availabilityClosedDay"> Is closed on this day

@@ -13,6 +13,7 @@ import { ParametersDataService } from "app/shared/common/services/parameters-dat
 import { TranslateService } from "app/shared/common/services/localization/translate.service";
 import { NotificationService } from 'app/shared/common/services/notification.service';
 import { AddressAvailabilitySliderComponent } from "app/shared/common/components/address-availability-slider.component";
+import { PagerService } from 'app/shared/common/services/pager.service';
 
 
 @NgModule({
@@ -35,6 +36,7 @@ import { AddressAvailabilitySliderComponent } from "app/shared/common/components
         GlobalErrorHandler,
         NotificationService,
         ParametersDataService,
+        PagerService,
         TranslateService,
         {
             provide: HttpService,

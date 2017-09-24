@@ -3,6 +3,7 @@ import { Router, RouterModule, Routes } from '@angular/router';
 import { Observable } from 'rxjs/Observable';
 import { AuthenticationObserver } from "app/authentication/services/authentication.observer";
 import { AuthenticationService } from "app/authentication/services/authentication.service";
+import { NotificationService } from 'app/shared/common/services/notification.service';
 
 
 @Injectable()
@@ -10,7 +11,8 @@ export class GlobalErrorHandler {
     // constructor
     constructor(private router: Router,
         private authenticationObserver: AuthenticationObserver,
-        private authenticationService: AuthenticationService) {
+        private authenticationService: AuthenticationService,
+    private notificationService:NotificationService) {
     }
 
     /**
@@ -49,6 +51,11 @@ export class GlobalErrorHandler {
         console.log("Your session has expired. please login again");
         //this.authenticationObserver.sendAuthenticationUpdates(false);
         this.authenticationService.logout();
-        this.router.navigate(["/login"]);
+        this.notificationService.show('Session expired. You have to login again.','danger','center','top');
+       let self=this;
+        setTimeout(function() {
+            self.router.navigate(["/login"]); 
+        }, 1500);
+      
     }
 }

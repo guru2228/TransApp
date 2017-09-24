@@ -1,22 +1,14 @@
 <div #maincontent class="main-content">
     <div class="container-fluid">
-
         <div class="row">
             <div class="col-sm-10">
                 <div class="form-group label-floating is-empty">
                     <label class="control-label"></label>
-                    <input type="text" class="form-control" placeholder="Search address">
-                </div>
-            </div>
-            <div class="col-sm-2">
-                <div class="form-group label-floating is-empty">
-                    <button class="btn btn-warning">
-                            <i class="material-icons">filter_list</i> Filters
-                        </button>
+                    <input type="text" class="form-control" [formControl]="searchTerm" placeholder="Search address">
                 </div>
             </div>
         </div>
-        <button class="btn btn-primary" [routerLink]="['/address-add']">(+) Create a new address</button>
+        <button class="btn btn-info" [routerLink]="['/address-add']">(+) Create a new address</button>
 
         <div class="row">
             <div class="col-md-12">
@@ -24,23 +16,28 @@
                     <!-- <div class="card-header card-header-icon" data-background-color="rose">
                         <i class="material-icons">assignment</i>
                     </div> -->
-                    <div class="card-content table-full-width">
+                    <div *ngIf="componentModel && componentModel.length > 0" class="card-content table-full-width">
                         <!--<h4 class="card-title">Regular Table with Colors</h4>-->
                         <div class="table-responsive" id="addresseGrid" *ngIf="componentModel && componentModel.length > 0">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th *ngFor="let cell of headerRow">{{ cell }}</th>
+                                        <th>Name</th>
+                                        <th>Street, Number, Zipcode, City</th>
+                                        <th>Country code</th>
+                                        <th>Contact person</th>
+                                        <th>Phone</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     <ng-container *ngFor="let addressRow of componentModel; let rowindex = index">
                                         <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="(addressRow.viewActions ||addressRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
-                                            <td style="width:30%;">{{addressRow.address.name}}</td>
-                                            <td style="width:15%;">{{addressRow.address.userCreated}}</td>
-                                            <td style="width:15%;">{{addressRow.address.phone}}</td>
-                                            <td style="width:15%;">{{addressRow.address.location.zipCode}}</td>
+                                            <td>{{addressRow.address.name}}</td>
+                                            <td>{{addressRow.address.location.street + ', ' + addressRow.address.location.streetNumber + ', ' + addressRow.address.location.zipCode + ', ' + addressRow.address.location.city}}</td>
+                                            <td>{{addressRow.address.location.countryCode}}</td>
+                                            <td>{{addressRow.address.contactPerson}}</td>
+                                            <td>{{addressRow.address.phone}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="addressRow.viewActions">
@@ -65,16 +62,26 @@
                                             </td>
                                         </tr>
                                     </ng-container>
-
-
                                 </tbody>
                             </table>
+
                         </div>
-                        <h4 *ngIf="!componentModel || componentModel.length <= 0">
-                            &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
-                        </h4>
+                        <ul *ngIf="pagesCollection && pagesCollection.length > 0" class="pagination pagination-info">
+                            <li>
+                                <a href="javascript:void(0);" (click)="paginate((currentPage -1 < 0 ? 0 : currentPage -1))"> prev</a>
+                            </li>
+                            <li *ngFor="let page of pagesCollection;  let idx = index" [ngClass]="currentPage == page ? 'active' : ''">
+                                <a href="javascript:void(0);" (click)="paginate(page)"> {{page + 1}}</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" (click)="paginate((currentPage +1 > pagesCollection.length -1 ? pagesCollection.length -1 : currentPage +1))"> next</a>
+                            </li>
+                        </ul>
 
                     </div>
+                    <h4 *ngIf="!componentModel || componentModel.length <= 0">
+                        &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
+                    </h4>
                 </div>
             </div>
         </div>

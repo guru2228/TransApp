@@ -106,17 +106,25 @@ namespace TransApp.Site.ApiControllers
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAll/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
         public async Task<IEnumerable<AddressModel>> GetAll(int customerId, int startItem, int numberOfRetrievedItems,
-            int language)
+            int language, [FromQuery]string searchTerm)
         {
-            //TODO Bogdan implement this
-            var addresses = await _addressesService.GetAll(new FilterAddress
+            var searchFilter = new FilterAddress
             {
                 CustomerId = customerId,
                 StartItem = startItem,
                 Amount = numberOfRetrievedItems
-            });
+            };
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchFilter.CustomFilter = searchTerm;
+            }
+
+            //TODO Bogdan implement this
+            var addresses = await _addressesService.GetAll(searchFilter);
             return addresses;
         }
+
 
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("search/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]

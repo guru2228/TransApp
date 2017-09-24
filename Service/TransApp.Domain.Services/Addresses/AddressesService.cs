@@ -233,13 +233,13 @@ namespace TransApp.Domain.Services.Addresses
                         IsClosed = aAvailabilityModel.IsClosed,
                     };
                     if (!string.IsNullOrEmpty(aAvailabilityModel.AmStart))
-                        aAvailability.AmStart = TimeSpan.Parse(aAvailabilityModel.AmStart);
+                        aAvailability.AmStart = TimeSpan.Parse(aAvailabilityModel.AmStart.Length == 2 ? aAvailabilityModel.AmStart + ":00" : aAvailabilityModel.AmStart);
                     if (!string.IsNullOrEmpty(aAvailabilityModel.AmStop))
-                        aAvailability.AmStop = TimeSpan.Parse(aAvailabilityModel.AmStop);
+                        aAvailability.AmStop = TimeSpan.Parse(aAvailabilityModel.AmStop.Length == 2 ? aAvailabilityModel.AmStop + ":00" : aAvailabilityModel.AmStop);
                     if (!string.IsNullOrEmpty(aAvailabilityModel.PmStart))
-                        aAvailability.PmStart = TimeSpan.Parse(aAvailabilityModel.PmStart);
+                        aAvailability.PmStart = TimeSpan.Parse(aAvailabilityModel.PmStart.Length == 2 ? aAvailabilityModel.PmStart + ":00" : aAvailabilityModel.PmStart);
                     if (!string.IsNullOrEmpty(aAvailabilityModel.PmStop))
-                        aAvailability.PmStop = TimeSpan.Parse(aAvailabilityModel.PmStop);
+                        aAvailability.PmStop = TimeSpan.Parse(aAvailabilityModel.PmStop.Length == 2 ? aAvailabilityModel.PmStop + ":00" : aAvailabilityModel.PmStop);
                     aAvailability.DateModified = DateTime.Now;
                     aAvailability.UserIdModified = userId;
                     if (aAvailability.Id <= 0)

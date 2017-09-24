@@ -58,10 +58,10 @@ else{
         this.range_min_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0, 0).getTime();
         this.range_max_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 24, 0, 0, 0).getTime();
 
-        this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 6, 0, 0, 0).getTime();
+        this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 8, 0, 0, 0).getTime();
         this.amStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 12, 0, 0, 0).getTime();
-        this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 14, 0, 0, 0).getTime();
-        this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 18, 0, 0, 0).getTime();
+        this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 13, 0, 0, 0).getTime();
+        this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 16, 0, 0, 0).getTime();
 
         if (this.availability.amStart && this.availability.amStart.length > 0) {
             let hoursArray = this.availability.amStart.split(":");
@@ -98,7 +98,6 @@ else{
     }
 
     onClosedDayClick(){
-        debugger;
         this.availability.isClosed = !this.availability.isClosed;
         this.initInitialDates();
 
@@ -185,9 +184,9 @@ else{
         let date = new Date(v);
 
         var hours = ("0" + date.getHours()).slice(-2);
-        var minutes = ("0" + date.getMinutes()).slice(-2);
+        var minutes = ("0" + date.getMinutes()).slice(-2) 
 
-        return hours + ":" + minutes;
+        return hours + ( date.getMinutes()  > 0 ? (":" + minutes) : '');
     }
 
 }

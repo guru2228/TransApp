@@ -9,6 +9,11 @@ import { ApplicationUser } from "app/authentication/viewmodels/application-user"
 import { AuthenticationService } from "app/authentication/services/authentication.service";
 import { TranslateService } from "app/shared/common/services/localization/translate.service";
 import { Subscription } from 'rxjs';
+import { FormControl } from '@angular/forms';
+import { PagerService } from 'app/shared/common/services/pager.service';
+import { Observable } from 'rxjs/Observable';
+import { HelperService } from 'app/shared/common/services/helperService';
+import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
 
 var moment = require('moment/moment');
 
@@ -20,22 +25,25 @@ declare var swal: any;
     templateUrl: './address-overview.component.html'
 })
 export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
-    ngOnDestroy(): void {
-        if (this.subscriptionReceiveUpdatedAddress) {
-            this.subscriptionReceiveUpdatedAddress.unsubscribe();
-        }
-    }
+
     // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
     componentModel: AddressRowViewModel[] = [];
-    headerRow: string[];
     currentUser: ApplicationUser;
+    // search term
+    searchTerm = new FormControl();
     currentAddressId = -1;
+
+    currentPage: number = 0;
+    pagesCollection: Array<number>;
+    pageSize = 4;
 
     private subscriptionReceiveUpdatedAddress: Subscription;
 
     constructor(private router: Router,
         private route: ActivatedRoute,
         private addressService: AddressService,
+        private helperService: HelperService,
+        private errorHandler: GlobalErrorHandler,
         private authenticationService: AuthenticationService,
         private translateService: TranslateService) {
 
@@ -43,49 +51,142 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
     public ngOnInit() {
         this.currentUser = this.authenticationService.getCurrentUser();
+        this.getNumberOfAddresses('', false);
+        this.getAddresses();
+
+        this.register_updateSavedModel_handler();
+    }
+
+    /**
+     * Move to next/previous page
+     * @param page 
+     */
+    paginate(page: number) {
+        this.currentPage = page;
+        this.getAddresses();
+
+        this.helperService.scrollOnTop();
+    }
+
+    private getAddresses() {
+        let searchquery = '';
+        this.route.queryParams.subscribe(params => {
+            searchquery = params['searchquery'] ? params['searchquery'].toString() : '';
+        });
+        this.searchTerm = new FormControl(searchquery);
+        this.initSearchAddresses();
+
         if (this.currentUser && this.currentUser.customerId) {
-            this.headerRow = ['Name', 'Created by', 'Phone', 'Zipcode'];
-
-            this.addressService.getAll(this.currentUser.customerId, 0, 1000, this.translateService.currentLanguage).subscribe(result => {
+            this.addressService.getAll(this.currentUser.customerId, searchquery, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
+                this.componentModel = [];
                 if (result && result.length > 0) {
-
                     if (this.route.firstChild) {
                         this.currentAddressId = +this.route.firstChild.snapshot.params['id']
                     }
-
                     for (let i = 0; i < result.length; i++) {
                         let addressRow = new AddressRowViewModel();
                         addressRow.address = result[i];
                         // if url contains edit then open it by default
                         //addressRow.viewActions = result[i].id == this.currentAddressId;
-                        addressRow.viewEdit = result[i].id == this.currentAddressId;
+                        addressRow.viewActions = result[i].id == this.currentAddressId;
                         this.componentModel.push(addressRow);
                     }
                 }
-            });;
+            }, error => {
+                this.errorHandler.handleError(error);
+            });
         }
-
-        this.register_updateSavedModel_handler();
-
     }
+
+    private getNumberOfAddresses(searchQueryParam: string, ignoreQueryString: boolean) {
+        this.pagesCollection = null;
+        if (searchQueryParam.length <= 0 && !ignoreQueryString) {
+            this.route.queryParams.subscribe(params => {
+                searchQueryParam = params['searchquery'] ? params['searchquery'].toString() : '';
+            });
+        }
+        if (this.currentUser && this.currentUser.customerId) {
+            this.addressService.getAll(this.currentUser.customerId, searchQueryParam, 0, 10000, this.translateService.currentLanguage).subscribe(result => {
+                this.pagesCollection = [];
+                if (result) {
+                    let numberOfPages = Math.round(result.length / this.pageSize);
+                    numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
+                    let self = this;
+                    setTimeout(function () {
+                        for (let i = 0; i < numberOfPages; i++) {
+                            self.pagesCollection.push(i);
+                        }
+                    }, 100);
+
+                }
+            }, error => {
+                this.errorHandler.handleError(error);
+            });
+        }
+    }
+
+    private searchAddresses(searchTerm: string) {
+        if (this.currentUser && this.currentUser.customerId) {
+            this.currentPage = 0;
+            this.addressService.getAll(this.currentUser.customerId, searchTerm, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
+                this.componentModel = [];
+                if (result && result.length > 0) {
+                    for (let i = 0; i < result.length; i++) {
+                        let addressRow = new AddressRowViewModel();
+                        addressRow.address = result[i];
+                        // if url contains edit then open it by default
+                        //addressRow.viewActions = result[i].id == this.currentAddressId;
+                        this.componentModel.push(addressRow);
+                    }
+                }
+            }, error => {
+                this.errorHandler.handleError(error);
+            });
+        }
+    }
+
+    private initSearchAddresses() {
+        this.searchTerm.valueChanges
+            .debounceTime(600)
+            .subscribe(term => {
+                this.router.navigate(['/address-overview'], {
+                    relativeTo: this.route,
+                    queryParams: {
+                        searchquery: term ? term : ''
+                    }
+                });
+                let searchTerm = term && term.length > 0 ? term : '';
+
+                this.getNumberOfAddresses(term, true);
+                    this.searchAddresses(searchTerm);
+            });
+    }
+
     ngAfterViewInit() {
         //  Activate the tooltips
         $('[rel="tooltip"]').tooltip();
     }
 
+    ngOnDestroy(): void {
+        if (this.subscriptionReceiveUpdatedAddress) {
+            this.subscriptionReceiveUpdatedAddress.unsubscribe();
+        }
+    }
+
     private register_updateSavedModel_handler() {
         this.subscriptionReceiveUpdatedAddress = this.addressService.addressModelReceivedHandler$.subscribe(address => {
             if (address != null) {
-                debugger;
                 let modelToUpdate = this.componentModel.filter(item => item.address.id == address.id)[0];
                 if (modelToUpdate) {
                     modelToUpdate.address = address;
                     var $main_panel = $('.main-panel');
                     $main_panel.scrollTop(100).perfectScrollbar('update');
-                   // $('body').scrollTop(100).perfectScrollbar('update');
+                    // $('body').scrollTop(100).perfectScrollbar('update');
                 }
                 this.addressService.resetSendAddressModelHandler();
             }
+        }, error => {
+            this.errorHandler.handleError(error);
         });
     }
     /** Show row available actions on click */
@@ -93,7 +194,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
         for (let i = 0; i < this.componentModel.length; i++) {
             if (i != index)
                 this.componentModel[i].viewActions = false;
-                this.componentModel[i].viewEdit = false;
+            this.componentModel[i].viewEdit = false;
         }
         addressRow.viewActions = !addressRow.viewActions;
         if (addressRow.viewActions) {
@@ -106,11 +207,10 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
         }, 500);
     }
 
-
     /** Show edit address */
     onClickEditAddress(addressRow: AddressRowViewModel) {
         addressRow.viewActions = false;
-     
+
         this.router.navigate(['./address-edit/' + addressRow.address.id], { relativeTo: this.route });
 
         addressRow.viewEdit = !addressRow.viewEdit;
@@ -154,8 +254,8 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                         'An error occured. Your file has not been deleted.  Please contact an administrator.',
                         'error'
                     );
+                    self.errorHandler.handleError(error);
                 });
-
             },
             // delete canceled
             function (dismiss) {

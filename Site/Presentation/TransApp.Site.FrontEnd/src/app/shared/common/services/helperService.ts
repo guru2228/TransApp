@@ -1,10 +1,10 @@
 ﻿import { Injectable } from '@angular/core';
 import { ComponentStateType } from "app/shared/common/helper/component-state-type";
 
+declare var $: any;
+
 @Injectable()
 export class HelperService {
-
-
     /**
      * Get component state based on current url
      * @param url 
@@ -19,6 +19,11 @@ export class HelperService {
         else if (url.indexOf('-edit') >= 0) {
             return ComponentStateType.display;
         }
+    }
+
+    scrollOnTop(){
+        var $main_panel = $('.main-panel');
+        $main_panel.scrollTop(0).perfectScrollbar('update');
     }
 
     /**

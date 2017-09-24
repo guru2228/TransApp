@@ -3,9 +3,10 @@ import { ROUTES } from "app/shared/sidebar/sidebar-routes.config";
 import { AuthenticationService } from "app/authentication/services/authentication.service";
 import { Router, ActivatedRoute } from '@angular/router';
 import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
+import { HelperService } from 'app/shared/common/services/helperService';
 
 
-declare var $:any;
+declare var $: any;
 var sidebarTimer;
 
 @Component({
@@ -14,67 +15,58 @@ var sidebarTimer;
     templateUrl: 'sidebar.component.html',
 })
 
-export class SidebarComponent implements OnInit{
+export class SidebarComponent implements OnInit {
     public menuItems: any[];
 
-currentUser: ApplicationUser;
+    currentUser: ApplicationUser;
 
-    constructor(private authenticationService: AuthenticationService, private router:Router){
+    constructor(private authenticationService: AuthenticationService, private router: Router, private helperService: HelperService) {
 
     }
-    isNotMobileMenu(){
-        if($(window).width() > 991){
+    isNotMobileMenu() {
+        if ($(window).width() > 991) {
             return false;
         }
         return true;
     }
 
     scroll() {
-        var $main_panel = $('.main-panel');
-        $main_panel.scrollTop(100).perfectScrollbar('update');
-       // $("html, body").animate({ scrollTop: 0 }, "slow");
-
-     //  $('.main-content').scrollTop(0);
-  //   $('.main-content').perfectScrollbar('update');
-
-  //$('#mainPanel').perfectScrollbar(); 
-
-  //$('#mainPanel').scrollTop = 0;
+        this.helperService.scrollOnTop;
     }
 
     ngOnInit() {
         this.currentUser = this.authenticationService.getCurrentUser();
-        
+
         var isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
-        if (isWindows){
-           // if we are on windows OS we activate the perfectScrollbar function
+        if (isWindows) {
+            // if we are on windows OS we activate the perfectScrollbar function
             var $sidebar = $('.sidebar-wrapper');
             $sidebar.perfectScrollbar();
         }
         this.menuItems = ROUTES.filter(menuItem => menuItem);
         isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
 
-        if (isWindows){
-           // if we are on windows OS we activate the perfectScrollbar function
-           $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
-           $('html').addClass('perfect-scrollbar-on');
-       } else {
-           $('html').addClass('perfect-scrollbar-off');
-       }
+        if (isWindows) {
+            // if we are on windows OS we activate the perfectScrollbar function
+            $('.sidebar .sidebar-wrapper, .main-panel').perfectScrollbar();
+            $('html').addClass('perfect-scrollbar-on');
+        } else {
+            $('html').addClass('perfect-scrollbar-off');
+        }
     }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
         // init Moving Tab after the view is initialisez
         setTimeout(() => {
-            if(mda.movingTabInitialised == false){
+            if (mda.movingTabInitialised == false) {
                 mda.initMovingTab();
                 mda.movingTabInitialised = true;
             }
         }, 100);
     }
 
-    onClickSignOut() : void{
-this.authenticationService.logout();
+    onClickSignOut(): void {
+        this.authenticationService.logout();
     }
 }
 
@@ -87,157 +79,157 @@ var mda: any = {
     movingTabInitialised: false,
     distance: 0,
 
-    setMovingTabPosition: function($currentActive){
-       $currentActive = mda.sidebarMenuActive;
-       mda.distance = $currentActive.parent().position().top - 10;
+    setMovingTabPosition: function ($currentActive) {
+        $currentActive = mda.sidebarMenuActive;
+        mda.distance = $currentActive.parent().position().top - 10;
 
-       if($currentActive.closest('.collapse').length != 0){
-           var parent_distance = $currentActive.closest('.collapse').parent().position().top;
-           mda.distance = mda.distance + parent_distance;
-       }
+        if ($currentActive.closest('.collapse').length != 0) {
+            var parent_distance = $currentActive.closest('.collapse').parent().position().top;
+            mda.distance = mda.distance + parent_distance;
+        }
 
-       mda.moveTab();
+        mda.moveTab();
     },
-    initMovingTab: function(){
-       mda.movingTab = $(mda.movingTab);
+    initMovingTab: function () {
+        mda.movingTab = $(mda.movingTab);
 
-       mda.sidebarMenuActive = $('.sidebar .nav-container > .nav > li.active > a:not([data-toggle="collapse"]');
+        mda.sidebarMenuActive = $('.sidebar .nav-container > .nav > li.active > a:not([data-toggle="collapse"]');
 
-       if(mda.sidebarMenuActive.length != 0){
-           mda.setMovingTabPosition(mda.sidebarMenuActive);
-       } else {
-           mda.sidebarMenuActive = $('.sidebar .nav-container .nav > li.active .collapse li.active > a');
-           mda.isChild = true;
-           this.setParentCollapse();
-       }
+        if (mda.sidebarMenuActive.length != 0) {
+            mda.setMovingTabPosition(mda.sidebarMenuActive);
+        } else {
+            mda.sidebarMenuActive = $('.sidebar .nav-container .nav > li.active .collapse li.active > a');
+            mda.isChild = true;
+            this.setParentCollapse();
+        }
 
-       mda.sidebarMenuActive.parent().addClass('visible');
+        mda.sidebarMenuActive.parent().addClass('visible');
 
-       var button_text = mda.sidebarMenuActive.html();
-       mda.movingTab.html(button_text);
+        var button_text = mda.sidebarMenuActive.html();
+        mda.movingTab.html(button_text);
 
-       $('.sidebar .nav-container').append(mda.movingTab);
+        $('.sidebar .nav-container').append(mda.movingTab);
 
-       if (window.history && window.history.pushState) {
-           $(window).on('popstate', function() {
+        if (window.history && window.history.pushState) {
+            $(window).on('popstate', function () {
 
-               setTimeout(function(){
-                   mda.sidebarMenuActive = $('.sidebar .nav-container .nav li.active a:not([data-toggle="collapse"])');
+                setTimeout(function () {
+                    mda.sidebarMenuActive = $('.sidebar .nav-container .nav li.active a:not([data-toggle="collapse"])');
 
-                   if(mda.isChild == true){
-                       this.setParentCollapse();
-                   }
-                   clearTimeout(sidebarTimer);
+                    if (mda.isChild == true) {
+                        this.setParentCollapse();
+                    }
+                    clearTimeout(sidebarTimer);
 
-                   var $currentActive = mda.sidebarMenuActive;
+                    var $currentActive = mda.sidebarMenuActive;
 
-                   $('.sidebar .nav-container .nav li').removeClass('visible');
+                    $('.sidebar .nav-container .nav li').removeClass('visible');
 
-                   var $movingTab = mda.movingTab;
-                   $movingTab.addClass('moving');
+                    var $movingTab = mda.movingTab;
+                    $movingTab.addClass('moving');
 
-                   $movingTab.css('padding-left',$currentActive.css('padding-left'));
-                   var button_text = $currentActive.html();
+                    $movingTab.css('padding-left', $currentActive.css('padding-left'));
+                    var button_text = $currentActive.html();
 
-                   mda.setMovingTabPosition($currentActive);
+                    mda.setMovingTabPosition($currentActive);
 
-                   sidebarTimer = setTimeout(function(){
-                       $movingTab.removeClass('moving');
-                       $currentActive.parent().addClass('visible');
-                   }, 650);
+                    sidebarTimer = setTimeout(function () {
+                        $movingTab.removeClass('moving');
+                        $currentActive.parent().addClass('visible');
+                    }, 650);
 
-                   setTimeout(function(){
-                       $movingTab.html(button_text);
-                   }, 10);
-               },10);
+                    setTimeout(function () {
+                        $movingTab.html(button_text);
+                    }, 10);
+                }, 10);
 
-           });
-       }
+            });
+        }
 
-       $('.sidebar .nav .collapse').on('hidden.bs.collapse', function () {
-           var $currentActive = mda.sidebarMenuActive;
+        $('.sidebar .nav .collapse').on('hidden.bs.collapse', function () {
+            var $currentActive = mda.sidebarMenuActive;
 
-           mda.distance = $currentActive.parent().position().top - 10;
+            mda.distance = $currentActive.parent().position().top - 10;
 
-           if($currentActive.closest('.collapse').length != 0){
-               var parent_distance = $currentActive.closest('.collapse').parent().position().top;
-               mda.distance = mda.distance + parent_distance;
-           }
+            if ($currentActive.closest('.collapse').length != 0) {
+                var parent_distance = $currentActive.closest('.collapse').parent().position().top;
+                mda.distance = mda.distance + parent_distance;
+            }
 
-           mda.moveTab();
-       });
+            mda.moveTab();
+        });
 
-       $('.sidebar .nav .collapse').on('shown.bs.collapse', function () {
-           var $currentActive = mda.sidebarMenuActive;
+        $('.sidebar .nav .collapse').on('shown.bs.collapse', function () {
+            var $currentActive = mda.sidebarMenuActive;
 
-           mda.distance = $currentActive.parent().position().top - 10;
+            mda.distance = $currentActive.parent().position().top - 10;
 
-           if($currentActive.closest('.collapse').length != 0){
-               var parent_distance = $currentActive.closest('.collapse').parent().position().top;
-               mda.distance = mda.distance + parent_distance;
-           }
+            if ($currentActive.closest('.collapse').length != 0) {
+                var parent_distance = $currentActive.closest('.collapse').parent().position().top;
+                mda.distance = mda.distance + parent_distance;
+            }
 
-           mda.moveTab();
-       });
+            mda.moveTab();
+        });
 
-       $('.sidebar .nav-container .nav > li > a:not([data-toggle="collapse"])').click(function(){
-           mda.sidebarMenuActive = $(this);
-           var $parent = $(this).parent();
+        $('.sidebar .nav-container .nav > li > a:not([data-toggle="collapse"])').click(function () {
+            mda.sidebarMenuActive = $(this);
+            var $parent = $(this).parent();
 
-           if(mda.sidebarMenuActive.closest('.collapse').length == 0){
-               mda.isChild = false;
-           }
+            if (mda.sidebarMenuActive.closest('.collapse').length == 0) {
+                mda.isChild = false;
+            }
 
-           // we call the animation of the moving tab
-           clearTimeout(sidebarTimer);
+            // we call the animation of the moving tab
+            clearTimeout(sidebarTimer);
 
-           var $currentActive = mda.sidebarMenuActive;
+            var $currentActive = mda.sidebarMenuActive;
 
-           $('.sidebar .nav-container .nav li').removeClass('visible');
+            $('.sidebar .nav-container .nav li').removeClass('visible');
 
-           var $movingTab = mda.movingTab;
-           $movingTab.addClass('moving');
+            var $movingTab = mda.movingTab;
+            $movingTab.addClass('moving');
 
-           $movingTab.css('padding-left',$currentActive.css('padding-left'));
-           var button_text = $currentActive.html();
+            $movingTab.css('padding-left', $currentActive.css('padding-left'));
+            var button_text = $currentActive.html();
 
-           var $currentActive = mda.sidebarMenuActive;
-           mda.distance = $currentActive.parent().position().top - 10;
+            var $currentActive = mda.sidebarMenuActive;
+            mda.distance = $currentActive.parent().position().top - 10;
 
-           if($currentActive.closest('.collapse').length != 0){
-               var parent_distance = $currentActive.closest('.collapse').parent().position().top;
-               mda.distance = mda.distance + parent_distance;
-           }
+            if ($currentActive.closest('.collapse').length != 0) {
+                var parent_distance = $currentActive.closest('.collapse').parent().position().top;
+                mda.distance = mda.distance + parent_distance;
+            }
 
-           mda.moveTab();
+            mda.moveTab();
 
-           sidebarTimer = setTimeout(function(){
-               $movingTab.removeClass('moving');
-               $currentActive.parent().addClass('visible');
-           }, 650);
+            sidebarTimer = setTimeout(function () {
+                $movingTab.removeClass('moving');
+                $currentActive.parent().addClass('visible');
+            }, 650);
 
-           setTimeout(function(){
-               $movingTab.html(button_text);
-           }, 10);
-       });
+            setTimeout(function () {
+                $movingTab.html(button_text);
+            }, 10);
+        });
     },
-    setParentCollapse: function(){
-       if(mda.isChild == true){
-           var $sidebarParent = mda.sidebarMenuActive.parent().parent().parent();
-           var collapseId = $sidebarParent.siblings('a').attr("href");
+    setParentCollapse: function () {
+        if (mda.isChild == true) {
+            var $sidebarParent = mda.sidebarMenuActive.parent().parent().parent();
+            var collapseId = $sidebarParent.siblings('a').attr("href");
 
-           $(collapseId).collapse("show");
+            $(collapseId).collapse("show");
 
-           $(collapseId).collapse()
-           .on('shown.bs.collapse', () => {
-               mda.setMovingTabPosition();
-           })
-           .on('hidden.bs.collapse', () => {
-               mda.setMovingTabPosition();
-           });
-       }
+            $(collapseId).collapse()
+                .on('shown.bs.collapse', () => {
+                    mda.setMovingTabPosition();
+                })
+                .on('hidden.bs.collapse', () => {
+                    mda.setMovingTabPosition();
+                });
+        }
     },
-    animateMovingTab: function(){
+    animateMovingTab: function () {
         clearTimeout(sidebarTimer);
 
         var $currentActive = mda.sidebarMenuActive;
@@ -247,27 +239,27 @@ var mda: any = {
         var $movingTab = mda.movingTab;
         $movingTab.addClass('moving');
 
-        $movingTab.css('padding-left',$currentActive.css('padding-left'));
+        $movingTab.css('padding-left', $currentActive.css('padding-left'));
         var button_text = $currentActive.html();
 
         mda.setMovingTabPosition($currentActive);
 
-        sidebarTimer = setTimeout(function(){
+        sidebarTimer = setTimeout(function () {
             $movingTab.removeClass('moving');
             $currentActive.parent().addClass('visible');
         }, 650);
 
-        setTimeout(function(){
+        setTimeout(function () {
             $movingTab.html(button_text);
         }, 10);
-   },
-   moveTab: function(){
-       mda.movingTab.css({
-           'transform':'translate3d(0px,' + mda.distance + 'px, 0)',
-           '-webkit-transform':'translate3d(0px,' + mda.distance + 'px, 0)',
-           '-moz-transform':'translate3d(0px,' + mda.distance + 'px, 0)',
-           '-ms-transform':'translate3d(0px,' + mda.distance + 'px, 0)',
-           '-o-transform':'translate3d(0px,' + mda.distance + 'px, 0)'
-       });
-   }
+    },
+    moveTab: function () {
+        mda.movingTab.css({
+            'transform': 'translate3d(0px,' + mda.distance + 'px, 0)',
+            '-webkit-transform': 'translate3d(0px,' + mda.distance + 'px, 0)',
+            '-moz-transform': 'translate3d(0px,' + mda.distance + 'px, 0)',
+            '-ms-transform': 'translate3d(0px,' + mda.distance + 'px, 0)',
+            '-o-transform': 'translate3d(0px,' + mda.distance + 'px, 0)'
+        });
+    }
 };

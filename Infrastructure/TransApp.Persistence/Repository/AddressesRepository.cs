@@ -243,7 +243,7 @@ where Address.Id = " + id);
             }
             var sb = new StringBuilder();
             sb.Append(@"SELECT  RowConstrainedResult.* from (select  ROW_NUMBER() OVER 
-( ORDER BY Address.Name ) AS RowNum
+( ORDER BY Address.Id DESC ) AS RowNum
       ,[Address].[Id]
       ,[Address].[CustomerId]
       ,[Address].[Name]
@@ -309,7 +309,7 @@ where 1=1");
                 sb.Append(" and Address.Name like '%" + filter.Name + "%'");
             }
             sb.Append(@" ) AS RowConstrainedResult
-WHERE  RowNum between " + filter.StartItem + @" and " + filter.StartItem + filter.Amount + @" ORDER BY RowNum ");
+WHERE  RowNum between " + filter.StartItem + @" and " + (filter.StartItem + filter.Amount - 1)  + @" ORDER BY Id Desc");
             return sb.ToString();
         }
 
