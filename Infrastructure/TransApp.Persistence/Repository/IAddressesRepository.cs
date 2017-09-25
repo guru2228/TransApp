@@ -19,6 +19,8 @@ namespace TransApp.Persistence.Repository
         
         Task<List<AddressSigleDto>> GetAll(FilterAddress filter);
 
+        Task<int> GetAllCount(FilterAddress filter);
+
         Task SaveAddress(int currentUserId, Address address, IDbTransaction transaction = null);
 
         Task DeleteAddress(Address address, IDbTransaction transaction);

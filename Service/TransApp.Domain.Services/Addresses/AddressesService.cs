@@ -176,6 +176,12 @@ namespace TransApp.Domain.Services.Addresses
             return new List<AddressModel>();
         }
 
+        public async Task<int> GetAllCount(FilterAddress filter)
+        {
+            return
+                await _unitOfWork.AddressesRepository.GetAllCount(filter);
+        }
+
         public async Task<int> SaveAddress(int userId, AddressModel currentAdrress)
         {
             if (currentAdrress == null)

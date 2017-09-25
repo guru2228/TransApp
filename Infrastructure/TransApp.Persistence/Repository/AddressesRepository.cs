@@ -114,6 +114,15 @@ namespace TransApp.Persistence.Repository
             }
         }
 
+        public async Task<int> GetAllCount(FilterAddress filter)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                cn.Open();
+                return (await cn.QueryAsync<int>(GetAddressQueryFilteredCount(filter))).Count();
+            }
+        }
+
         /// <summary>
         /// Save
         /// </summary>
@@ -282,14 +291,6 @@ where 1=1");
             if (!string.IsNullOrEmpty(filter.CustomFilter))
             {
                 var partialFilter = filter.CustomFilter;
-                //  var splitFilter = GetSplitFilter(filter.CustomFilter);
-                //sb.Append(" AND (Address.Name is null or Address.Name IN (" + splitFilter + @") )");
-                //sb.Append(" AND (Address.Street1 is null or Address.Street1 IN (" + splitFilter + @") )");
-                //sb.Append(" AND (Address.ZipCode is null Address.ZipCode IN (" + splitFilter + @") )");
-                //sb.Append(" AND (Address.City is null Address.City  IN (" + splitFilter + @") )");
-                //sb.Append(" AND (Address.Country is null Address.Country  IN (" + splitFilter + @") )");
-                //sb.Append(" AND (Address.Phone is null Address.Phone  IN (" + splitFilter + @") )");
-
                 sb.Append(" AND (Address.Name like '%" + partialFilter + "%'");
                 sb.Append(" OR Address.Street1 like '%" + partialFilter + "%'");
                 sb.Append(" OR Address.StreetNumber like '%" + partialFilter + "%'");
@@ -309,44 +310,50 @@ where 1=1");
                 sb.Append(" and Address.Name like '%" + filter.Name + "%'");
             }
             sb.Append(@" ) AS RowConstrainedResult
-WHERE  RowNum between " + filter.StartItem + @" and " + (filter.StartItem + filter.Amount - 1)  + @" ORDER BY Id Desc");
+WHERE  RowNum between " + filter.StartItem + @" and " + (filter.StartItem + filter.Amount - 1) + @" ORDER BY Id Desc");
             return sb.ToString();
         }
 
-        private string GetSplitFilter(string filterCustomFilter)
+        private string GetAddressQueryFilteredCount(FilterAddress filter)
         {
-            string[] listFilters = filterCustomFilter.Split(' ');
-            List<string> result = new List<string>();
-            for (int i = 0; i < listFilters.Length; i++)
+            if (filter.StartItem < 0)
             {
-                if (!result.Contains(listFilters[i]))
-                {
-                    result.Add(listFilters[i]);
-                }
-                if (i > 0)
-                {
-                    string local = string.Empty;
-                    for (int j = 0; j <= i; j++)
-                    {
-                        local += " " + listFilters[j];
-                        local = local.Trim();
-                        if (!result.Contains(local))
-                        {
-                            result.Add(local);
-                        }
-                    }
-                }
+                filter.StartItem = 0;
             }
-            var stringResult = string.Empty;
-            foreach (string s in result)
+            if (filter.Amount < 0)
             {
-                stringResult += "'" + s + "'" + ",";
+                filter.Amount = 9999;
             }
-            if (stringResult.EndsWith(","))
+            var sb = new StringBuilder();
+            sb.Append(@" select  Address.Id
+from Address 
+where 1=1");
+            if (filter.CustomerId.HasValue)
             {
-                stringResult = stringResult.Remove(stringResult.Length - 1, 1);
+                sb.Append(" and Address.CustomerId=" + filter.CustomerId.Value);
             }
-            return stringResult;
+            if (!string.IsNullOrEmpty(filter.CustomFilter))
+            {
+                var partialFilter = filter.CustomFilter;
+                sb.Append(" AND (Address.Name like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.Street1 like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.StreetNumber like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.ZipCode like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.City like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.Country like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.Phone like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.ContactPerson like '%" + partialFilter + "%'");
+                sb.Append(" OR Address.Email like '%" + partialFilter + "%'");
+                sb.Append(@" OR (isnull(Address.Street1,'') + ' '+isnull(Address.[StreetNumber],'') + ', '+isnull(Address.[City],'') + ', '+
+                                 isnull(Address.StateInfo,'') + ', '+isnull(Address.Country,'')  like '%" +
+                          partialFilter + "%'))");
+            }
+
+            if (!string.IsNullOrEmpty(filter.Name))
+            {
+                sb.Append(" and Address.Name like '%" + filter.Name + "%'");
+            }
+            return sb.ToString();
         }
     }
 }

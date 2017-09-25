@@ -230,5 +230,26 @@ namespace TransApp.Tests.Address
             }
             Assert.IsTrue(true);
         }
+
+        [TestMethod]
+        public async Task Test_AddressGetAllCount_Is_Ok()
+        {
+            try
+            {
+                var amount =
+                   await _addressesService.GetAllCount(new FilterAddress
+                   {
+                       CustomerId = 1,
+                       StartItem = 0,
+                       Amount = 15,
+                       CustomFilter = "Fratersplein"
+                   });
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
     }
 }

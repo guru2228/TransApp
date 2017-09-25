@@ -25,6 +25,13 @@ namespace TransApp.Domain.Services.Addresses
         Task<List<AddressModel>> GetAll(FilterAddress filter);
 
         /// <summary>
+        /// GetAllCount
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        Task<int> GetAllCount(FilterAddress filter);
+
+        /// <summary>
         /// Save Full Address
         /// </summary>
         /// <param name="userId"></param>
