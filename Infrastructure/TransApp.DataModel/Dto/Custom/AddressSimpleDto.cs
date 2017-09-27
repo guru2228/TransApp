@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto.Custom
 {
-    public class AddressSigleDto
+    public class AddressSimpleDto
     {
         public int Id { get; set; }
 

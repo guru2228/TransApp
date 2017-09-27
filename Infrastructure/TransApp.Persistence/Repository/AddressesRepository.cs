@@ -105,12 +105,12 @@ namespace TransApp.Persistence.Repository
         /// </summary>
         /// <param name="filter"></param>
         /// <returns></returns>
-        public async Task<List<AddressSigleDto>> GetAll(FilterAddress filter)
+        public async Task<List<AddressSimpleDto>> GetAll(FilterAddress filter)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                return (await cn.QueryAsync<AddressSigleDto>(GetAddressQueryFiltered(filter))).ToList();
+                return (await cn.QueryAsync<AddressSimpleDto>(GetAddressQueryFiltered(filter))).ToList();
             }
         }
 

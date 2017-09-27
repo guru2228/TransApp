@@ -15,6 +15,11 @@ namespace TransApp.Domain.Common
 
         public string FR { get; set; }
 
+        public string DE { get; set; }
+
+
+        public string RO { get; set; }
+
 
         public int? UserIdCreated { get; set; }
 
