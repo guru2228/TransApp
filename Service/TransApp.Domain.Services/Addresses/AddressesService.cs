@@ -134,7 +134,7 @@ namespace TransApp.Domain.Services.Addresses
             List<AddressModel> result = new List<AddressModel>();
             if (addresses != null)
             {
-                foreach (AddressSigleDto currentAdrress in addresses)
+                foreach (AddressSimpleDto currentAdrress in addresses)
                 {
                     AddressModel address = new AddressModel
                     {

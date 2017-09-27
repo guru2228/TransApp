@@ -485,6 +485,14 @@ where 1=1");
             {
                 sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
             }
+            if (filter.ShipmentStatusId.HasValue)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId=" + filter.ShipmentStatusId.Value);
+            }
+            if (filter.TransporterId.HasValue)
+            {
+                sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
+            }
 
             sb.Append(@" ) AS RowConstrainedResult
 WHERE  RowNum between " + filter.StartItem + @" and " + filter.StartItem + filter.Amount + @" ORDER BY RowNum ");

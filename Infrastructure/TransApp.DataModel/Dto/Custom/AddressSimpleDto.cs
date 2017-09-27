@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto.Custom
 {
-    public class AddressSigleDto
+    public class AddressSimpleDto
     {
         public int Id { get; set; }
 
@@ -48,7 +48,7 @@ namespace TransApp.DataModel.Dto.Custom
 
         public string StateCode { get; set; }
 
-        public string StreetNumber { get; set; }
+        public int StreetNumber { get; set; }
 
         public bool CommonAvailability { get; set; }
         public string UserCreated { get; set; }
