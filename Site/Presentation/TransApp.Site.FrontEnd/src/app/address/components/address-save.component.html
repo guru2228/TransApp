@@ -28,15 +28,15 @@
                                 <div class="col-sm-12">
                                     <div class="row">
                                         <div class="col-md-8">
-                                            <div [ngClass]="'form-group label-floating is-focused'  + ((!componentModel.location || !componentModel.location.street ) && formAddress.submitted ? ' has-error' : '')">
+                                            <div [ngClass]="'form-group label-floating is-focused'">
                                                 <label for="" class="">Street <span class="star">*</span></label>
-                                                <input type="text" id="street" name="street" [ngClass]="'form-control '  + ((!componentModel.location || !componentModel.location.street ) && formAddress.submitted ? ' ' : 'nofocusline')" disabled="" [(ngModel)]="componentModel.location.street">
+                                                <input type="text" id="street" name="street" [ngClass]="'form-control nofocusline'" disabled="" [(ngModel)]="componentModel.location.street">
                                             </div>
                                         </div>
                                         <div class="col-md-2">
-                                            <div [ngClass]="'form-group label-floating is-focused'  + ((!componentModel.location || !componentModel.location.streetNumber ) && formAddress.submitted ? ' has-error' : '')">
+                                            <div [ngClass]="'form-group label-floating is-focused'">
                                                 <label for="" class="">Number<span class="star">*</span></label>
-                                                <input type="text" id="streetNumber" name="streetNumber" [ngClass]="'form-control '  + ((!componentModel.location || !componentModel.location.streetNumber ) && formAddress.submitted ? ' ' : 'nofocusline')" disabled="" [(ngModel)]="componentModel.location.streetNumber">
+                                                <input type="text" id="streetNumber" name="streetNumber" [ngClass]="'form-control nofocusline'" disabled="" [(ngModel)]="componentModel.location.streetNumber">
                                             </div>
                                         </div>
                                     </div>
@@ -79,14 +79,13 @@
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.contactPerson" id="contactperson" name="contactPerson">
                             </div>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.email  && componentModel.email.length > 0 ? '' : 'is-empty ' + ((!componentModel.email || !email || !email.valid) && formAddress.submitted ? ' has-error' : '')) ">
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.email  && componentModel.email.length > 0 ? '' : 'is-empty ' + ((componentModel.email && !emailValidator(componentModel.email)) && formAddress.submitted ? ' has-error' : '')) ">
                                 <label class="control-label">
                                         Email address
-                                        <span class="star">*</span>
                                     </label>
-                                <input type="email" required class="form-control" [(ngModel)]="componentModel.email" id="email" name="addressEmail" required pattern="^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,6})+$">
+                                <input type="email" class="form-control" [(ngModel)]="componentModel.email" id="email" name="addressEmail">
 
-                                <small *ngIf="(!componentModel.email || !emailValidator(componentModel.email)) && formAddress.submitted" class="text-danger">
+                                <small *ngIf="(componentModel.email && !emailValidator(componentModel.email)) && formAddress.submitted" class="text-danger">
                                         Email is required and format should be <i>john@doe.com</i>.
                                     </small>
 

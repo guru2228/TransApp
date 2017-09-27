@@ -78,6 +78,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         // load required data
         this.loadComponentModel(this.componentState).subscribe(modelLoaded => {
             if (modelLoaded) {
+                debugger;
                 this.loadParamsData().subscribe(paramsDataLoaded => {
                     if (paramsDataLoaded) {
                         this.initDatetimePicker();
@@ -90,20 +91,15 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        let self =this;
+        let self = this;
         setTimeout(function () {
-            if(self.componentState == ComponentStateType.add){
-               let element = document.getElementById("searchControl");
-               if(element){
-                element.focus()
-               }
-            }
-        }, 1000);
+            self.moveToAddressSearch();
+        }, 500);
     }
 
     save(model: AddressModel, isValid: boolean) {
         console.log(model, isValid);
-        if (isValid) {
+        if (isValid && this.isModelValid()) {
             this.addressService.save(this.componentModel).subscribe(result => {
                 if (this.componentState == ComponentStateType.add) {
                     this.router.navigate(['/address-overview/address-edit/' + result]);
@@ -117,6 +113,10 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             }, error => {
                 this.errorHandler.handleError(error);
             });
+        }
+        else {
+            this.helperService.scrollOnTop();
+            this.moveToAddressSearch();
         }
     }
 
@@ -156,6 +156,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
                         observer.next(true);
                     }, error => {
+                        debugger;
                         this.errorHandler.handleError(error);
                         observer.next(false);
                     })
@@ -182,11 +183,11 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
                     observer.next(true);
                     //   resolve(true);
-                }), error => {
-                    //   reject(false);
-                    observer.next(false);
+                }, error => {
+                    debugger;
                     this.errorHandler.handleError(error);
-                };
+                    observer.next(false);
+                });
             //  });
         });
     }
@@ -196,6 +197,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
      * When palce is changed, handler to update model is registered
      */
     private register_googleMapsPlaceSearchHandler() {
+        debugger;
         //load Places Autocomplete
         this.mapsAPILoader.load().then(() => {
             // create map
@@ -232,8 +234,12 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
      */
     private updateLocationModel(place: any) {
         this.componentModel.location = new AddressLocationModel();
+        this.componentModel.phone = '';
+        this.componentModel.name = '';
+
         this.componentModel.location.latitude = place.geometry.location.lat();
         this.componentModel.location.longitude = place.geometry.location.lng();
+
 
         for (let i = 0; i < place.address_components.length; i++) {
             let addressMember = place.address_components[i].types[0];
@@ -276,9 +282,15 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             }
         }
 
+        this.componentModel.name = '';
+        if (place.name) {
+            this.componentModel.name += place.name;
+        }
         if (place.formatted_address) {
-            this.componentModel.name = place.formatted_address;
-
+            if(this.componentModel.name.length > 0){
+                this.componentModel.name +=  ', ';
+            }
+            this.componentModel.name += place.formatted_address;
         }
 
         if (place.formatted_phone_number) {
@@ -298,7 +310,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             -	Sunday closed
  */
     private updateOpeningHours(place: any) {
-
+        debugger;
         this.componentModel.availabilities = [];
         // if is permanently closed then, send common availability = true and closed on day 0  = true
         if (place.permanently_closed) {
@@ -350,14 +362,14 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                         }
                         else {
                             availability.amStart = ("0" + periodStart.open.hours).slice(-2) + ':' + ("0" + periodStart.open.minutes).slice(-2);
-                            availability.amStop = ("0" + periodStart.close.hours).slice(-2) + ':' + ("0" + periodStart.close.minutes).slice(-2);
+                            availability.amStop = ("0" + (periodStart.close.hours == 0 ? 24 :periodStart.close.hours )).slice(-2) + ':' + ("0" + periodStart.close.minutes).slice(-2);
                         }
 
                         let periodEnd = periods.length > 1 ? periods[1] : null;
 
                         if (periodEnd) {
                             availability.pmStart = ("0" + periodEnd.open.hours).slice(-2) + ':' + ("0" + periodEnd.open.minutes).slice(-2);
-                            availability.pmStop = ("0" + periodEnd.close.hours).slice(-2) + ':' + ("0" + periodEnd.close.minutes).slice(-2);
+                            availability.pmStop = ("0" + (periodStart.close.hours == 0 ? 24 :periodStart.close.hours )).slice(-2) + ':' + ("0" + periodEnd.close.minutes).slice(-2);
                         }
                         else {
                             availability.pmStart = availability.amStop;
@@ -370,13 +382,13 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                     }
 
                     availabilitiesList.push(availability);
-            this.componentModel.availabilities = availabilitiesList;
-            
+                    this.componentModel.availabilities = availabilitiesList;
+
                 }
             }
 
         }
-        else{
+        else {
             this.generateAvailabilities();
         }
     }
@@ -417,6 +429,34 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         this.componentModel.facilities = [];
         this.componentModel.requirements = [];
         this.componentModel.trucks = [];
+    }
+
+    private isModelValid(): boolean {
+        if (!this.componentModel.name)
+            return false;
+
+        if (!this.componentModel.location)
+            return false;
+
+        if (!this.componentModel.location.zipCode)
+            return false;
+
+        if (!this.componentModel.location.city)
+            return false;
+
+        if (!this.componentModel.location.country)
+            return false;
+
+        if (!this.componentModel.contactPerson)
+            return false;
+
+        if (!this.componentModel.phone)
+            return false;
+
+            if (this.componentModel.email && !this.emailValidator(this.componentModel.email))
+            return false;
+
+        return true;
     }
 
     private generateAvailabilities() {
@@ -556,26 +596,35 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         });
     }
 
-    emailValidator(email:string): boolean {
+    emailValidator(email: string): boolean {
         var EMAIL_REGEXP = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (!EMAIL_REGEXP.test(email)) {
             return false;
         }
-        return true; 
+        return true;
     }
 
- private getDay(day:number):string{
+    private getDay(day: number): string {
         let weekdays = [
-             "Monday", "Tuesday",
+            "Monday", "Tuesday",
             "Wednesday", "Thursday", "Friday",
-            "Saturday","Sunday"
+            "Saturday", "Sunday"
         ];
-        if(day > 0){
-            return weekdays[day -1];
+        if (day > 0) {
+            return weekdays[day - 1];
         }
         else {
             return weekdays[0] + ' - ' + weekdays[6];
+        }
+    }
+
+    private moveToAddressSearch() {
+        if (this.componentState == ComponentStateType.add) {
+            let element = document.getElementById("searchControl");
+            if (element) {
+                element.focus();
+            }
         }
     }
 }

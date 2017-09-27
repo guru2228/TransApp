@@ -20,7 +20,7 @@
 
         public string Street { get; set; }
 
-        public int StreetNumber { get; set; }
+        public string StreetNumber { get; set; }
 
         public string ZipCode { get; set; }
 

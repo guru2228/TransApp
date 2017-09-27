@@ -126,6 +126,34 @@ namespace TransApp.Site.ApiControllers
         }
 
 
+        /// <summary>
+        /// Get number of addresses, used for paging
+        /// </summary>
+        /// <param name="customerId"></param>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getCount/{customerId}/{language}")]
+        public async Task<int> GetCount(int customerId,
+            int language, [FromQuery]string searchTerm)
+        {
+            var searchFilter = new FilterAddress
+            {
+                CustomerId = customerId,
+                StartItem = 0,
+                Amount = 99999
+            };
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                searchFilter.CustomFilter = searchTerm;
+            }
+
+            //TODO Bogdan implement this
+            var count = await _addressesService.GetAllCount(searchFilter);
+            return count;
+        }
+
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("search/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
         public async Task<IEnumerable<AddressModel>> Search(int customerId, int startItem, int numberOfRetrievedItems, int language, [FromQuery]string searchTerm)

@@ -90,7 +90,7 @@ namespace TransApp.Tests.Address
             location.Longitude = Convert.ToDecimal(2222.2222);
             location.State = "Moldova";
             location.Street = "Silvestru";
-            location.StreetNumber = 10;
+            location.StreetNumber = "10";
             location.ZipCode = "555";
             currentAdrress.Location = location;
 

@@ -48,7 +48,7 @@ namespace TransApp.DataModel.Dto.Custom
 
         public string StateCode { get; set; }
 
-        public int StreetNumber { get; set; }
+        public string StreetNumber { get; set; }
 
         public bool CommonAvailability { get; set; }
         public string UserCreated { get; set; }

@@ -49,7 +49,7 @@ namespace TransApp.DataModel.Dto
 
         public string StateCode { get; set; }
 
-        public int StreetNumber { get; set; }
+        public string StreetNumber { get; set; }
 
         public bool CommonAvailability { get; set; }
 

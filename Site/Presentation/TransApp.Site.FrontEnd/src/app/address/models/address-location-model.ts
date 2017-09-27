@@ -8,7 +8,7 @@ export class AddressLocationModel {
     public state: string;
     public stateCode: string;
     public street: string;
-    public streetNumber: number;
+    public streetNumber: string;
     public zipCode: string;
 
     public phone: string;

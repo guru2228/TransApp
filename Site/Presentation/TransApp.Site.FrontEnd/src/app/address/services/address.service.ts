@@ -58,6 +58,23 @@ export class AddressService {
             .catch(this.errorHandler.throwError);
     }
 
+        /**
+     * Get number of addresses, used for paging
+     * @param customerId 
+     * @param startItem 
+     * @param numberOfRetrievedItems 
+     * @param language 
+     */
+    getCount(customerId: number,searchTerm:string,  language: string): Observable<number> {
+        return this.http.get(this.serviceUrl +
+            'getCount' +
+            '/' + customerId +
+            '/' + language +
+            '?searchTerm='+searchTerm)
+            .map((res: Response) => res.json())
+            .catch(this.errorHandler.throwError);
+    }
+
     /**
      * Save address
      * @param medicalEncryptedData 

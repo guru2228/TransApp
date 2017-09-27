@@ -106,10 +106,9 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
             });
         }
         if (this.currentUser && this.currentUser.customerId) {
-            this.addressService.getAll(this.currentUser.customerId, searchQueryParam, 0, 10000, this.translateService.currentLanguage).subscribe(result => {
+            this.addressService.getCount(this.currentUser.customerId, searchQueryParam, this.translateService.currentLanguage).subscribe(result => {
                 this.pagesCollection = [];
-                if (result) {
-                    let numberOfPages = Math.round(result.length / this.pageSize);
+                    let numberOfPages = Math.round(result / this.pageSize);
                     numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
                     let self = this;
                     setTimeout(function () {
@@ -117,8 +116,6 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                             self.pagesCollection.push(i);
                         }
                     }, 100);
-
-                }
             }, error => {
                 this.errorHandler.handleError(error);
             });

@@ -48,6 +48,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
             date = moment().isoWeekday(this.availability.day).toDate();
         }
 
+        debugger;
         if (this.availability.isClosed) {
             this.availability.amStart = '';
             this.availability.amStop = '';
