@@ -35,7 +35,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
     currentPage: number = 0;
     pagesCollection: Array<number>;
-    pageSize = 4;
+    pageSize = 20;
 
     private subscriptionReceiveUpdatedAddress: Subscription;
 
@@ -50,8 +50,11 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     public ngOnInit() {
+        
         this.currentUser = this.authenticationService.getCurrentUser();
+
         this.getNumberOfAddresses('', false);
+
         this.getAddresses();
 
         this.register_updateSavedModel_handler();

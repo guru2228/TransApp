@@ -44,6 +44,28 @@
                                     </label>
                                 <input type="text" class="form-control" name="sender" required>
                             </div>
+
+                            <div class="form-group label-floating">
+                                <md-form-field class="autocomplete-address">
+                                    <input type="text" name="searchAddress" aria-label="Select sender" placeholder="Select sender" md-min-length="0" mdInput [formControl]="addressesSearchTerm" [mdAutocomplete]="auto">
+                                    <md-autocomplete #auto="mdAutocomplete" [displayWith]="displayFn">
+                                        <md-option *ngFor="let option of addresses" [value]="option">
+                                            {{ option.name }}
+                                        </md-option>
+                                    </md-autocomplete>
+                                </md-form-field>
+                            </div>
+
+                            <div class="form-group label-floating">
+                                <md-datepicker-toggle mdSuffix [for]="resultPicker">
+                                </md-datepicker-toggle>
+                                <md-input-container>
+                                    <input mdInput [mdDatepicker]="resultPicker" placeholder="Pick a day">
+                                </md-input-container>
+                                <md-datepicker #resultPicker [touchUi]="touch" [startView]="'month'">
+                                </md-datepicker>
+                            </div>
+
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div class="form-group label-floating">

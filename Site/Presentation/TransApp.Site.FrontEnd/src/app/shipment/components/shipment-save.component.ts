@@ -1,38 +1,81 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import {MdDatepickerModule} from '@angular/material';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/startWith';
+import 'rxjs/add/operator/map';
+import { Router, ActivatedRoute } from '@angular/router';
+import { AuthenticationService } from 'app/authentication/services/authentication.service';
+import { HelperService } from 'app/shared/common/services/helperService';
+import { AddressService } from 'app/address/services/address.service';
+import { ParametersDataService } from 'app/shared/common/services/parameters-data.service';
+import { TranslateService } from 'app/shared/common/services/localization/translate.service';
+import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
+import { NotificationService } from 'app/shared/common/services/notification.service';
+import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
+import { AddressModel } from 'app/address/models/address-model';
 
 declare var google: any;
 declare var $:any;
 
 
 @Component({
-    moduleId: module.id,
+  moduleId: module.id,
   selector: 'shipment-save-component',
   templateUrl: './shipment-save.component.html'
 })
 
-export class ShipmentSaveComponent{
-    // rangeValidation : FormGroup;
-    //
-    // // We are passing an instance of the FormBuilder to our constructor
-    // constructor(fb: FormBuilder){
-    //   // Here we are using the FormBuilder to build out our form.
-    //   this.rangeValidation = fb.group({
-    //     // To add a validator, we must first convert the string value into an array. The first item in the array is the default value if any, then the next item in the array is the validator. Here we are adding a required validator meaning that the firstName attribute must have a value in it.
-    //     // To add a validator, we must first convert the string value into an array. The first item in the array is the default value if any, then the next item in the array is the validator. Here we are adding a required validator meaning that the firstName attribute must have a value in it.
-    //   'firstName' : [null, Validators.required],
-    //   // We can use more than one validator per field. If we want to use more than one validator we have to wrap our array of validators with a Validators.compose function. Here we are using a required, minimum length and maximum length validator.
-    //   'lastName': [null, Validators.compose([Validators.required, Validators.minLength(5), Validators.maxLength(10)])],
-    //   'gender' : [null, Validators.required],
-    //
-    //   })
-    // }
+export class ShipmentSaveComponent implements OnInit, AfterViewInit{
+
+    currentUser: ApplicationUser; 
+    
+    constructor(
+        private router: Router,
+        private route: ActivatedRoute,
+        private authenticationService: AuthenticationService,
+        private helperService: HelperService,
+        private addressService: AddressService,
+        private parametersDataService: ParametersDataService,
+        private translateService: TranslateService,
+        private errorHandler: GlobalErrorHandler,
+        private notificationService: NotificationService
+    ) { }
+
+    addressesSearchTerm = new FormControl();
+        options = [
+            new User('Mary Mary Mary MaryMary'),
+            new User('Shelley'),
+            new User('Igor'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley'),
+            new User('Mary'),
+            new User('Shelley')
+        ];
+    
+        addresses: AddressModel[];
+
   ngOnInit() {
 
-            // $.getScript('../../../assets/js/plugins/bootstrap-datetimepicker.js');
-        // $.getScript('../../../assets/js/plugins/jquery.tagsinput.js');
-
+    this.currentUser = this.authenticationService.getCurrentUser();
+this.initSearchAddresses();
           //  Init Bootstrap Select Picker
         if($(".selectpicker").length != 0){
             $(".selectpicker").selectpicker();
@@ -76,7 +119,82 @@ export class ShipmentSaveComponent{
          
   }
 
+  private initSearchAddresses() {
+    this.addressesSearchTerm.valueChanges
+        .debounceTime(600)
+        .subscribe(term => {
+            let searchTerm = term && term.length > 0 ? term : '';
+                this.searchAddresses(searchTerm);
+        });
+}
+
+  private searchAddresses(searchTerm: string) {
+    if (this.currentUser && this.currentUser.customerId) {
+        this.addressService.getAll(this.currentUser.customerId, searchTerm, 0, 1000, this.translateService.currentLanguage).subscribe(result => {
+
+            this.addresses = result;
+        }, error => {
+            this.errorHandler.handleError(error);
+        });
+    }
+}
+
+  ngAfterViewInit(){
+    var availableTags = [
+		"ActionScript",
+		"AppleScript",
+		"Asp",
+		"BASIC",
+		"C",
+		"C++",
+		"Clojure",
+		"COBOL",
+		"ColdFusion longer resut here and even longer  longer resut here and even longer",
+		"Erlang",
+		"Fortran",
+		"Groovy",
+		"Haskell",
+		"Java",
+		"JavaScript",
+		"Lisp",
+		"Perl",
+		"PHP",
+		"Python",
+		"Ruby",
+		"Scala",
+		"Scheme"
+        ];
+        debugger;
+		$( "#autocomplete_procedure" ).autocomplete({
+		source: availableTags,
+			open: function (event, ui) {
+			var $input = $(event.target);
+			var $results = $input.autocomplete("widget");
+			var scrollTop = $(window).scrollTop();
+			var top = $results.position().top; 
+			var height = $results.outerHeight();
+			if (top + height > $(window).innerHeight() + scrollTop) {
+			let	newTop = top - height - $input.outerHeight();
+				if (newTop > scrollTop)
+					$results.css("top", newTop + "px");
+			}
+		}
+		});
+  }
+
     onSubmit(value: any):void{
         console.log(value);
     }
-}
+
+        filter(name: string): User[] {
+            return this.options.filter(option =>
+                option.name.toLowerCase().indexOf(name.toLowerCase()) === 0);
+        }
+    
+        displayFn(user: User): string {
+            return user ? user.name : '';
+        }
+    }
+    export class User {
+        constructor(public name: string) { }
+    }

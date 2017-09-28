@@ -1,8 +1,10 @@
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { HttpModule } from "@angular/http";
 import { RouterModule, Routes } from '@angular/router';
+
+import {  MaterialModule, MdDatepickerModule, MdAutocompleteModule, MdNativeDateModule, MdInputModule, MdSelectModule } from '@angular/material';
 
 import { AgmCoreModule } from '@agm/core';
 import { MdModule } from "app/shared/md/md.module";
@@ -13,13 +15,18 @@ import { ShipmentSaveComponent } from "app/shipment/components/shipment-save.com
     imports: [
         CommonModule,
         FormsModule,
+        ReactiveFormsModule,
         HttpModule,
         MdModule,
         RouterModule,
         
+        MaterialModule, MdDatepickerModule, MdAutocompleteModule, MdNativeDateModule, MdInputModule, MdSelectModule,
+
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyChUim14iXhf6riJ73R3qxNxnMls2SGZDA'
-        })
+        }),
+
+        
     ],
     exports: [
     ],

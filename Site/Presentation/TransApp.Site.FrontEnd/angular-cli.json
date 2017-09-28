@@ -19,6 +19,7 @@
         "scripts": [
             "../node_modules/jquery/dist/jquery.js",
             "../node_modules/bootstrap/dist/js/bootstrap.js",
+            "../node_modules/bootstrap-material-design/dist/js/material.min.js",
             "../src/assets/js/core/material.min.js",
             "../node_modules/arrive/src/arrive.js",
             "../node_modules/moment/moment.js",
@@ -39,7 +40,9 @@
             "../src/assets/js/core/jquery.perfect-scrollbar.min.js",
             "../src/assets/js/plugins/jquery-jvectormap.js",
             "../src/assets/js/plugins/sweetalert2.min.js",
-            "../src/assets/js/core/jquery.validate.min.js"
+            "../src/assets/js/core/jquery.validate.min.js",
+            "../src/assets/js/core/jquery-ui.js"
+
 
         ],
         "environmentSource": "environments/environment.ts",
