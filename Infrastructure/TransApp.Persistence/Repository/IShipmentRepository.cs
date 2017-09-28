@@ -23,5 +23,9 @@ namespace TransApp.Persistence.Repository
 
         Task DeleteShipment(Shipment currentShipment, IDbTransaction transaction = null);
 
+        Task<dynamic> GetShipmentsUnassignedAmount(int customerId);
+        Task<dynamic> GetShipmentsCompletedAmount(int customerId);
+        Task<dynamic> GetShipmentsAssignedAmount(int customerId);
+        Task<dynamic> GetShipmentsOpenMarketAmount(int customerId);
     }
 }

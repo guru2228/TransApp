@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
 using TransApp.Core.Exceptions;
+using TransApp.Core.ShipmentTransporter;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Addresses;
@@ -254,23 +255,7 @@ namespace TransApp.Domain.Services.Shipment
                 foreach (ShipmentTransporterModel aShipmentTransporterModel in currentShipment.ShipmentTransporters)
                 {
                     ShipmentTransporter aShipmentTransporter = Mapper.Map<ShipmentTransporterModel, ShipmentTransporter>(aShipmentTransporterModel);
-                    if (aShipmentTransporter != null)
-                    {
-                        aShipmentTransporter.DateModified = DateTime.Now;
-                        aShipmentTransporter.UserIdModified = userId;
-                        if (aShipmentTransporter.Id <= 0)
-                        {
-                            aShipmentTransporter.DateCreated = DateTime.Now;
-                            aShipmentTransporter.ShipmentId = dest.Id;
-                            aShipmentTransporter.UserIdCreated = userId;
-                            aShipmentTransporterModel.Id =
-                                await _unitOfWork.ShipmentTransporterRepository.AddAsync(aShipmentTransporter, transaction);
-                        }
-                        else
-                        {
-                            await _unitOfWork.ShipmentTransporterRepository.UpdateAsync(aShipmentTransporter, transaction);
-                        }
-                    }
+                    await _unitOfWork.ShipmentTransporterRepository.Save(userId, aShipmentTransporter, transaction);
                 }
             }
             if (currentShipment.ShipmentReceiverFacilities != null)
@@ -471,12 +456,82 @@ namespace TransApp.Domain.Services.Shipment
                 }
                 if (currentShipment.ShipmentTransporters != null)
                 {
-                    _unitOfWork.ShipmentTransporterRepository
+                    await _unitOfWork.ShipmentTransporterRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);
                 _unitOfWork.Commit(transaction);
             }
+        }
+
+        public async Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId)
+        {
+            var shipmentsUnassigned =
+              await _unitOfWork.ShipmentRepository.GetShipmentsUnassignedAmount(customerId);
+            var shipmentsCompleted =
+               await _unitOfWork.ShipmentRepository.GetShipmentsCompletedAmount(customerId);
+            var shipmentsAssigned =
+              await _unitOfWork.ShipmentRepository.GetShipmentsAssignedAmount(customerId);
+            var shipmentsOpenMarket =
+              await _unitOfWork.ShipmentRepository.GetShipmentsOpenMarketAmount(customerId);
+            List<ShipmentTransporterFilterModel> result= new List<ShipmentTransporterFilterModel>();
+
+            ShipmentTransporterFilterModel unassigned = new ShipmentTransporterFilterModel
+            {
+                StatusType = ShipmentTransporterStatus.Unassigned
+            };
+            if (shipmentsUnassigned != null)
+            {
+                unassigned.Amount = shipmentsUnassigned.Amount;
+                if (shipmentsUnassigned.LastDateTime != null && shipmentsUnassigned.LastDateTime != DBNull.Value)
+                {
+                    unassigned.LastDateTime = shipmentsUnassigned.LastDateTime;
+                }
+            }
+            result.Add(unassigned);
+
+            ShipmentTransporterFilterModel completed = new ShipmentTransporterFilterModel
+            {
+                StatusType = ShipmentTransporterStatus.Completed
+            };
+            if (shipmentsCompleted != null)
+            {
+                completed.Amount = shipmentsCompleted.Amount;
+                if (shipmentsCompleted.LastDateTime != null && shipmentsCompleted.LastDateTime != DBNull.Value)
+                {
+                    completed.LastDateTime = shipmentsCompleted.LastDateTime;
+                }
+            }
+            result.Add(completed);
+
+            ShipmentTransporterFilterModel assigned = new ShipmentTransporterFilterModel
+            {
+                StatusType = ShipmentTransporterStatus.Assigned
+            };
+            if (shipmentsAssigned != null)
+            {
+                assigned.Amount = shipmentsAssigned.Amount;
+                if (shipmentsAssigned.LastDateTime != null && shipmentsAssigned.LastDateTime != DBNull.Value)
+                {
+                    assigned.LastDateTime = shipmentsAssigned.LastDateTime;
+                }
+            }
+            result.Add(assigned);
+            ShipmentTransporterFilterModel openMarket = new ShipmentTransporterFilterModel
+            {
+                StatusType = ShipmentTransporterStatus.OpenMarket
+            };
+            if (shipmentsOpenMarket != null)
+            {
+                openMarket.Amount = shipmentsOpenMarket.Amount;
+                if (shipmentsOpenMarket.LastDateTime != null && shipmentsOpenMarket.LastDateTime != DBNull.Value)
+                {
+                    openMarket.LastDateTime = shipmentsOpenMarket.LastDateTime;
+                }
+            }
+            result.Add(openMarket);
+            return result;
+
         }
     }
 }

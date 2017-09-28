@@ -44,7 +44,7 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<ShipmentSenderFacility> _shipmentSenderFacilityRepository;
         private GenericRepository<ShipmentSenderRequirement> _shipmentSenderRequirementRepository;
         private GenericRepository<ShipmentSenderTruck> _shipmentSenderTruckRepository;
-        private GenericRepository<ShipmentTransporter> _shipmentTransporterRepository;
+        private IShipmentTransporterRepository _shipmentTransporterRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -433,13 +433,13 @@ namespace TransApp.Persistence.UnitOfWork
                 return _shipmentSenderTruckRepository;
             }
         }
-        public GenericRepository<ShipmentTransporter> ShipmentTransporterRepository
+        public IShipmentTransporterRepository ShipmentTransporterRepository
         {
             get
             {
                 if (this._shipmentTransporterRepository == null)
                 {
-                    this._shipmentTransporterRepository = new GenericRepository<ShipmentTransporter>("ShipmentTransporter", _dataBaseConfig.Value.DefaultConnectionString);
+                    this._shipmentTransporterRepository = new ShipmentTransporterRepository("ShipmentTransporter", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _shipmentTransporterRepository;
             }

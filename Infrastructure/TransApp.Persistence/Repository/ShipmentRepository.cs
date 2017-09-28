@@ -359,6 +359,105 @@ where [Shipment].Id =  " + id);
             await DeleteAsync(currentShipment, transaction);
         }
 
+        public async Task<dynamic> GetShipmentsUnassignedAmount(int customerId)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                DynamicParameters d=new DynamicParameters();
+                d.Add("@CustomerId",customerId);
+                cn.Open();
+                return (await cn.QueryAsync<dynamic>(GetQueryUnassigned(),d)).FirstOrDefault();
+            }
+        }
+
+        public async Task<dynamic> GetShipmentsCompletedAmount(int customerId)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                DynamicParameters d = new DynamicParameters();
+                d.Add("@CustomerId", customerId);
+                cn.Open();
+                return (await cn.QueryAsync<dynamic>(GetQueryCompleted(), d)).FirstOrDefault();
+            }
+        }
+        public async Task<dynamic> GetShipmentsAssignedAmount(int customerId)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                DynamicParameters d = new DynamicParameters();
+                d.Add("@CustomerId", customerId);
+                cn.Open();
+                return (await cn.QueryAsync<dynamic>(GetQueryAssigned(), d)).FirstOrDefault();
+            }
+        }
+
+        public async Task<dynamic> GetShipmentsOpenMarketAmount(int customerId)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                DynamicParameters d = new DynamicParameters();
+                d.Add("@CustomerId", customerId);
+                cn.Open();
+                return (await cn.QueryAsync<dynamic>(GetQueryOpenMarket(), d)).FirstOrDefault();
+            }
+        }
+
+        private string GetQueryUnassigned()
+        {
+            var sb = new StringBuilder();
+            sb.Append(@"
+            select  count(Shipment.Id) As Amount,
+            (select max(Shipment.DateModified) from Shipment where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null) as LastDateTime
+            from Shipment where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null");
+            return sb.ToString();
+        }
+
+        private string GetQueryCompleted()
+        {
+            var sb = new StringBuilder();
+            sb.Append(@"
+            select  count(Shipment.Id) As Amount,
+ (select max(Shipment.DateModified)from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null) as LastDateTime
+ from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null");
+            return sb.ToString();
+        }
+
+        private string GetQueryAssigned()
+        {
+            var sb = new StringBuilder();
+            sb.Append(@"
+            select  count(Shipment.Id) As Amount,
+ (select max(Shipment.DateModified)from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null) as LastDateTime
+ from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null");
+            return sb.ToString();
+        }
+
+        private string GetQueryOpenMarket()
+        {
+            var sb = new StringBuilder();
+            sb.Append(@"
+           select  count(distinct Shipment.Id) As Amount,
+ (select max(ShipmentTransporter.DateModified)from Shipment inner join ShipmentTransporter on ShipmentTransporter.ShipmentId=Shipment.Id
+ and ShipmentTransporter.Assigned=0 and ShipmentTransporter.Declined=0 and ShipmentTransporter.Accepted=0 and ShipmentTransporter.Selected=0
+ inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is null) as LastDateTime
+ from Shipment inner join ShipmentTransporter on ShipmentTransporter.ShipmentId=Shipment.Id
+ and ShipmentTransporter.Assigned=0 and ShipmentTransporter.Declined=0 and ShipmentTransporter.Accepted=0 and ShipmentTransporter.Selected=0
+ inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code=''
+ where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is null");
+            return sb.ToString();
+        }
+
         private string GetQueryExtra(int id)
         {
             var sb = new StringBuilder();

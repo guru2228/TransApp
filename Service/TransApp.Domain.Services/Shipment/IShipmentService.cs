@@ -34,5 +34,7 @@ namespace TransApp.Domain.Services.Shipment
         Task<int> SaveShipment(int userId, ShipmentModel currentShipment);
 
         Task DeleteShipment(ShipmentModel currentShipment);
+
+        Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId);
     }
 }
