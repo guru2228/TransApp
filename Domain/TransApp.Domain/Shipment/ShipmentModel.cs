@@ -65,14 +65,14 @@ namespace TransApp.Domain.Shipment
 
         public List<ShipmentDetailModel> ShipmentDetails { get; set; }
 
-        public List<FacilityEntityModel> ShipmentReceiverFacilities { get; set; }
-        public List<RequirementEntityModel> ShipmentReceiverRequirements { get; set; }
-        public List<TruckEntityModel> ShipmentReceiverTrucks { get; set; }
+        public List<FacilityEntityModel> ReceiverFacilities { get; set; }
+        public List<RequirementEntityModel> ReceiverRequirements { get; set; }
+        public List<TruckEntityModel> ReceiverTrucks { get; set; }
 
-        public List<FacilityEntityModel> ShipmentSenderFacilities { get; set; }
-        public List<RequirementEntityModel> ShipmentSenderRequirements { get; set; }
-        public List<TruckEntityModel> ShipmentSenderTrucks { get; set; }
+        public List<FacilityEntityModel> SenderFacilities { get; set; }
+        public List<RequirementEntityModel> SenderRequirements { get; set; }
+        public List<TruckEntityModel> SenderTrucks { get; set; }
 
-        public List<ShipmentTransporterModel> ShipmentTransporters { get; set; }
+        public List<ShipmentTransporterModel> Transporters { get; set; }
     }
 }

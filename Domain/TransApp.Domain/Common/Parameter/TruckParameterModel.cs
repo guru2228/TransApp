@@ -27,5 +27,4 @@ namespace TransApp.Domain.Common.Parameter
 
         public string Description { get; set; }
     }
-
 }

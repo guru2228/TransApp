@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace TransApp.Domain.Addresses
+namespace TransApp.Domain.Common.Entity
 {
     public class AvailabilityEntityModel
     {

@@ -1,7 +1,7 @@
-export class AddressRequirementModel {
+export class TruckEntityModel {
     public id: number;
     public addressId: number;
-    public requirementId: number;
+    public truckId: number;
     public active: boolean;
     public userIdCreated: number;
     public dateCreated: Date;

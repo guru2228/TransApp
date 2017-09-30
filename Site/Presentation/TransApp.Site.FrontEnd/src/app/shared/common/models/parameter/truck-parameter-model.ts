@@ -1,4 +1,4 @@
-export class RequirementModel {
+export class TruckParameterModel {
     public id: number;
     public code: string;
     public dictionaryId: number;
@@ -9,7 +9,5 @@ export class RequirementModel {
     public userIdModified: number;
     public dateModified: Date;
     public active: boolean;
-    public userCreated: string;
-    public userModified: string;
     public description: string;
 }

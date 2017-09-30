@@ -100,26 +100,26 @@ namespace TransApp.Domain.Services.Shipment
                 result.ShipmentDetails =
                     Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
                         currentShipment.ShipmentDetails);
-                result.ShipmentReceiverFacilities =
+                result.ReceiverFacilities =
                     Mapper.Map<List<ShipmentReceiverFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentReceiverFacilities);
-                result.ShipmentTransporters =
+                result.Transporters =
                     Mapper.Map<List<ShipmentTransporter>, List<ShipmentTransporterModel>>(
                         currentShipment.ShipmentTransporters);
-                result.ShipmentReceiverRequirements =
+                result.ReceiverRequirements =
                     Mapper.Map<List<ShipmentReceiverRequirement>, List<RequirementEntityModel>>(
                         currentShipment.ShipmentReceiverRequirements);
 
-                result.ShipmentReceiverTrucks =
+                result.ReceiverTrucks =
                     Mapper.Map<List<ShipmentReceiverTruck>, List<TruckEntityModel>>(
                         currentShipment.ShipmentReceiverTrucks);
-                result.ShipmentSenderFacilities =
+                result.SenderFacilities =
                     Mapper.Map<List<ShipmentSenderFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentSenderFacilities);
-                result.ShipmentSenderRequirements =
+                result.SenderRequirements =
                     Mapper.Map<List<ShipmentSenderRequirement>, List<RequirementEntityModel>>(
                         currentShipment.ShipmentSenderRequirements);
-                result.ShipmentSenderTrucks =
+                result.SenderTrucks =
                    Mapper.Map<List<ShipmentSenderTruck>, List<TruckEntityModel>>(
                        currentShipment.ShipmentSenderTrucks);
 
@@ -258,9 +258,9 @@ namespace TransApp.Domain.Services.Shipment
                     }
                 }
             }
-            if (currentShipment.ShipmentTransporters != null)
+            if (currentShipment.Transporters != null)
             {
-                foreach (ShipmentTransporterModel aShipmentTransporterModel in currentShipment.ShipmentTransporters)
+                foreach (ShipmentTransporterModel aShipmentTransporterModel in currentShipment.Transporters)
                 {
                     ShipmentTransporter aShipmentTransporter = Mapper.Map<ShipmentTransporterModel, ShipmentTransporter>(aShipmentTransporterModel);
                     if (aShipmentTransporter != null)
@@ -282,9 +282,9 @@ namespace TransApp.Domain.Services.Shipment
                     }
                 }
             }
-            if (currentShipment.ShipmentReceiverFacilities != null)
+            if (currentShipment.ReceiverFacilities != null)
             {
-                foreach (FacilityEntityModel aShipmentReceiverFacilityModel in currentShipment.ShipmentReceiverFacilities)
+                foreach (FacilityEntityModel aShipmentReceiverFacilityModel in currentShipment.ReceiverFacilities)
                 {
                     ShipmentReceiverFacility aShipmentReceiverFacility =
                         Mapper.Map<FacilityEntityModel, ShipmentReceiverFacility>(aShipmentReceiverFacilityModel);
@@ -307,9 +307,9 @@ namespace TransApp.Domain.Services.Shipment
                     }
                 }
             }
-            if (currentShipment.ShipmentReceiverRequirements != null)
+            if (currentShipment.ReceiverRequirements != null)
             {
-                foreach (RequirementEntityModel aShipmentReceiverRequirementModel in currentShipment.ShipmentReceiverRequirements)
+                foreach (RequirementEntityModel aShipmentReceiverRequirementModel in currentShipment.ReceiverRequirements)
                 {
                     ShipmentReceiverRequirement aShipmentReceiverRequirement = Mapper.Map<RequirementEntityModel, ShipmentReceiverRequirement>(aShipmentReceiverRequirementModel);
                     if (aShipmentReceiverRequirement != null)
@@ -331,9 +331,9 @@ namespace TransApp.Domain.Services.Shipment
                 }
             }
 
-            if (currentShipment.ShipmentReceiverTrucks != null)
+            if (currentShipment.ReceiverTrucks != null)
             {
-                foreach (TruckEntityModel aShipmentReceiverTruckModel in currentShipment.ShipmentReceiverTrucks)
+                foreach (TruckEntityModel aShipmentReceiverTruckModel in currentShipment.ReceiverTrucks)
                 {
                     ShipmentReceiverTruck aShipmentReceiverTruck = Mapper.Map<TruckEntityModel, ShipmentReceiverTruck>(aShipmentReceiverTruckModel);
                     if (aShipmentReceiverTruck != null)
@@ -355,9 +355,9 @@ namespace TransApp.Domain.Services.Shipment
                 }
             }
 
-            if (currentShipment.ShipmentSenderFacilities != null)
+            if (currentShipment.SenderFacilities != null)
             {
-                foreach (FacilityEntityModel aShipmentSenderFacilityModel in currentShipment.ShipmentSenderFacilities)
+                foreach (FacilityEntityModel aShipmentSenderFacilityModel in currentShipment.SenderFacilities)
                 {
                     ShipmentSenderFacility aShipmentSenderFacility = Mapper.Map<FacilityEntityModel, ShipmentSenderFacility>(aShipmentSenderFacilityModel);
                     if (aShipmentSenderFacility != null)
@@ -379,9 +379,9 @@ namespace TransApp.Domain.Services.Shipment
                 }
             }
 
-            if (currentShipment.ShipmentSenderRequirements != null)
+            if (currentShipment.SenderRequirements != null)
             {
-                foreach (RequirementEntityModel aShipmentSenderRequirementModel in currentShipment.ShipmentSenderRequirements)
+                foreach (RequirementEntityModel aShipmentSenderRequirementModel in currentShipment.SenderRequirements)
                 {
                     ShipmentSenderRequirement aShipmentSenderRequirement = Mapper.Map<RequirementEntityModel, ShipmentSenderRequirement>(aShipmentSenderRequirementModel);
                     if (aShipmentSenderRequirement != null)
@@ -403,9 +403,9 @@ namespace TransApp.Domain.Services.Shipment
                 }
             }
 
-            if (currentShipment.ShipmentSenderTrucks != null)
+            if (currentShipment.SenderTrucks != null)
             {
-                foreach (TruckEntityModel aShipmentSenderTruckModel in currentShipment.ShipmentSenderTrucks)
+                foreach (TruckEntityModel aShipmentSenderTruckModel in currentShipment.SenderTrucks)
                 {
                     ShipmentSenderTruck aShipmentSenderTruck = Mapper.Map<TruckEntityModel, ShipmentSenderTruck>(aShipmentSenderTruckModel);
                     if (aShipmentSenderTruck != null)
@@ -447,38 +447,38 @@ namespace TransApp.Domain.Services.Shipment
                     _unitOfWork.ShipmentDetailRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentReceiverFacilities != null)
+                if (currentShipment.ReceiverFacilities != null)
                 {
                     _unitOfWork.ShipmentReceiverFacilityRepository
                          .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentReceiverRequirements != null)
+                if (currentShipment.ReceiverRequirements != null)
                 {
                     _unitOfWork.ShipmentReceiverRequirementRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentReceiverTrucks != null)
+                if (currentShipment.ReceiverTrucks != null)
                 {
                     _unitOfWork.ShipmentReceiverTruckRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 ///
-                if (currentShipment.ShipmentSenderFacilities != null)
+                if (currentShipment.SenderFacilities != null)
                 {
                     _unitOfWork.ShipmentSenderFacilityRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentSenderRequirements != null)
+                if (currentShipment.SenderRequirements != null)
                 {
                     _unitOfWork.ShipmentSenderRequirementRepository
                          .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentSenderTrucks != null)
+                if (currentShipment.SenderTrucks != null)
                 {
                     _unitOfWork.ShipmentSenderTruckRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
-                if (currentShipment.ShipmentTransporters != null)
+                if (currentShipment.Transporters != null)
                 {
                     _unitOfWork.ShipmentTransporterRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);

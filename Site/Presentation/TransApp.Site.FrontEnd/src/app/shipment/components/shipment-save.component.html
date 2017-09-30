@@ -1,592 +1,425 @@
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-6 col-md-offset-3">
-                <div class="card">
-                    <form #f="ngForm" novalidate (ngSubmit)="save(f.value, f.valid)">
+        <form #formShipment="ngForm" novalidate class="form-horizontal" novalidate (ngSubmit)="save(formShipment.value, formShipment.valid)">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="card">
                         <div class="card-header card-header-icon" data-background-color="rose">
                             <i class="material-icons">local_shipping</i>
                         </div>
                         <div class="card-content">
                             <h4 class="card-title">Create new shipment</h4>
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                                        Transapp shipment reference
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control" name="sender" required>
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.reference  && componentModel.reference.length > 0 ? '' : 'is-empty ' + ((!componentModel.reference ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" class="control-label ">
+                                Transapp shipment reference
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" name="reference">
                             </div>
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                                        PO Number
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control" name="sender" required>
+
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ' + ((!componentModel.poNumber ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" class="control-label ">
+                                PO Number
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.poNumber" id="poNumber" name="poNumber">
                             </div>
+
                         </div>
-                    </form>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <form #f="ngForm" novalidate (ngSubmit)="save(f.value, f.valid)">
+            <div class="row">
+                <!-- ********* Sender column ********* -->
+                <div class="col-md-6">
+                    <div class="card">
                         <div class="card-header card-header-icon" data-background-color="rose">
                             <i class="material-icons">send</i>
                         </div>
                         <div class="card-content">
+
                             <h4 class="card-title">Sender</h4>
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                                        Sender
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control" name="sender" required>
-                            </div>
 
                             <div class="form-group label-floating">
+                                <label for="" class="control-label">
+                              Sender
+                              <span class="star">*</span>
+                          </label>
                                 <md-form-field class="autocomplete-address">
-                                    <input type="text" name="searchAddress" aria-label="Select sender" placeholder="Select sender" md-min-length="0" mdInput [formControl]="addressesSearchTerm" [mdAutocomplete]="auto">
+                                    <input type="text" name="searchAddress" [formControl]="senderSearchAddressControl" placeholder="Select sender" md-min-length="0" mdInput [mdAutocomplete]="auto" aria-label="Select sender">
                                     <md-autocomplete #auto="mdAutocomplete">
-                                        <md-option *ngFor="let option of addresses" [value]="option.id" (onSelectionChange)="callSomeFunction($event, option)">
-                                            {{ option.name }}
+                                        <md-option *ngFor="let address of senderFoundAddresses" [value]="address" (onSelectionChange)="onSenderAddressSelected($event, address)">
+                                            {{ address.name }}
                                         </md-option>
                                     </md-autocomplete>
-                                    <h4 *ngIf='!addresses || addresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
+                                    <h4 *ngIf='!senderFoundAddresses || senderFoundAddresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
                                 </md-form-field>
                             </div>
 
+                            <!-- Adress info -->
+                            <h3>Address info</h3>
                             <div class="form-group label-floating">
                                 <md-datepicker-toggle mdSuffix [for]="resultPicker">
                                 </md-datepicker-toggle>
                                 <md-input-container>
-                                    <input mdInput [mdDatepicker]="resultPicker" placeholder="Pick a day">
+                                    <input mdInput [mdDatepicker]="resultPicker" [(ngModel)]="componentModel.pickUpDate" id="pickUpDate" name="pickUpDate" placeholder="Pickup date">
                                 </md-input-container>
                                 <md-datepicker #resultPicker [touchUi]="touch" [startView]="'month'">
                                 </md-datepicker>
                             </div>
 
-                            <!-- Adress info -->
-                            <h3>Address info</h3>
                             <div class="form-group label-floating">
                                 <label for="" class="control-label">
-                                        Pickup date
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control datetimepicker" value="10/05/2016" />
+                              Pickup adress
+                              <span class="star">*</span>
+                          </label>
+                                <textarea class="form-control" [(ngModel)]="senderAddress.name" id="senderAddress" name="senderAddress" rows="2" disabled></textarea>
                             </div>
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                                        Pickup adress
-                                        <span class="star">*</span>
-                                    </label>
-                                <textarea class="form-control" rows="5"></textarea>
-                            </div>
+
                             <!-- Opening hours -->
                             <h3>Opening hours</h3>
                             <div class="form-group label-floating">
-                                <div id="sliderDouble" class="slider slider-info"></div>
+                                <address-availability-slider [availability]="componentModel.senderAvailability"></address-availability-slider>
                             </div>
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.senderContactPerson  && componentModel.senderContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" class="control-label ">
+                              Contactperson
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.senderContactPerson" id="senderContactPerson" name="senderContactPerson">
+                            </div>
+
+                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.senderPhone  && componentModel.senderPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.senderPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
+                                <label for="" class="control-label">
+                              Phone
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.senderPhone" id="senderPhone" name="senderPhone">
+                            </div>
+
                             <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Contact
-                                    </label>
-                                <input type="text" class="form-control" name="email">
+                                <label for="" class="control-label">
+                              Info
+                          </label>
+                                <textarea class="form-control" rows="5" [(ngModel)]="componentModel.senderRemark" id="senderRemark" name="senderRemark"></textarea>
                             </div>
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Phone
-                                    </label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Info
-                                    </label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <!-- Truck -->
-                            <h3>Truck</h3>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Van (&lt;8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Distri (8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Tautliner (<8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Boxtrailer (<8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Transport requirments -->
-                            <h3>Transport requirments</h3>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Frigo
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Hidraulic lift
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> All risk insurance
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Adr
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Facilities -->
+
+                            <!-- Sender Facilities -->
                             <h3>Facilities</h3>
-                            <div class="input-group">
+                            <div class="input-group" *ngFor="let facility of componentModel.senderFacilities">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{facility.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Pallet jack
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group">
+
+                            <!-- Sender Truck -->
+                            <h3>Truck</h3>
+                            <div class="input-group" *ngFor="let truck of componentModel.senderTrucks">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{truck.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Loading dock
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="truckactive_{{truck.truckId}}"> {{truck.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group">
+
+                            <!-- Sender Transport requirments -->
+                            <h3>Transport requirements</h3>
+                            <div class="input-group" *ngFor="let requirement of componentModel.senderRequirements">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{requirement.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Forklift
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-            <!--  ***************** Receiver *************** -->
-            <div class="col-md-6">
-                <div class="card">
-                    <form #f="ngForm" novalidate (ngSubmit)="save(f.value, f.valid)">
+                <!-- ********* Receiver column ********* -->
+                <div class="col-md-6">
+                    <div class="card">
                         <div class="card-header card-header-icon" data-background-color="rose">
                             <i class="material-icons">call_received</i>
                         </div>
+
                         <div class="card-content">
+
                             <h4 class="card-title">Receiver</h4>
+
                             <div class="form-group label-floating">
                                 <label for="" class="control-label">
-                                        Sender
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control" name="sender">
+                              Receiver
+                              <span class="star">*</span>
+                          </label>
+                                <md-form-field class="autocomplete-address">
+                                    <input type="text" name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" placeholder="Select receiver" md-min-length="0" mdInput [mdAutocomplete]="auto" aria-label="Select receiver">
+                                    <md-autocomplete #auto="mdAutocomplete">
+                                        <md-option *ngFor="let address of receiverFoundAddresses" [value]="address" (onSelectionChange)="onReceiverAddressSelected($event, address)">
+                                            {{ address.name }}
+                                        </md-option>
+                                    </md-autocomplete>
+                                    <h4 *ngIf='!receiverFoundAddresses || receiverFoundAddresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
+                                </md-form-field>
                             </div>
+
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                                        Pickup date
-                                        <span class="star">*</span>
-                                    </label>
-                                <input type="text" class="form-control datetimepicker" value="10/05/2016" />
+                                <md-datepicker-toggle mdSuffix [for]="resultPicker">
+                                </md-datepicker-toggle>
+                                <md-input-container>
+                                    <input mdInput [(ngModel)]="componentModel.deliveryDate" id="deliveryDate" name="deliveryDate" [mdDatepicker]="resultPicker" placeholder="Pickup date">
+                                </md-input-container>
+                                <md-datepicker #resultPicker [touchUi]="touch" [startView]="'month'">
+                                </md-datepicker>
                             </div>
+
                             <div class="form-group label-floating">
                                 <label for="" class="control-label">
-                                        Pickup adress
-                                        <span class="star">*</span>
-                                    </label>
-                                <textarea class="form-control" rows="5"></textarea>
+                              Pickup adress
+                              <span class="star">*</span>
+                          </label>
+                                <textarea [(ngModel)]="receiverAddress.name" id="receiverAddress" name="receiverAddress" class="form-control" rows="2" disabled></textarea>
                             </div>
+
                             <!-- Opening hours -->
                             <h3>Opening hours</h3>
                             <div class="form-group label-floating">
-                                <div id="sliderDoubleReceiver" class="slider slider-info"></div>
+                                <address-availability-slider [availability]="componentModel.receiverAvailability"></address-availability-slider>
                             </div>
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.receiverContactPerson  && componentModel.receiverContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" class="control-label ">
+                              Contactperson
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.receiverContactPerson" id="receiverContactPerson" name="receiverContactPerson">
+                            </div>
+
+                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.receiverPhone  && componentModel.receiverPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.receiverPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
+                                <label for="" class="control-label">
+                              Phone
+                              <span class="star">*</span>
+                          </label>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.receiverPhone" id="receiverPhone" name="receiverPhone">
+                            </div>
+
                             <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Contact
-                                    </label>
-                                <input type="text" class="form-control" name="email">
+                                <label for="" class="control-label">
+                              Info
+                          </label>
+                                <textarea class="form-control" rows="5" [(ngModel)]="componentModel.receiverRemark" id="receiverRemark" name="receiverRemark"></textarea>
                             </div>
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Phone
-                                    </label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <div class="form-group label-floating">
-                                <label class="control-label" for="">
-                                        Info
-                                    </label>
-                                <input type="text" class="form-control" name="email">
-                            </div>
-                            <!-- Truck -->
-                            <h3>Truck</h3>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Van (&lt;8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Distri (8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Tautliner (<8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Boxtrailer (<8m)
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Transport requirments -->
-                            <h3>Transport requirments</h3>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Frigo
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Hidraulic lift
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> All risk insurance
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                                <input type="checkbox" checked> Adr
-                                            </label>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Facilities -->
+
+                            <!-- Sender Facilities -->
                             <h3>Facilities</h3>
-                            <div class="input-group">
+                            <div class="input-group" *ngFor="let facility of componentModel.receiverFacilities">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{facility.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Pallet jack
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="receiver_facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group">
+
+                            <!-- Sender Truck -->
+                            <h3>Truck</h3>
+                            <div class="input-group" *ngFor="let truck of componentModel.receiverTrucks">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{truck.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Loading dock
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="receiver_truckactive_{{truck.truckId}}"> {{truck.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
-                            <div class="input-group">
+
+                            <!-- Sender Transport requirments -->
+                            <h3>Transport requirements</h3>
+                            <div class="input-group" *ngFor="let requirement of componentModel.receiverRequirements">
                                 <span class="input-group-addon">
-                                        <i class="material-icons">local_shipping</i>
-                                    </span>
+                              <i class="material-icons">{{requirement.iconName}}</i>
+                          </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                                <input type="checkbox" checked> Forklift
-                                            </label>
+                                      <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="receiver_requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                  </label>
                                     </div>
                                 </div>
                             </div>
+
                         </div>
-                    </form>
-                </div>
-            </div>
-        </div>
 
-        <!-- Goods -->
-        <div class="row">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header card-header-icon" data-background-color="rose">
-                        <i class="material-icons">add_shopping_cart</i>
-                    </div>
-                    <div class="card-content table-full-width">
-                        <h4 class="card-title">Goods</h4>
-                        <div class="table-responsive">
-                            <table style="min-width: 400px;">
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label"></label>
-                                                <select name="country" class="form-control">
-                                                        <option disabled="" selected="">Choose Quantity</option>
-                                                        <option value="1"> 1 </option>
-                                                        <option value="2"> 2 </option>
-                                                        <option value="3"> 3 </option>
-                                                        <option value="...">...</option>
-                                                    </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label"></label>
-                                                <select name="country" class="form-control">
-                                                        <option disabled="" selected="">Choose type</option>
-                                                        <option value="Box"> Box </option>
-                                                        <option value="...">...</option>
-                                                    </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Length(cm)</label>
-                                                <input class="form-control" type="number" name="number" number="true" required>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Width(cm)</label>
-                                                <input class="form-control" type="number" name="number" number="true" required>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Height(cm)</label>
-                                                <input class="form-control" type="number" name="number" number="true" required>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Weight(cm)</label>
-                                                <input class="form-control" type="number" name="number" number="true" required>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-
-                                    <tr>
-                                        <td colspan="2"></td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <select name="country" class="form-control">
-                                                        <option disabled="" selected="">Choose Quantity</option>
-                                                        <option value="1"> 1 </option>
-                                                        <option value="2"> 2 </option>
-                                                        <option value="3"> 3 </option>
-                                                        <option value="...">...</option>
-                                                    </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <select name="country" class="form-control">
-                                                        <option disabled="" selected="">Choose type</option>
-                                                        <option value="Box"> Box </option>
-                                                        <option value="...">...</option>
-                                                    </select>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <div class="form-group label-floating">
-                                                <label class="control-label">Length(cm)</label>
-                                                <input class="form-control" type="number" name="number" number="true" required>
-                                            </div>
-                                        </td>
-                                    </tr>
-
-                                </tbody>
-                            </table>
-                            <button type="submit" class="btn btn-fill btn-rose">+ Add more packages</button>
-                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="row">
-            <div class="col-xs-4">
-                <div class="card">
-                    <div class="card-content text-center">
-                        <span class="input-group-addon">
-                                <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
-                            </span>
-                        <div class="form-group label-floating">
-                            <h4>Total quantity: 4 items</h4>
+            <!-- Goods -->
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card">
+                        <div class="card-header card-header-icon" data-background-color="rose">
+                            <i class="material-icons">add_shopping_cart</i>
+                        </div>
+                        <div class="card-content table-full-width">
+                            <h4 class="card-title">Goods</h4>
+                            <div class="table-responsive">
+                                <table style="min-width: 400px;">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <select name="country" class="form-control">
+                                                  <option disabled="" selected="">Choose Quantity</option>
+                                                  <option value="1"> 1 </option>
+                                                  <option value="2"> 2 </option>
+                                                  <option value="3"> 3 </option>
+                                                  <option value="...">...</option>
+                                              </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label"></label>
+                                                    <select name="country" class="form-control">
+                                                  <option disabled="" selected="">Choose type</option>
+                                                  <option value="Box"> Box </option>
+                                                  <option value="...">...</option>
+                                              </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Length(cm)</label>
+                                                    <input class="form-control" type="number" name="number" number="true" required>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Width(cm)</label>
+                                                    <input class="form-control" type="number" name="number" number="true" required>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Height(cm)</label>
+                                                    <input class="form-control" type="number" name="number" number="true" required>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Weight(cm)</label>
+                                                    <input class="form-control" type="number" name="number" number="true" required>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                        <tr>
+                                            <td colspan="2"></td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <select name="country" class="form-control">
+                                                  <option disabled="" selected="">Choose Quantity</option>
+                                                  <option value="1"> 1 </option>
+                                                  <option value="2"> 2 </option>
+                                                  <option value="3"> 3 </option>
+                                                  <option value="...">...</option>
+                                              </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <select name="country" class="form-control">
+                                                  <option disabled="" selected="">Choose type</option>
+                                                  <option value="Box"> Box </option>
+                                                  <option value="...">...</option>
+                                              </select>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-group label-floating">
+                                                    <label class="control-label">Length(cm)</label>
+                                                    <input class="form-control" type="number" name="number" number="true" required>
+                                                </div>
+                                            </td>
+                                        </tr>
+
+                                    </tbody>
+                                </table>
+                                <button type="submit" class="btn btn-fill btn-rose">+ Add more packages</button>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4">
-                <div class="card">
-                    <div class="card-content text-center">
-                        <span class="input-group-addon">
-                                <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
-                            </span>
-                        <div class="form-group label-floating">
-                            <h4>Total volume: 8172 m2</h4>
+
+            <div class="row">
+                <div class="col-xs-4">
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <span class="input-group-addon">
+                          <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
+                      </span>
+                            <div class="form-group label-floating">
+                                <h4>Total quantity: 4 items</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <span class="input-group-addon">
+                          <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
+                      </span>
+                            <div class="form-group label-floating">
+                                <h4>Total volume: 8172 m2</h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-xs-4">
+                    <div class="card">
+                        <div class="card-content text-center">
+                            <span class="input-group-addon">
+                          <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
+                      </span>
+                            <div class="form-group label-floating">
+                                <h4>Total weight: 1530 kg</h4>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-xs-4">
-                <div class="card">
-                    <div class="card-content text-center">
-                        <span class="input-group-addon">
-                                <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
-                            </span>
-                        <div class="form-group label-floating">
-                            <h4>Total weight: 1530 kg</h4>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-
+        </form>
     </div>
 </div>

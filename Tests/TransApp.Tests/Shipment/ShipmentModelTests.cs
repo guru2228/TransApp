@@ -147,7 +147,7 @@ namespace TransApp.Tests.Shipment
                 FacilityId = 1
             };
             shipmentReceiverFacilities.Add(aShipmentReceiverFacilityModel);
-            currentShipment.ShipmentReceiverFacilities = shipmentReceiverFacilities;
+            currentShipment.ReceiverFacilities = shipmentReceiverFacilities;
 
             List<RequirementEntityModel> shipmentReceiverRequirements =
                 new EditableList<RequirementEntityModel>();
@@ -158,7 +158,7 @@ namespace TransApp.Tests.Shipment
                 RequirementId = 11
             };
             shipmentReceiverRequirements.Add(aShipmentReceiverRequirementModel);
-            currentShipment.ShipmentReceiverRequirements = shipmentReceiverRequirements;
+            currentShipment.ReceiverRequirements = shipmentReceiverRequirements;
 
             List<TruckEntityModel> shipmentReceiverTrucks = new EditableList<TruckEntityModel>();
             TruckEntityModel aShipmentReceiverTruckModel = new TruckEntityModel
@@ -167,7 +167,7 @@ namespace TransApp.Tests.Shipment
                 TruckId = 5
             };
             shipmentReceiverTrucks.Add(aShipmentReceiverTruckModel);
-            currentShipment.ShipmentReceiverTrucks = shipmentReceiverTrucks;
+            currentShipment.ReceiverTrucks = shipmentReceiverTrucks;
 
             List<FacilityEntityModel> shipmentSenderFacilities = new EditableList<FacilityEntityModel>();
             FacilityEntityModel aShipmentSenderFacilityModel = new FacilityEntityModel
@@ -176,7 +176,7 @@ namespace TransApp.Tests.Shipment
                 FacilityId = 1
             };
             shipmentSenderFacilities.Add(aShipmentSenderFacilityModel);
-            currentShipment.ShipmentSenderFacilities = shipmentSenderFacilities;
+            currentShipment.SenderFacilities = shipmentSenderFacilities;
 
             List<RequirementEntityModel> shipmentSenderRequirements =
                 new EditableList<RequirementEntityModel>();
@@ -187,7 +187,7 @@ namespace TransApp.Tests.Shipment
                 RequirementId = 11
             };
             shipmentSenderRequirements.Add(aShipmentSenderRequirementModel);
-            currentShipment.ShipmentSenderRequirements = shipmentSenderRequirements;
+            currentShipment.SenderRequirements = shipmentSenderRequirements;
 
             List<TruckEntityModel> shipmentSenderTrucks = new EditableList<TruckEntityModel>();
             TruckEntityModel aShipmentSenderTruckModel = new TruckEntityModel
@@ -196,7 +196,7 @@ namespace TransApp.Tests.Shipment
                 TruckId = 6
             };
             shipmentSenderTrucks.Add(aShipmentSenderTruckModel);
-            currentShipment.ShipmentSenderTrucks = shipmentSenderTrucks;
+            currentShipment.SenderTrucks = shipmentSenderTrucks;
 
             List<ShipmentTransporterModel> shipmentTransporters = new EditableList<ShipmentTransporterModel>();
             ShipmentTransporterModel aShipmentTransporterModel = new ShipmentTransporterModel
@@ -215,7 +215,7 @@ namespace TransApp.Tests.Shipment
                 TransporterId = 1
             };
             shipmentTransporters.Add(aShipmentTransporterModel);
-            currentShipment.ShipmentTransporters = shipmentTransporters;
+            currentShipment.Transporters = shipmentTransporters;
             try
             {
                 await _shipmentService.SaveShipment(1000, currentShipment);
@@ -295,31 +295,31 @@ namespace TransApp.Tests.Shipment
                 {
                     av.Length = 454545;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverFacilities)
+                foreach (var av in currentShipmentModel.ReceiverFacilities)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverRequirements)
+                foreach (var av in currentShipmentModel.ReceiverRequirements)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                foreach (var av in currentShipmentModel.ReceiverTrucks)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentSenderFacilities)
+                foreach (var av in currentShipmentModel.SenderFacilities)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentSenderRequirements)
+                foreach (var av in currentShipmentModel.SenderRequirements)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                foreach (var av in currentShipmentModel.ReceiverTrucks)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentTransporters)
+                foreach (var av in currentShipmentModel.Transporters)
                 {
                     av.Accepted = false;
                 }

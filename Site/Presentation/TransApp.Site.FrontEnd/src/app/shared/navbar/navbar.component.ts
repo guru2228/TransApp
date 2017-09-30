@@ -1,106 +1,147 @@
 import { Component, OnInit, Renderer, ViewChild, ElementRef, Directive } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
-import { ROUTES } from "app/shared/sidebar/sidebar-routes.config";
-var misc: any = {
+import { ROUTES } from 'app/shared/sidebar/sidebar-routes.config';
+const misc: any = {
     navbar_menu_visible: 0,
     active_collapse: true,
     disabled_collapse_init: 0,
-}
+};
+
 declare var $: any;
 @Component({
-    moduleId: module.id,
-    selector: 'navbar-cmp',
+    selector: 'app-navbar-cmp',
     templateUrl: 'navbar.component.html'
 })
 
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit {
     private listTitles: any[];
     location: Location;
     private nativeElement: Node;
-    private toggleButton;
+    private toggleButton: any;
     private sidebarVisible: boolean;
 
-    @ViewChild("navbar-cmp") button;
+    @ViewChild('app-navbar-cmp') button: any;
 
-    constructor(location:Location, private renderer : Renderer, private element : ElementRef) {
+    constructor(location: Location, private renderer: Renderer, private element: ElementRef) {
         this.location = location;
         this.nativeElement = element.nativeElement;
         this.sidebarVisible = false;
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.listTitles = ROUTES.filter(listTitle => listTitle);
 
-        var navbar : HTMLElement = this.element.nativeElement;
+        const navbar: HTMLElement = this.element.nativeElement;
         this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];
-        if($('body').hasClass('sidebar-mini')){
+        if ($('body').hasClass('sidebar-mini')) {
             misc.sidebar_mini_active = true;
         }
-        $('#minimizeSidebar').click(function(){
-            var $btn = $(this);
-
-            if(misc.sidebar_mini_active == true){
+        if ($('body').hasClass('hide-sidebar')) {
+            misc.hide_sidebar_active = true;
+        }
+        $('#minimizeSidebar').click(function() {
+            if (misc.sidebar_mini_active === true) {
                 $('body').removeClass('sidebar-mini');
                 misc.sidebar_mini_active = false;
 
-            }else{
-                setTimeout(function(){
+            } else {
+                setTimeout(function() {
                     $('body').addClass('sidebar-mini');
 
                     misc.sidebar_mini_active = true;
-                },300);
+                }, 300);
             }
 
             // we simulate the window Resize so the charts will get updated in realtime.
-            var simulateWindowResize = setInterval(function(){
+            const simulateWindowResize = setInterval(function() {
                 window.dispatchEvent(new Event('resize'));
-            },180);
+            }, 180);
 
             // we stop the simulation of Window Resize after the animations are completed
-            setTimeout(function(){
+            setTimeout(function() {
                 clearInterval(simulateWindowResize);
-            },1000);
+            }, 1000);
+        });
+        $('#hideSidebar').click(function() {
+            if (misc.hide_sidebar_active === true) {
+                setTimeout(function() {
+                    $('body').removeClass('hide-sidebar');
+                    misc.hide_sidebar_active = false;
+                }, 300);
+                setTimeout(function () {
+                    $('.sidebar').removeClass('animation');
+                }, 600);
+                $('.sidebar').addClass('animation');
+
+            } else {
+                setTimeout(function() {
+                    $('body').addClass('hide-sidebar');
+                    // $('.sidebar').addClass('animation');
+                    misc.hide_sidebar_active = true;
+                }, 300);
+            }
+
+            // we simulate the window Resize so the charts will get updated in realtime.
+            const simulateWindowResize = setInterval(function() {
+                window.dispatchEvent(new Event('resize'));
+            }, 180);
+
+            // we stop the simulation of Window Resize after the animations are completed
+            setTimeout(function() {
+                clearInterval(simulateWindowResize);
+            }, 1000);
         });
     }
-    isMobileMenu(){
-        if($(window).width() < 991){
+    isMobileMenu() {
+        if ($(window).width() < 991) {
             return false;
         }
         return true;
-    }
-    sidebarToggle(){
-        var toggleButton = this.toggleButton;
-        var body = document.getElementsByTagName('body')[0];
+    };
+    sidebarOpen() {
+        const toggleButton = this.toggleButton;
+        const body = document.getElementsByTagName('body')[0];
+        setTimeout(function(){
+            toggleButton.classList.add('toggled');
+        }, 500);
+        body.classList.add('nav-open');
 
-        if(this.sidebarVisible == false){
-            setTimeout(function(){
-                toggleButton.classList.add('toggled');
-            },500);
-            body.classList.add('nav-open');
-            this.sidebarVisible = true;
+        this.sidebarVisible = true;
+    };
+    sidebarClose() {
+        const body = document.getElementsByTagName('body')[0];
+        this.toggleButton.classList.remove('toggled');
+        this.sidebarVisible = false;
+        body.classList.remove('nav-open');
+    };
+    sidebarToggle() {
+        // const toggleButton = this.toggleButton;
+        // const body = document.getElementsByTagName('body')[0];
+        if (this.sidebarVisible === false) {
+            this.sidebarOpen();
         } else {
-            this.toggleButton.classList.remove('toggled');
-            this.sidebarVisible = false;
-            body.classList.remove('nav-open');
+            this.sidebarClose();
         }
-    }
+    };
 
-    getTitle(){
-        var titlee = this.location.prepareExternalUrl(this.location.path());
-        if(titlee.charAt(0) === '#'){
-            titlee = titlee.slice( 2 );
-        }
-        for(var item = 0; item < this.listTitles.length; item++){
-            if(this.listTitles[item].path.indexOf(titlee) >=0 || titlee.indexOf(this.listTitles[item].path) >=0){
-                return this.listTitles[item].title;
+    getTitle() {
+        let titlee: any = this.location.prepareExternalUrl(this.location.path());
+        for (let i = 0; i < this.listTitles.length; i++) {
+            if (this.listTitles[i].type === "link" && this.listTitles[i].path === titlee) {
+                return this.listTitles[i].title;
+            } else if (this.listTitles[i].type === "sub") {
+                for (let j = 0; j < this.listTitles[i].children.length; j++) {
+                    let subtitle = this.listTitles[i].path + '/' + this.listTitles[i].children[j].path;
+                    if (subtitle === titlee) {
+                        return this.listTitles[i].children[j].title;
+                    }
+                }
             }
         }
-        return 'Home';
+        return 'Dashboard';
     }
-    getPath(){
-        // console.log(this.location);
+    getPath() {
         return this.location.prepareExternalUrl(this.location.path());
     }
 }
-

@@ -7,28 +7,28 @@ declare const $: any;
 export class NotificationService {
 
 
-    /**
-     * Show notification
-     * @param message  notification message
-     * @param notificationType type: allowed types ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary']
-     * @param horizontalPosition vertical position, allowed: 'left', 'center','right'
-     * @param verticalPosition horizontal position, allowed: 'bottom', 'top'
-     */
-    show(message:string, notificationType :string, horizontalPosition: any, verticalPosition: any) {
-        const type = ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary'];
+  /**
+   * Show notification
+   * @param message  notification message
+   * @param notificationType type: allowed types ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary']
+   * @param horizontalPosition vertical position, allowed: 'left', 'center','right'
+   * @param verticalPosition horizontal position, allowed: 'bottom', 'top'
+   */
+  show(message: string, notificationType: string, horizontalPosition: any, verticalPosition: any) {
+    const type = ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary'];
 
-        const color = Math.floor((Math.random() * 6) + 1);
+    const color = Math.floor((Math.random() * 6) + 1);
 
-        $.notify({
-            icon: 'notifications',
-            message: message
-        }, {
-            type: notificationType,
-            timer: 3000,
-            placement: {
-                from: verticalPosition,
-                align: horizontalPosition
-            }
-        });
-    }
+    $.notify({
+      icon: 'notifications',
+      message: message
+    }, {
+        type: notificationType,
+        timer: 3000,
+        placement: {
+          from: verticalPosition,
+          align: horizontalPosition
+        }
+      });
+  }
 }
