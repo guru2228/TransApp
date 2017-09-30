@@ -58,10 +58,10 @@ export class SidebarComponent implements OnInit {
     ngAfterViewInit() {
         // init Moving Tab after the view is initialisez
         setTimeout(() => {
-            if (mda.movingTabInitialised == false) {
-                mda.initMovingTab();
-                mda.movingTabInitialised = true;
-            }
+           // if (mda.movingTabInitialised == false) {
+                //mda.initMovingTab();
+            //    mda.movingTabInitialised = true;
+           // }
         }, 100);
     }
 

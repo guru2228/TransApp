@@ -1,6 +1,6 @@
-export class AddressFacilityModel {
+export class FacilityEntityModel {
     public id: number;
-    public addressId: number;
+    public entityId: number;
     public facilityId: number;
     public active: boolean;
 

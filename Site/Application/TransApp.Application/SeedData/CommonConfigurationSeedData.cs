@@ -96,9 +96,9 @@ namespace TransApp.Application.SeedData
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
-                    EN = "Hydraulic Lift",
-                    NL = "Hydraulic Lift",
-                    FR = "Hydraulic Lift"
+                    EN = "Hydraulic lift",
+                    NL = "Hydraulic lift",
+                    FR = "Hydraulic lift"
                 });
 
                 await CreateRequirement("ALL", "local_shipping", 500, new Dictionary

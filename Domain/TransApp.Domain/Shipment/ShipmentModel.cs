@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using TransApp.Domain.Addresses;
+using TransApp.Domain.Common.Entity;
 
 namespace TransApp.Domain.Shipment
 {
@@ -27,13 +27,7 @@ namespace TransApp.Domain.Shipment
 
         public string SenderRemark { get; set; }
 
-        public string SenderAmStart { get; set; }
-
-        public string SenderAmStop { get; set; }
-
-        public string SenderPmStart { get; set; }
-
-        public string SenderPmStop { get; set; }
+        public AvailabilityEntityModel SenderAvailability { get; set; }
 
         public int? ReceiverAddressId { get; set; }
 
@@ -43,13 +37,7 @@ namespace TransApp.Domain.Shipment
 
         public string ReceiverRemark { get; set; }
 
-        public string ReceiverAmStart { get; set; }
-
-        public string ReceiverAmStop { get; set; }
-
-        public string ReceiverPmStart { get; set; }
-
-        public string ReceiverPmStop { get; set; }
+        public AvailabilityEntityModel ReceiverAvailability { get; set; }
 
         public decimal? TotalPrice { get; set; }
 
@@ -74,13 +62,17 @@ namespace TransApp.Domain.Shipment
         public string UserCreated { get; set; }
 
         public DateTime? DateModified { get; set; }
+
         public List<ShipmentDetailModel> ShipmentDetails { get; set; }
-        public List<ShipmentReceiverFacilityModel> ShipmentReceiverFacilities { get; set; }
-        public List<ShipmentReceiverRequirementModel> ShipmentReceiverRequirements { get; set; }
-        public List<ShipmentReceiverTruckModel> ShipmentReceiverTrucks { get; set; }
-        public List<ShipmentSenderFacilityModel> ShipmentSenderFacilities { get; set; }
-        public List<ShipmentSenderRequirementModel> ShipmentSenderRequirements { get; set; }
-        public List<ShipmentSenderTruckModel> ShipmentSenderTrucks { get; set; }
-        public List<ShipmentTransporterModel> ShipmentTransporters { get; set; }
+
+        public List<FacilityEntityModel> ReceiverFacilities { get; set; }
+        public List<RequirementEntityModel> ReceiverRequirements { get; set; }
+        public List<TruckEntityModel> ReceiverTrucks { get; set; }
+
+        public List<FacilityEntityModel> SenderFacilities { get; set; }
+        public List<RequirementEntityModel> SenderRequirements { get; set; }
+        public List<TruckEntityModel> SenderTrucks { get; set; }
+
+        public List<ShipmentTransporterModel> Transporters { get; set; }
     }
 }

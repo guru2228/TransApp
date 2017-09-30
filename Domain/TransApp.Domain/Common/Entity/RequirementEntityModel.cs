@@ -1,17 +1,16 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace TransApp.Domain.Addresses
+namespace TransApp.Domain.Common.Entity
 {
-    public class AddressFacilityModel
+    public class RequirementEntityModel
     {
         public int Id { get; set; }
 
-        public int? AddressId { get; set; }
+        public int? EntityId { get; set; }
 
-        public int? FacilityId { get; set; }
+        public int? RequirementId { get; set; }
+
+        public decimal? AmountInsurance { get; set; }
 
         public bool Active { get; set; }
 

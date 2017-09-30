@@ -1,9 +1,9 @@
-export class AddressAvailabilityModel {
+export class AvailabilityEntityModel {
     public id: number;
-    public addressId: number;
+    public entityId: number;
     public day: number;
 
-    public isClosed : boolean;
+    public isClosed: boolean;
 
     public amStart: string;
     public amStop: string;

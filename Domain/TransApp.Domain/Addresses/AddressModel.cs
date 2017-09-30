@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransApp.Domain.Common.Entity;
 
 namespace TransApp.Domain.Addresses
 {
@@ -24,10 +25,10 @@ namespace TransApp.Domain.Addresses
 
         public string Remark { get; set; }
 
-        public List<AddressAvailabilityModel> Availabilities { get; set; }
-        public List<AddressFacilityModel> Facilities { get; set; }
-        public List<AddressRequirementModel> Requirements { get; set; }
-        public List<AddressTruckModel> Trucks { get; set; }
+        public List<AvailabilityEntityModel> Availabilities { get; set; }
+        public List<FacilityEntityModel> Facilities { get; set; }
+        public List<RequirementEntityModel> Requirements { get; set; }
+        public List<TruckEntityModel> Trucks { get; set; }
 
         public int? UserIdCreated { get; set; }
 

@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TransApp.Domain.Common
+namespace TransApp.Domain.Common.Parameter
 {
-    public class TruckModel
+    public class TruckParameterModel
     {
         public int Id { get; set; }
 
@@ -27,5 +27,4 @@ namespace TransApp.Domain.Common
 
         public string Description { get; set; }
     }
-
 }

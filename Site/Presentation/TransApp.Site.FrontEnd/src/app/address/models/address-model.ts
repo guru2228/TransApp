@@ -1,8 +1,8 @@
-import { AddressFacilityModel } from "app/address/models/address-facility-model";
-import { AddressRequirementModel } from "app/address/models/address-requirment-model";
-import { AddressTruckModel } from "app/address/models/address-truck-model";
-import { AddressLocationModel } from "app/address/models/address-location-model";
-import { AddressAvailabilityModel } from "app/shared/common/models/address-availability-model";
+import { AddressLocationModel } from 'app/address/models/address-location-model';
+import { FacilityEntityModel } from 'app/shared/common/models/entity/facility-entity-model';
+import { AvailabilityEntityModel } from 'app/shared/common/models/entity/availability-entity-model';
+import { RequirementEntityModel } from 'app/shared/common/models/entity/requirement-entity-model';
+import { TruckEntityModel } from 'app/shared/common/models/entity/truck-entity-model';
 
 export class AddressModel {
     public id: number;
@@ -19,9 +19,9 @@ export class AddressModel {
     public dateModified: Date;
     public userCreated: string;
     public userModified: string;
-    public availabilities: Array<AddressAvailabilityModel>;
-    public facilities: Array<AddressFacilityModel>;
-    public requirements: Array<AddressRequirementModel>;
-    public trucks: Array<AddressTruckModel>;
-    public commonAvailability : boolean;
+    public availabilities: Array<AvailabilityEntityModel>;
+    public facilities: Array<FacilityEntityModel>;
+    public requirements: Array<RequirementEntityModel>;
+    public trucks: Array<TruckEntityModel>;
+    public commonAvailability: boolean;
 }

@@ -6,6 +6,7 @@ using Castle.Components.DictionaryAdapter;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TransApp.Domain.Addresses;
+using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Shipment;
@@ -38,6 +39,8 @@ namespace TransApp.Tests.Shipment
         public async Task Test_SaveShipment_AddOnlyMaster_Is_Ok()
         {
             ShipmentModel currentShipment = new ShipmentModel();
+            currentShipment.ReceiverAvailability = new AvailabilityEntityModel();
+            currentShipment.SenderAvailability = new AvailabilityEntityModel();
             currentShipment.Id = -1;
             currentShipment.CustomerId = 1;
             currentShipment.DeliveryDate = DateTime.Now;
@@ -45,22 +48,22 @@ namespace TransApp.Tests.Shipment
             currentShipment.DateCreated = DateTime.Now;
             currentShipment.PickUpDate = DateTime.Now;
             currentShipment.PoNumber = "12345678";
-            currentShipment.ReceiverAmStop = "11:30";
+            currentShipment.ReceiverAvailability.AmStop = "11:30";
             currentShipment.ReceiverAddressId = 70;
-            currentShipment.ReceiverAmStart = "08:00";
+            currentShipment.ReceiverAvailability.AmStart = "08:00";
             currentShipment.ReceiverContactPerson = "dan MIhai";
             currentShipment.ReceiverPhone = "4443333";
-            currentShipment.ReceiverPmStart = "15:00";
-            currentShipment.ReceiverPmStop = "18:00";
+            currentShipment.ReceiverAvailability.PmStart = "15:00";
+            currentShipment.ReceiverAvailability.PmStop = "18:00";
             currentShipment.ReceiverRemark = "Iași Buc";
             currentShipment.Reference = "aaaa";
             currentShipment.SenderAddressId = 70;
-            currentShipment.SenderAmStart = "07:00";
-            currentShipment.SenderAmStop = "11:34";
+            currentShipment.SenderAvailability.AmStart = "07:00";
+            currentShipment.SenderAvailability.AmStop = "11:34";
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
-            currentShipment.SenderPmStart = "18:00";
-            currentShipment.SenderPmStop = "20:00";
+            currentShipment.SenderAvailability.PmStart = "18:00";
+            currentShipment.SenderAvailability.PmStop = "20:00";
             currentShipment.SenderRemark = "Iași to see availability";
             currentShipment.ShipmentStatusId = 1;
             currentShipment.TotalPrice = 5554;
@@ -86,6 +89,9 @@ namespace TransApp.Tests.Shipment
         public async Task Test_SaveShipment_Full_Is_Ok()
         {
             ShipmentModel currentShipment = new ShipmentModel();
+            currentShipment.ReceiverAvailability = new AvailabilityEntityModel();
+           currentShipment.SenderAvailability = new AvailabilityEntityModel();
+            
             currentShipment.Id = -1;
             currentShipment.CustomerId = 1;
             currentShipment.DeliveryDate = DateTime.Now;
@@ -93,22 +99,22 @@ namespace TransApp.Tests.Shipment
             currentShipment.DateCreated = DateTime.Now;
             currentShipment.PickUpDate = DateTime.Now;
             currentShipment.PoNumber = "12345678";
-            currentShipment.ReceiverAmStop = "11:30";
+            currentShipment.ReceiverAvailability.AmStop = "11:30";
             currentShipment.ReceiverAddressId = 70;
-            currentShipment.ReceiverAmStart = "08:00";
+            currentShipment.ReceiverAvailability.AmStart = "08:00";
             currentShipment.ReceiverContactPerson = "dan MIhai";
             currentShipment.ReceiverPhone = "4443333";
-            currentShipment.ReceiverPmStart = "15:00";
-            currentShipment.ReceiverPmStop = "18:00";
+            currentShipment.ReceiverAvailability.PmStart = "15:00";
+            currentShipment.ReceiverAvailability.PmStop = "18:00";
             currentShipment.ReceiverRemark = "Iași Buc";
             currentShipment.Reference = "aaaa";
             currentShipment.SenderAddressId = 70;
-            currentShipment.SenderAmStart = "07:00";
-            currentShipment.SenderAmStop = "11:34";
+            currentShipment.SenderAvailability.AmStart = "07:00";
+            currentShipment.SenderAvailability.AmStop = "11:34";
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
-            currentShipment.SenderPmStart = "18:00";
-            currentShipment.SenderPmStop = "20:00";
+            currentShipment.SenderAvailability.PmStart = "18:00";
+            currentShipment.SenderAvailability.PmStop = "20:00";
             currentShipment.SenderRemark = "Iași to see availability";
             currentShipment.ShipmentStatusId = 1;
             currentShipment.TotalPrice = 5554;
@@ -133,64 +139,64 @@ namespace TransApp.Tests.Shipment
             shipmentDetail.Add(aShipmentDetailModel);
             currentShipment.ShipmentDetails = shipmentDetail;
 
-            List<ShipmentReceiverFacilityModel> shipmentReceiverFacilities =
-                new EditableList<ShipmentReceiverFacilityModel>();
-            ShipmentReceiverFacilityModel aShipmentReceiverFacilityModel = new ShipmentReceiverFacilityModel
+            List<FacilityEntityModel> shipmentReceiverFacilities =
+                new EditableList<FacilityEntityModel>();
+            FacilityEntityModel aShipmentReceiverFacilityModel = new FacilityEntityModel
             {
                 Active = true,
                 FacilityId = 1
             };
             shipmentReceiverFacilities.Add(aShipmentReceiverFacilityModel);
-            currentShipment.ShipmentReceiverFacilities = shipmentReceiverFacilities;
+            currentShipment.ReceiverFacilities = shipmentReceiverFacilities;
 
-            List<ShipmentReceiverRequirementModel> shipmentReceiverRequirements =
-                new EditableList<ShipmentReceiverRequirementModel>();
-            ShipmentReceiverRequirementModel aShipmentReceiverRequirementModel = new ShipmentReceiverRequirementModel
+            List<RequirementEntityModel> shipmentReceiverRequirements =
+                new EditableList<RequirementEntityModel>();
+            RequirementEntityModel aShipmentReceiverRequirementModel = new RequirementEntityModel
             {
                 Active = true,
                 AmountInsurance = 11,
                 RequirementId = 11
             };
             shipmentReceiverRequirements.Add(aShipmentReceiverRequirementModel);
-            currentShipment.ShipmentReceiverRequirements = shipmentReceiverRequirements;
+            currentShipment.ReceiverRequirements = shipmentReceiverRequirements;
 
-            List<ShipmentReceiverTruckModel> shipmentReceiverTrucks = new EditableList<ShipmentReceiverTruckModel>();
-            ShipmentReceiverTruckModel aShipmentReceiverTruckModel = new ShipmentReceiverTruckModel
+            List<TruckEntityModel> shipmentReceiverTrucks = new EditableList<TruckEntityModel>();
+            TruckEntityModel aShipmentReceiverTruckModel = new TruckEntityModel
             {
                 Active = true,
                 TruckId = 5
             };
             shipmentReceiverTrucks.Add(aShipmentReceiverTruckModel);
-            currentShipment.ShipmentReceiverTrucks = shipmentReceiverTrucks;
+            currentShipment.ReceiverTrucks = shipmentReceiverTrucks;
 
-            List<ShipmentSenderFacilityModel> shipmentSenderFacilities = new EditableList<ShipmentSenderFacilityModel>();
-            ShipmentSenderFacilityModel aShipmentSenderFacilityModel = new ShipmentSenderFacilityModel
+            List<FacilityEntityModel> shipmentSenderFacilities = new EditableList<FacilityEntityModel>();
+            FacilityEntityModel aShipmentSenderFacilityModel = new FacilityEntityModel
             {
                 Active = true,
                 FacilityId = 1
             };
             shipmentSenderFacilities.Add(aShipmentSenderFacilityModel);
-            currentShipment.ShipmentSenderFacilities = shipmentSenderFacilities;
+            currentShipment.SenderFacilities = shipmentSenderFacilities;
 
-            List<ShipmentSenderRequirementModel> shipmentSenderRequirements =
-                new EditableList<ShipmentSenderRequirementModel>();
-            ShipmentSenderRequirementModel aShipmentSenderRequirementModel = new ShipmentSenderRequirementModel
+            List<RequirementEntityModel> shipmentSenderRequirements =
+                new EditableList<RequirementEntityModel>();
+            RequirementEntityModel aShipmentSenderRequirementModel = new RequirementEntityModel
             {
                 Active = true,
                 AmountInsurance = 999,
                 RequirementId = 11
             };
             shipmentSenderRequirements.Add(aShipmentSenderRequirementModel);
-            currentShipment.ShipmentSenderRequirements = shipmentSenderRequirements;
+            currentShipment.SenderRequirements = shipmentSenderRequirements;
 
-            List<ShipmentSenderTruckModel> shipmentSenderTrucks = new EditableList<ShipmentSenderTruckModel>();
-            ShipmentSenderTruckModel aShipmentSenderTruckModel = new ShipmentSenderTruckModel
+            List<TruckEntityModel> shipmentSenderTrucks = new EditableList<TruckEntityModel>();
+            TruckEntityModel aShipmentSenderTruckModel = new TruckEntityModel
             {
                 Active = true,
                 TruckId = 6
             };
             shipmentSenderTrucks.Add(aShipmentSenderTruckModel);
-            currentShipment.ShipmentSenderTrucks = shipmentSenderTrucks;
+            currentShipment.SenderTrucks = shipmentSenderTrucks;
 
             List<ShipmentTransporterModel> shipmentTransporters = new EditableList<ShipmentTransporterModel>();
             ShipmentTransporterModel aShipmentTransporterModel = new ShipmentTransporterModel
@@ -209,7 +215,7 @@ namespace TransApp.Tests.Shipment
                 TransporterId = 1
             };
             shipmentTransporters.Add(aShipmentTransporterModel);
-            currentShipment.ShipmentTransporters = shipmentTransporters;
+            currentShipment.Transporters = shipmentTransporters;
             try
             {
                 await _shipmentService.SaveShipment(1000, currentShipment);
@@ -289,31 +295,31 @@ namespace TransApp.Tests.Shipment
                 {
                     av.Length = 454545;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverFacilities)
+                foreach (var av in currentShipmentModel.ReceiverFacilities)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverRequirements)
+                foreach (var av in currentShipmentModel.ReceiverRequirements)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                foreach (var av in currentShipmentModel.ReceiverTrucks)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentSenderFacilities)
+                foreach (var av in currentShipmentModel.SenderFacilities)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentSenderRequirements)
+                foreach (var av in currentShipmentModel.SenderRequirements)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentReceiverTrucks)
+                foreach (var av in currentShipmentModel.ReceiverTrucks)
                 {
                     av.Active = false;
                 }
-                foreach (var av in currentShipmentModel.ShipmentTransporters)
+                foreach (var av in currentShipmentModel.Transporters)
                 {
                     av.Accepted = false;
                 }

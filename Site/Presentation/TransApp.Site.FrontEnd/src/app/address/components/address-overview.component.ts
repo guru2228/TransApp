@@ -5,23 +5,23 @@ import { TableData } from "app/shared/md/md-table/md-table.component";
 import { AddressRowViewModel } from "app/address/models/address-row-viewmodel";
 import { AddressModel } from "app/address/models/address-model";
 import { AddressService } from "app/address/services/address.service";
-import { ApplicationUser } from "app/authentication/viewmodels/application-user";
+import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
 import { AuthenticationService } from "app/authentication/services/authentication.service";
-import { TranslateService } from "app/shared/common/services/localization/translate.service";
-import { Subscription } from 'rxjs';
+import { TranslateService } from 'app/shared/common/services/localization/translate.service';
+import { Subscription } from 'rxjs/Subscription';
 import { FormControl } from '@angular/forms';
 import { PagerService } from 'app/shared/common/services/pager.service';
 import { Observable } from 'rxjs/Observable';
 import { HelperService } from 'app/shared/common/services/helperService';
 import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
 
-var moment = require('moment/moment');
+const moment = require('moment/moment');
 
 declare var $: any;
 declare var swal: any;
 
 @Component({
-    selector: 'address-overview',
+    selector: 'app-address-overview',
     templateUrl: './address-overview.component.html'
 })
 export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
@@ -33,9 +33,9 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     searchTerm = new FormControl();
     currentAddressId = -1;
 
-    currentPage: number = 0;
+    currentPage = 0;
     pagesCollection: Array<number>;
-    pageSize = 4;
+    pageSize = 20;
 
     private subscriptionReceiveUpdatedAddress: Subscription;
 
@@ -50,8 +50,11 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     }
 
     public ngOnInit() {
+
         this.currentUser = this.authenticationService.getCurrentUser();
+
         this.getNumberOfAddresses('', false);
+
         this.getAddresses();
 
         this.register_updateSavedModel_handler();
@@ -59,7 +62,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
     /**
      * Move to next/previous page
-     * @param page 
+     * @param page
      */
     paginate(page: number) {
         this.currentPage = page;
@@ -84,11 +87,10 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                         this.currentAddressId = +this.route.firstChild.snapshot.params['id']
                     }
                     for (let i = 0; i < result.length; i++) {
-                        let addressRow = new AddressRowViewModel();
+                        const addressRow = new AddressRowViewModel();
                         addressRow.address = result[i];
                         // if url contains edit then open it by default
-                        //addressRow.viewActions = result[i].id == this.currentAddressId;
-                        addressRow.viewActions = result[i].id == this.currentAddressId;
+                        addressRow.viewActions = result[i].id === this.currentAddressId;
                         this.componentModel.push(addressRow);
                     }
                 }
@@ -110,7 +112,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                 this.pagesCollection = [];
                     let numberOfPages = Math.round(result / this.pageSize);
                     numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
-                    let self = this;
+                    const self = this;
                     setTimeout(function () {
                         for (let i = 0; i < numberOfPages; i++) {
                             self.pagesCollection.push(i);
@@ -129,10 +131,9 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                 this.componentModel = [];
                 if (result && result.length > 0) {
                     for (let i = 0; i < result.length; i++) {
-                        let addressRow = new AddressRowViewModel();
+                        const addressRow = new AddressRowViewModel();
                         addressRow.address = result[i];
                         // if url contains edit then open it by default
-                        //addressRow.viewActions = result[i].id == this.currentAddressId;
                         this.componentModel.push(addressRow);
                     }
                 }
@@ -152,7 +153,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                         searchquery: term ? term : ''
                     }
                 });
-                let searchTerm = term && term.length > 0 ? term : '';
+                const searchTerm = term && term.length > 0 ? term : '';
 
                 this.getNumberOfAddresses(term, true);
                     this.searchAddresses(searchTerm);
@@ -173,12 +174,10 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     private register_updateSavedModel_handler() {
         this.subscriptionReceiveUpdatedAddress = this.addressService.addressModelReceivedHandler$.subscribe(address => {
             if (address != null) {
-                let modelToUpdate = this.componentModel.filter(item => item.address.id == address.id)[0];
+                const modelToUpdate = this.componentModel.filter(item => item.address.id === address.id)[0];
                 if (modelToUpdate) {
                     modelToUpdate.address = address;
-                    var $main_panel = $('.main-panel');
-                    $main_panel.scrollTop(100).perfectScrollbar('update');
-                    // $('body').scrollTop(100).perfectScrollbar('update');
+                    this.helperService.scrollOnTop();
                 }
                 this.addressService.resetSendAddressModelHandler();
             }
@@ -189,7 +188,7 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
     /** Show row available actions on click */
     onClickShowActions(addressRow: AddressRowViewModel, index: number) {
         for (let i = 0; i < this.componentModel.length; i++) {
-            if (i != index)
+            if (i !== index)
                 this.componentModel[i].viewActions = false;
             this.componentModel[i].viewEdit = false;
         }
@@ -215,10 +214,10 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
 
     /** Show edit address */
     onClickDeleteAddress(addressId: number) {
-        let self = this;
+        const self = this;
         swal({
             title: 'Are you sure?',
-            text: "You won't be able to revert this!",
+            text: 'You won\'t be able to revert this!',
             type: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
@@ -234,11 +233,9 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
                             'Your file has been deleted.',
                             'success'
                         );
-
                         // update model
-                        self.componentModel = self.componentModel.filter(item => item.address.id != addressId);
-                    }
-                    else {
+                        self.componentModel = self.componentModel.filter(item => item.address.id !== addressId);
+                    }else {
                         swal(
                             'Not Deleted!',
                             'An error occured. Your file has not been deleted.  Please contact an administrator.',
