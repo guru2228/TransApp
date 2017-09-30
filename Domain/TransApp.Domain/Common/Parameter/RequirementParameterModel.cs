@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TransApp.Domain.Common
+namespace TransApp.Domain.Common.Parameter
 {
-    public class RequirementModel
+    public class RequirementParameterModel
     {
         public int Id { get; set; }
 

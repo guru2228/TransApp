@@ -5,6 +5,7 @@ using Castle.Components.DictionaryAdapter;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Microsoft.Extensions.Options;
 using TransApp.Domain.Addresses;
+using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Framework.Filter;
@@ -95,8 +96,8 @@ namespace TransApp.Tests.Address
             currentAdrress.Location = location;
 
             //avalability
-            List<AddressAvailabilityModel> listAvailabilityModels = new EditableList<AddressAvailabilityModel>();
-            AddressAvailabilityModel availability= new AddressAvailabilityModel();
+            List<AvailabilityEntityModel> listAvailabilityModels = new EditableList<AvailabilityEntityModel>();
+            AvailabilityEntityModel availability= new AvailabilityEntityModel();
            // availability.AmStart = new TimeSpan(11, 00, 00);
            // availability.AmStop = new TimeSpan(12, 00, 00);
            // availability.PmStart = new TimeSpan(15, 00, 00);
@@ -108,8 +109,8 @@ namespace TransApp.Tests.Address
             currentAdrress.Availabilities = listAvailabilityModels;
 
             //trucks
-            List<AddressTruckModel> listAddressTruckModel = new EditableList<AddressTruckModel>();
-            AddressTruckModel truck = new AddressTruckModel();
+            List<TruckEntityModel> listAddressTruckModel = new EditableList<TruckEntityModel>();
+            TruckEntityModel truck = new TruckEntityModel();
             truck.Active = true;
             truck.TruckId = 5;
             truck.UserIdCreated = 100000;
@@ -118,14 +119,14 @@ namespace TransApp.Tests.Address
             currentAdrress.Trucks = listAddressTruckModel;
 
             //requirements
-            List<AddressRequirementModel> listreRequirementModels = new EditableList<AddressRequirementModel>();
-            AddressRequirementModel requirement = new AddressRequirementModel();
+            List<RequirementEntityModel> listreRequirementModels = new EditableList<RequirementEntityModel>();
+            RequirementEntityModel requirement = new RequirementEntityModel();
             requirement.Active = true;
             requirement.RequirementId = 9;
             requirement.UserIdCreated = 100000;
             requirement.UserIdModified = 999;
             listreRequirementModels.Add(requirement);
-            AddressRequirementModel requirement2 = new AddressRequirementModel();
+            RequirementEntityModel requirement2 = new RequirementEntityModel();
             requirement2.Active = true;
             requirement2.RequirementId = 9;
             requirement2.UserIdCreated = 100000;
@@ -134,8 +135,8 @@ namespace TransApp.Tests.Address
             currentAdrress.Requirements = listreRequirementModels;
 
             //facilities
-            List<AddressFacilityModel> listfaFacilityModels = new EditableList<AddressFacilityModel>();
-            AddressFacilityModel facility = new AddressFacilityModel();
+            List<FacilityEntityModel> listfaFacilityModels = new EditableList<FacilityEntityModel>();
+            FacilityEntityModel facility = new FacilityEntityModel();
             facility.Active = true;
             facility.FacilityId = 1;
             facility.UserIdCreated = 100000;
@@ -147,9 +148,9 @@ namespace TransApp.Tests.Address
             {
               await _addressesService.SaveAddress(1000,currentAdrress);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                
+                // ignored
             }
             if (currentAdrress.Id > 0 && listAvailabilityModels[0].Id > 0
                 && listAddressTruckModel[0].Id > 0
@@ -204,7 +205,7 @@ namespace TransApp.Tests.Address
                     await _addressesService.Get(74);
                 await _addressesService.DeleteAddress(currentAddressModel);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 Assert.IsFalse(true);
             }
@@ -224,7 +225,7 @@ namespace TransApp.Tests.Address
                 }
                 await _addressesService.SaveAddress(1000,currentAddressModel);
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 Assert.IsFalse(true);
             }

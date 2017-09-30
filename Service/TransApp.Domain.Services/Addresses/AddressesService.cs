@@ -10,6 +10,7 @@ using TransApp.Core.Exceptions;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Addresses;
+using TransApp.Domain.Common.Entity;
 using TransApp.Framework.Filter;
 using TransApp.Persistence.UnitOfWork;
 
@@ -83,10 +84,10 @@ namespace TransApp.Domain.Services.Addresses
                 }
                 if (currentAdrress.AddressAvailabilities != null)
                     result.Availabilities =
-                        currentAdrress.AddressAvailabilities.Select(availability => new AddressAvailabilityModel
+                        currentAdrress.AddressAvailabilities.Select(availability => new AvailabilityEntityModel
                         {
                             Id = availability.Id,
-                            AddressId = availability.AddressId,
+                            EntityId = availability.AddressId,
                             IsClosed = availability.IsClosed,
                             AmStart =
                                 availability.AmStart.HasValue
@@ -112,13 +113,13 @@ namespace TransApp.Domain.Services.Addresses
                         }).ToList();
 
                 result.Facilities =
-                    Mapper.Map<List<AddressFacility>, List<AddressFacilityModel>>(
+                    Mapper.Map<List<AddressFacility>, List<FacilityEntityModel>>(
                         currentAdrress.AddressFacilities);
                 result.Requirements =
-                    Mapper.Map<List<AddressRequirement>, List<AddressRequirementModel>>(
+                    Mapper.Map<List<AddressRequirement>, List<RequirementEntityModel>>(
                         currentAdrress.AddressRequirements);
                 result.Trucks =
-                    Mapper.Map<List<AddressTruck>, List<AddressTruckModel>>(
+                    Mapper.Map<List<AddressTruck>, List<TruckEntityModel>>(
                         currentAdrress.AddressTrucks);
 
                 return result;
@@ -234,7 +235,7 @@ namespace TransApp.Domain.Services.Addresses
                     var aAvailability = new AddressAvailability
                     {
                         Id = aAvailabilityModel.Id,
-                        AddressId = aAvailabilityModel.AddressId,
+                        AddressId = aAvailabilityModel.EntityId,
                         Day = aAvailabilityModel.Day,
                         IsClosed = aAvailabilityModel.IsClosed,
                     };
@@ -269,9 +270,9 @@ namespace TransApp.Domain.Services.Addresses
 
             if (currentAdrress.Facilities != null)
             {
-                foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
+                foreach (FacilityEntityModel aFacilityModel in currentAdrress.Facilities)
                 {
-                    AddressFacility aFacility = Mapper.Map<AddressFacilityModel, AddressFacility>(aFacilityModel);
+                    AddressFacility aFacility = Mapper.Map<FacilityEntityModel, AddressFacility>(aFacilityModel);
                     if (aFacility != null)
                     {
                         aFacility.DateModified = DateTime.Now;
@@ -293,10 +294,10 @@ namespace TransApp.Domain.Services.Addresses
             }
             if (currentAdrress.Requirements != null)
             {
-                foreach (AddressRequirementModel aRequirementModel in currentAdrress.Requirements)
+                foreach (RequirementEntityModel aRequirementModel in currentAdrress.Requirements)
                 {
                     AddressRequirement aRequirement =
-                        Mapper.Map<AddressRequirementModel, AddressRequirement>(aRequirementModel);
+                        Mapper.Map<RequirementEntityModel, AddressRequirement>(aRequirementModel);
                     if (aRequirement != null)
                     {
                         aRequirement.DateModified = DateTime.Now;
@@ -318,9 +319,9 @@ namespace TransApp.Domain.Services.Addresses
             }
             if (currentAdrress.Trucks != null)
             {
-                foreach (AddressTruckModel aTruckModel in currentAdrress.Trucks)
+                foreach (TruckEntityModel aTruckModel in currentAdrress.Trucks)
                 {
-                    AddressTruck aTruck = Mapper.Map<AddressTruckModel, AddressTruck>(aTruckModel);
+                    AddressTruck aTruck = Mapper.Map<TruckEntityModel, AddressTruck>(aTruckModel);
                     if (aTruck != null)
                     {
                         aTruck.DateModified = DateTime.Now;
@@ -358,10 +359,10 @@ namespace TransApp.Domain.Services.Addresses
                 var transaction = _unitOfWork.BeginTransaction();
                 if (currentAdrress.Availabilities != null)
                 {
-                    foreach (AddressAvailabilityModel aAvailabilityModel in currentAdrress.Availabilities)
+                    foreach (AvailabilityEntityModel aAvailabilityModel in currentAdrress.Availabilities)
                     {
                         AddressAvailability aAvailability =
-                            Mapper.Map<AddressAvailabilityModel, AddressAvailability>(aAvailabilityModel);
+                            Mapper.Map<AvailabilityEntityModel, AddressAvailability>(aAvailabilityModel);
                         if (aAvailability != null)
                         {
                             await _unitOfWork.AddressAvailabilitiesRepository.DeleteAsync(aAvailability, transaction);
@@ -370,9 +371,9 @@ namespace TransApp.Domain.Services.Addresses
                 }
                 if (currentAdrress.Facilities != null)
                 {
-                    foreach (AddressFacilityModel aFacilityModel in currentAdrress.Facilities)
+                    foreach (FacilityEntityModel aFacilityModel in currentAdrress.Facilities)
                     {
-                        AddressFacility aFacility = Mapper.Map<AddressFacilityModel, AddressFacility>(aFacilityModel);
+                        AddressFacility aFacility = Mapper.Map<FacilityEntityModel, AddressFacility>(aFacilityModel);
                         if (aFacility != null)
                         {
                             await _unitOfWork.AddressFacilityRepository.DeleteAsync(aFacility, transaction);
@@ -381,10 +382,10 @@ namespace TransApp.Domain.Services.Addresses
                 }
                 if (currentAdrress.Requirements != null)
                 {
-                    foreach (AddressRequirementModel aRequirementModel in currentAdrress.Requirements)
+                    foreach (RequirementEntityModel aRequirementModel in currentAdrress.Requirements)
                     {
                         AddressRequirement aRequirement =
-                            Mapper.Map<AddressRequirementModel, AddressRequirement>(aRequirementModel);
+                            Mapper.Map<RequirementEntityModel, AddressRequirement>(aRequirementModel);
                         if (aRequirement != null)
                         {
                             await _unitOfWork.AddressRequirementRepository.DeleteAsync(aRequirement, transaction);
@@ -393,9 +394,9 @@ namespace TransApp.Domain.Services.Addresses
                 }
                 if (currentAdrress.Trucks != null)
                 {
-                    foreach (AddressTruckModel aTruckModel in currentAdrress.Trucks)
+                    foreach (TruckEntityModel aTruckModel in currentAdrress.Trucks)
                     {
-                        AddressTruck aTruck = Mapper.Map<AddressTruckModel, AddressTruck>(aTruckModel);
+                        AddressTruck aTruck = Mapper.Map<TruckEntityModel, AddressTruck>(aTruckModel);
                         if (aTruck != null)
                         {
                             await _unitOfWork.AddressTruckRepository.DeleteAsync(aTruck, transaction);

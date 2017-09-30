@@ -9,6 +9,7 @@ using TransApp.Core.Exceptions;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Addresses;
+using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Shipment;
 using TransApp.Framework.Filter;
 using TransApp.Persistence.UnitOfWork;
@@ -52,14 +53,7 @@ namespace TransApp.Domain.Services.Shipment
                     SenderContactPerson = currentShipment.Shipment.SenderContactPerson,
                     ReceiverContactPerson = currentShipment.Shipment.ReceiverContactPerson,
                     Reference = currentShipment.Shipment.Reference,
-                    SenderAmStop = new DateTime(currentShipment.Shipment.SenderAmStop.Ticks).ToString("HH:mm"),
-                    SenderPmStart = new DateTime(currentShipment.Shipment.SenderPmStart.Ticks).ToString("HH:mm"),
-                    SenderAmStart = new DateTime(currentShipment.Shipment.SenderAmStart.Ticks).ToString("HH:mm"),
-                    SenderPmStop = new DateTime(currentShipment.Shipment.SenderPmStop.Ticks).ToString("HH:mm"),
-                    ReceiverAmStart = new DateTime(currentShipment.Shipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
-                    ReceiverPmStop = new DateTime(currentShipment.Shipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
-                    ReceiverAmStop = new DateTime(currentShipment.Shipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
-                    ReceiverPmStart = new DateTime(currentShipment.Shipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
+         
                     ReceiverRemark = currentShipment.Shipment.ReceiverRemark,
                     ReceiverPhone = currentShipment.Shipment.ReceiverPhone,
                     SenderAddressId = currentShipment.Shipment.SenderAddressId,
@@ -69,6 +63,21 @@ namespace TransApp.Domain.Services.Shipment
                     DateModified = currentShipment.Shipment.DateModified,
 
                 };
+                result.SenderAvailability = new AvailabilityEntityModel
+                {
+                    AmStop = new DateTime(currentShipment.Shipment.SenderAmStop.Ticks).ToString("HH:mm"),
+                   PmStart = new DateTime(currentShipment.Shipment.SenderPmStart.Ticks).ToString("HH:mm"),
+                   AmStart = new DateTime(currentShipment.Shipment.SenderAmStart.Ticks).ToString("HH:mm"),
+                    PmStop = new DateTime(currentShipment.Shipment.SenderPmStop.Ticks).ToString("HH:mm"),
+                };
+                result.ReceiverAvailability = new AvailabilityEntityModel
+                {
+                    AmStop = new DateTime(currentShipment.Shipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
+                    PmStart = new DateTime(currentShipment.Shipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
+                    AmStart = new DateTime(currentShipment.Shipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
+                    PmStop = new DateTime(currentShipment.Shipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
+                };
+
                
                 if (currentShipment.Shipment.UserIdCreated.HasValue)
                 {
@@ -92,26 +101,26 @@ namespace TransApp.Domain.Services.Shipment
                     Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
                         currentShipment.ShipmentDetails);
                 result.ShipmentReceiverFacilities =
-                    Mapper.Map<List<ShipmentReceiverFacility>, List<ShipmentReceiverFacilityModel>>(
+                    Mapper.Map<List<ShipmentReceiverFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentReceiverFacilities);
                 result.ShipmentTransporters =
                     Mapper.Map<List<ShipmentTransporter>, List<ShipmentTransporterModel>>(
                         currentShipment.ShipmentTransporters);
                 result.ShipmentReceiverRequirements =
-                    Mapper.Map<List<ShipmentReceiverRequirement>, List<ShipmentReceiverRequirementModel>>(
+                    Mapper.Map<List<ShipmentReceiverRequirement>, List<RequirementEntityModel>>(
                         currentShipment.ShipmentReceiverRequirements);
 
                 result.ShipmentReceiverTrucks =
-                    Mapper.Map<List<ShipmentReceiverTruck>, List<ShipmentReceiverTruckModel>>(
+                    Mapper.Map<List<ShipmentReceiverTruck>, List<TruckEntityModel>>(
                         currentShipment.ShipmentReceiverTrucks);
                 result.ShipmentSenderFacilities =
-                    Mapper.Map<List<ShipmentSenderFacility>, List<ShipmentSenderFacilityModel>>(
+                    Mapper.Map<List<ShipmentSenderFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentSenderFacilities);
                 result.ShipmentSenderRequirements =
-                    Mapper.Map<List<ShipmentSenderRequirement>, List<ShipmentSenderRequirementModel>>(
+                    Mapper.Map<List<ShipmentSenderRequirement>, List<RequirementEntityModel>>(
                         currentShipment.ShipmentSenderRequirements);
                 result.ShipmentSenderTrucks =
-                   Mapper.Map<List<ShipmentSenderTruck>, List<ShipmentSenderTruckModel>>(
+                   Mapper.Map<List<ShipmentSenderTruck>, List<TruckEntityModel>>(
                        currentShipment.ShipmentSenderTrucks);
 
                 return result;
@@ -149,14 +158,6 @@ namespace TransApp.Domain.Services.Shipment
                             SenderPhone = currentShipment.SenderPhone,
                             SenderContactPerson = currentShipment.SenderContactPerson,
                             ReceiverContactPerson = currentShipment.ReceiverContactPerson,
-                            SenderAmStop = new DateTime(currentShipment.SenderAmStop.Ticks).ToString("HH:mm"),
-                            SenderPmStart =new DateTime(currentShipment.SenderPmStart.Ticks).ToString("HH:mm"), 
-                            SenderAmStart =new DateTime(currentShipment.SenderAmStart.Ticks).ToString("HH:mm"), 
-                            SenderPmStop =new DateTime(currentShipment.SenderPmStop.Ticks).ToString("HH:mm"),
-                            ReceiverAmStart =new DateTime(currentShipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
-                            ReceiverPmStop =new DateTime(currentShipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
-                            ReceiverAmStop =new DateTime(currentShipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
-                            ReceiverPmStart =new DateTime(currentShipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
                             Reference = currentShipment.Reference,
                             ReceiverRemark = currentShipment.ReceiverRemark,
                             ReceiverPhone = currentShipment.ReceiverPhone,
@@ -167,6 +168,21 @@ namespace TransApp.Domain.Services.Shipment
                             DateModified = currentShipment.DateModified,
                             UserCreated = currentShipment.UserCreated,
                             UserModified = currentShipment.UserModified
+                        };
+
+                        shipmentModel.SenderAvailability = new AvailabilityEntityModel
+                        {
+                            AmStop = new DateTime(currentShipment.SenderAmStop.Ticks).ToString("HH:mm"),
+                            PmStart = new DateTime(currentShipment.SenderPmStart.Ticks).ToString("HH:mm"),
+                            AmStart = new DateTime(currentShipment.SenderAmStart.Ticks).ToString("HH:mm"),
+                            PmStop = new DateTime(currentShipment.SenderPmStop.Ticks).ToString("HH:mm"),
+                        };
+                        shipmentModel.ReceiverAvailability = new AvailabilityEntityModel
+                        {
+                            AmStop = new DateTime(currentShipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
+                            PmStart = new DateTime(currentShipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
+                            AmStart = new DateTime(currentShipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
+                            PmStop = new DateTime(currentShipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
                         };
 
                         result.Add(shipmentModel);
@@ -202,14 +218,7 @@ namespace TransApp.Domain.Services.Shipment
                 SenderPhone = currentShipment.SenderPhone,
                 SenderContactPerson = currentShipment.SenderContactPerson,
                 ReceiverContactPerson = currentShipment.ReceiverContactPerson,
-                SenderAmStop = TimeSpan.Parse(currentShipment.SenderAmStop) ,
-                SenderPmStart = TimeSpan.Parse(currentShipment.SenderPmStart) ,
-                SenderAmStart = TimeSpan.Parse(currentShipment.SenderAmStart) ,
-                SenderPmStop = TimeSpan.Parse(currentShipment.SenderPmStop),
-                ReceiverAmStart = TimeSpan.Parse(currentShipment.ReceiverAmStart),
-                ReceiverPmStop = TimeSpan.Parse(currentShipment.ReceiverPmStop),
-                ReceiverAmStop = TimeSpan.Parse(currentShipment.ReceiverAmStop),
-                ReceiverPmStart = TimeSpan.Parse(currentShipment.ReceiverPmStart),
+
                 Reference = currentShipment.Reference,
                 ReceiverRemark = currentShipment.ReceiverRemark,
                 ReceiverPhone = currentShipment.ReceiverPhone,
@@ -275,10 +284,10 @@ namespace TransApp.Domain.Services.Shipment
             }
             if (currentShipment.ShipmentReceiverFacilities != null)
             {
-                foreach (ShipmentReceiverFacilityModel aShipmentReceiverFacilityModel in currentShipment.ShipmentReceiverFacilities)
+                foreach (FacilityEntityModel aShipmentReceiverFacilityModel in currentShipment.ShipmentReceiverFacilities)
                 {
                     ShipmentReceiverFacility aShipmentReceiverFacility =
-                        Mapper.Map<ShipmentReceiverFacilityModel, ShipmentReceiverFacility>(aShipmentReceiverFacilityModel);
+                        Mapper.Map<FacilityEntityModel, ShipmentReceiverFacility>(aShipmentReceiverFacilityModel);
                     if (aShipmentReceiverFacility != null)
                     {
                         aShipmentReceiverFacility.DateModified = DateTime.Now;
@@ -300,9 +309,9 @@ namespace TransApp.Domain.Services.Shipment
             }
             if (currentShipment.ShipmentReceiverRequirements != null)
             {
-                foreach (ShipmentReceiverRequirementModel aShipmentReceiverRequirementModel in currentShipment.ShipmentReceiverRequirements)
+                foreach (RequirementEntityModel aShipmentReceiverRequirementModel in currentShipment.ShipmentReceiverRequirements)
                 {
-                    ShipmentReceiverRequirement aShipmentReceiverRequirement = Mapper.Map<ShipmentReceiverRequirementModel, ShipmentReceiverRequirement>(aShipmentReceiverRequirementModel);
+                    ShipmentReceiverRequirement aShipmentReceiverRequirement = Mapper.Map<RequirementEntityModel, ShipmentReceiverRequirement>(aShipmentReceiverRequirementModel);
                     if (aShipmentReceiverRequirement != null)
                     {
                         aShipmentReceiverRequirement.DateModified = DateTime.Now;
@@ -324,9 +333,9 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentReceiverTrucks != null)
             {
-                foreach (ShipmentReceiverTruckModel aShipmentReceiverTruckModel in currentShipment.ShipmentReceiverTrucks)
+                foreach (TruckEntityModel aShipmentReceiverTruckModel in currentShipment.ShipmentReceiverTrucks)
                 {
-                    ShipmentReceiverTruck aShipmentReceiverTruck = Mapper.Map<ShipmentReceiverTruckModel, ShipmentReceiverTruck>(aShipmentReceiverTruckModel);
+                    ShipmentReceiverTruck aShipmentReceiverTruck = Mapper.Map<TruckEntityModel, ShipmentReceiverTruck>(aShipmentReceiverTruckModel);
                     if (aShipmentReceiverTruck != null)
                     {
                         aShipmentReceiverTruck.DateModified = DateTime.Now;
@@ -348,9 +357,9 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentSenderFacilities != null)
             {
-                foreach (ShipmentSenderFacilityModel aShipmentSenderFacilityModel in currentShipment.ShipmentSenderFacilities)
+                foreach (FacilityEntityModel aShipmentSenderFacilityModel in currentShipment.ShipmentSenderFacilities)
                 {
-                    ShipmentSenderFacility aShipmentSenderFacility = Mapper.Map<ShipmentSenderFacilityModel, ShipmentSenderFacility>(aShipmentSenderFacilityModel);
+                    ShipmentSenderFacility aShipmentSenderFacility = Mapper.Map<FacilityEntityModel, ShipmentSenderFacility>(aShipmentSenderFacilityModel);
                     if (aShipmentSenderFacility != null)
                     {
                         aShipmentSenderFacility.DateModified = DateTime.Now;
@@ -372,9 +381,9 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentSenderRequirements != null)
             {
-                foreach (ShipmentSenderRequirementModel aShipmentSenderRequirementModel in currentShipment.ShipmentSenderRequirements)
+                foreach (RequirementEntityModel aShipmentSenderRequirementModel in currentShipment.ShipmentSenderRequirements)
                 {
-                    ShipmentSenderRequirement aShipmentSenderRequirement = Mapper.Map<ShipmentSenderRequirementModel, ShipmentSenderRequirement>(aShipmentSenderRequirementModel);
+                    ShipmentSenderRequirement aShipmentSenderRequirement = Mapper.Map<RequirementEntityModel, ShipmentSenderRequirement>(aShipmentSenderRequirementModel);
                     if (aShipmentSenderRequirement != null)
                     {
                         aShipmentSenderRequirement.DateModified = DateTime.Now;
@@ -396,9 +405,9 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentSenderTrucks != null)
             {
-                foreach (ShipmentSenderTruckModel aShipmentSenderTruckModel in currentShipment.ShipmentSenderTrucks)
+                foreach (TruckEntityModel aShipmentSenderTruckModel in currentShipment.ShipmentSenderTrucks)
                 {
-                    ShipmentSenderTruck aShipmentSenderTruck = Mapper.Map<ShipmentSenderTruckModel, ShipmentSenderTruck>(aShipmentSenderTruckModel);
+                    ShipmentSenderTruck aShipmentSenderTruck = Mapper.Map<TruckEntityModel, ShipmentSenderTruck>(aShipmentSenderTruckModel);
                     if (aShipmentSenderTruck != null)
                     {
                         aShipmentSenderTruck.DateModified = DateTime.Now;

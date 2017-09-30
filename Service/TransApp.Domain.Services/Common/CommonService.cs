@@ -4,6 +4,7 @@ using AutoMapper;
 using TransApp.Core.CacheService;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Common;
+using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Shipment;
 using TransApp.Persistence.UnitOfWork;
 
@@ -25,15 +26,15 @@ namespace TransApp.Domain.Services.Common
         /// </summary>
         /// <param name="language"></param>
         /// <returns></returns>
-        public async Task<List<FacilityModel>> GetFacilities(string language)
+        public async Task<List<FacilityParameterModel>> GetFacilities(string language)
         {
             var faciltyList =
                 await _unitOfWork.FacilityRepository.GetFacilities(language);
             if (faciltyList != null)
             {
-                return Mapper.Map<List<FacilityDto>, List<FacilityModel>>(faciltyList);
+                return Mapper.Map<List<FacilityDto>, List<FacilityParameterModel>>(faciltyList);
             }
-            return new List<FacilityModel>();
+            return new List<FacilityParameterModel>();
         }
 
         public async Task<List<ShipmentStatusModel>> GetStatuses(string language)
@@ -47,15 +48,15 @@ namespace TransApp.Domain.Services.Common
             return new List<ShipmentStatusModel>();
         }
 
-        public async Task<List<TruckModel>> GetTrucks(string language)
+        public async Task<List<TruckParameterModel>> GetTrucks(string language)
         {
             var truckList =
                await _unitOfWork.TruckRepository.GetTrucks(language);
             if (truckList != null)
             {
-                return Mapper.Map<List<TruckDto>, List<TruckModel>>(truckList);
+                return Mapper.Map<List<TruckDto>, List<TruckParameterModel>>(truckList);
             }
-            return new List<TruckModel>();
+            return new List<TruckParameterModel>();
         }
 
         public async Task<List<PackTypeModel>> GetTypes(string language)
@@ -69,15 +70,15 @@ namespace TransApp.Domain.Services.Common
             return new List<PackTypeModel>();
         }
 
-        public async Task<List<RequirementModel>> GetRequirements(string language)
+        public async Task<List<RequirementParameterModel>> GetRequirements(string language)
         {
             var requirementList =
                 await _unitOfWork.RequirementRepository.GetRequirements(language);
             if (requirementList != null)
             {
-                return Mapper.Map<List<RequirementDto>, List<RequirementModel>>(requirementList);
+                return Mapper.Map<List<RequirementDto>, List<RequirementParameterModel>>(requirementList);
             }
-            return new List<RequirementModel>();
+            return new List<RequirementParameterModel>();
         }
     }
 }

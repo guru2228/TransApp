@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace TransApp.Domain.Common
+namespace TransApp.Domain.Common.Parameter
 {
-    public class FacilityModel 
+    public class FacilityParameterModel 
     {
         public int Id { get; set; }
         public string Code { get; set; }

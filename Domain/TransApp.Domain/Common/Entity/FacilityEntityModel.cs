@@ -1,17 +1,14 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace TransApp.Domain.Shipment
+namespace TransApp.Domain.Common.Entity
 {
-    public class ShipmentSenderTruckModel 
+    public class FacilityEntityModel
     {
         public int Id { get; set; }
 
-        public int? ShipmentId { get; set; }
+        public int? EntityId { get; set; }
 
-        public int? TruckId { get; set; }
+        public int? FacilityId { get; set; }
 
         public bool Active { get; set; }
 
@@ -22,7 +19,5 @@ namespace TransApp.Domain.Shipment
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
     }
-
 }

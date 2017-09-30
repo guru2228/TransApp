@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace TransApp.Domain.Addresses
 {
-    public class AddressAvailabilityModel
+    public class AvailabilityEntityModel
     {
-
         public int Id { get; set; }
 
-        public int? AddressId { get; set; }
+        public int? EntityId { get; set; }
         public bool IsClosed { get; set; }
 
         public int? Day { get; set; }

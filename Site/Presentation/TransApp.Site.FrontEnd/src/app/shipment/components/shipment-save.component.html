@@ -48,11 +48,12 @@
                             <div class="form-group label-floating">
                                 <md-form-field class="autocomplete-address">
                                     <input type="text" name="searchAddress" aria-label="Select sender" placeholder="Select sender" md-min-length="0" mdInput [formControl]="addressesSearchTerm" [mdAutocomplete]="auto">
-                                    <md-autocomplete #auto="mdAutocomplete" [displayWith]="displayFn">
-                                        <md-option *ngFor="let option of addresses" [value]="option">
+                                    <md-autocomplete #auto="mdAutocomplete">
+                                        <md-option *ngFor="let option of addresses" [value]="option.id" (onSelectionChange)="callSomeFunction($event, option)">
                                             {{ option.name }}
                                         </md-option>
                                     </md-autocomplete>
+                                    <h4 *ngIf='!addresses || addresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
                                 </md-form-field>
                             </div>
 

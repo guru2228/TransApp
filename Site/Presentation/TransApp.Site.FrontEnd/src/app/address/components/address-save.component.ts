@@ -1,25 +1,25 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone, AfterViewInit } from '@angular/core';
-import { NgForm, FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
+import { NgForm, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { Observable } from "rxjs/Rx";
+import { Observable } from 'rxjs/Rx';
 
 import { ActivatedRoute, Params, RouterModule, Router, Routes } from '@angular/router';
 import { AgmCoreModule, MapsAPILoader } from '@agm/core';
-import { AddressModel } from "app/address/models/address-model";
-import { HelperService } from "app/shared/common/services/helperService";
-import { AddressService } from "app/address/services/address.service";
-import { TranslateService } from "app/shared/common/services/localization/translate.service";
-import { FacilityModel } from "app/shared/common/models/facility-model";
-import { RequirementModel } from "app/shared/common/models/requirement-model";
-import { TruckModel } from "app/shared/common/models/truck-model";
-import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandler";
-import { AddressLocationModel } from "app/address/models/address-location-model";
-import { ParametersDataService } from "app/shared/common/services/parameters-data.service";
-import { AuthenticationService } from "app/authentication/services/authentication.service";
-import { ApplicationUser } from "app/authentication/viewmodels/application-user";
-import { ComponentStateType } from "app/shared/common/helper/component-state-type";
-import { AddressFacilityModel } from "app/address/models/address-facility-model";
-import { AddressAvailabilityModel } from "app/shared/common/models/address-availability-model";
+import { AddressModel } from 'app/address/models/address-model';
+import { HelperService } from 'app/shared/common/services/helperService';
+import { AddressService } from 'app/address/services/address.service';
+import { TranslateService } from 'app/shared/common/services/localization/translate.service';
+import { FacilityModel } from 'app/shared/common/models/facility-model';
+import { RequirementModel } from 'app/shared/common/models/requirement-model';
+import { TruckModel } from 'app/shared/common/models/truck-model';
+import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
+import { AddressLocationModel } from 'app/address/models/address-location-model';
+import { ParametersDataService } from 'app/shared/common/services/parameters-data.service';
+import { AuthenticationService } from 'app/authentication/services/authentication.service';
+import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
+import { ComponentStateType } from 'app/shared/common/helper/component-state-type';
+import { AddressFacilityModel } from 'app/address/models/address-facility-model';
+import { AddressAvailabilityModel } from 'app/shared/common/models/address-availability-model';
 import { NotificationService } from 'app/shared/common/services/notification.service';
 
 declare var require: any
@@ -28,7 +28,7 @@ declare var $: any;
 
 @Component({
     moduleId: module.id,
-    selector: 'address-save-component',
+    selector: 'app-address-save-component',
     templateUrl: './address-save.component.html'
 })
 
@@ -40,18 +40,18 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     public searchControl: FormControl;
 
-    @ViewChild("searchElement")
+    @ViewChild('searchElement')
     public searchElementRef: ElementRef;
 
     currentUser: ApplicationUser;
-    /** 
-     * used to set map zoom mode 
+    /**
+     * used to set map zoom mode
      *  1: World
         5: Landmass/continent
         10: City
         15: Streets
         20: Buildings
-     * 
+     *
     */
     private zoomLevel = 15;
     constructor(
@@ -70,7 +70,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         this.currentUser = this.authenticationService.getCurrentUser();
-        //create search FormControl
+        // create search FormControl
         this.searchControl = new FormControl();
 
         // get component state
@@ -78,11 +78,9 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         // load required data
         this.loadComponentModel(this.componentState).subscribe(modelLoaded => {
             if (modelLoaded) {
-                debugger;
                 this.loadParamsData().subscribe(paramsDataLoaded => {
                     if (paramsDataLoaded) {
                         this.initDatetimePicker();
-                        //this.initSelectionSlider();
                         this.register_googleMapsPlaceSearchHandler();
                     }
                 })
@@ -91,7 +89,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
 
     ngAfterViewInit(): void {
-        let self = this;
+        const self = this;
         setTimeout(function () {
             self.moveToAddressSearch();
         }, 500);
@@ -101,11 +99,10 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         console.log(model, isValid);
         if (isValid && this.isModelValid()) {
             this.addressService.save(this.componentModel).subscribe(result => {
-                if (this.componentState == ComponentStateType.add) {
+                if (this.componentState === ComponentStateType.add) {
                     this.router.navigate(['/address-overview/address-edit/' + result]);
                     this.notificationService.show('Address created.', 'success', 'center', 'top');
-                }
-                else {
+                } else {
                     //// send data to addreess coponent to be updated
                     this.addressService.sendAddressModel(this.componentModel);
                     this.notificationService.show('Address saved. ', 'success', 'center', 'top');
@@ -113,8 +110,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             }, error => {
                 this.errorHandler.handleError(error);
             });
-        }
-        else {
+        } else {
             this.helperService.scrollOnTop();
             this.moveToAddressSearch();
         }
@@ -130,25 +126,23 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     /**
      * Load component model, or create a new one if component state is = Add
-     * @param componentState 
+     * @param componentState
      */
     private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
         return Observable.create(observer => {
-            debugger
-            if (componentState == ComponentStateType.add) {
+            if (componentState === ComponentStateType.add) {
 
                 this.createAddressEmptyModel();
-                //set current position
+                // set current position
                 this.createMap(50.89, 4.34);
                 observer.next(true);
-            }
-            else {
+            } else {
                 let addressId = 0;
                 this.route.params.forEach((params: Params) => {
                     addressId = params['id'];
                     this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
                         this.componentModel = result as AddressModel;
-                        var self = this;
+                        const self = this;
                         // settimeout used to let angular template engine to render map element (everything is displayed only when component model )
                         setTimeout(function () {
                             self.createMap(self.componentModel.location.latitude, self.componentModel.location.longitude);
@@ -156,7 +150,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
                         observer.next(true);
                     }, error => {
-                        debugger;
                         this.errorHandler.handleError(error);
                         observer.next(false);
                     })
@@ -184,7 +177,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                     observer.next(true);
                     //   resolve(true);
                 }, error => {
-                    debugger;
                     this.errorHandler.handleError(error);
                     observer.next(false);
                 });
@@ -197,29 +189,28 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
      * When palce is changed, handler to update model is registered
      */
     private register_googleMapsPlaceSearchHandler() {
-        debugger;
-        //load Places Autocomplete
+        // load Places Autocomplete
         this.mapsAPILoader.load().then(() => {
             // create map
-            let addressesAutocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+            const addressesAutocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
                 // types: ["address"]
             });
             // init place change listener
-            addressesAutocomplete.addListener("place_changed", () => {
+            addressesAutocomplete.addListener('place_changed', () => {
                 this.ngZone.run(() => {
-                    //get the place result
-                    let place = addressesAutocomplete.getPlace();
-                    //verify result
+                    // get the place result
+                    const place = addressesAutocomplete.getPlace();
+                    // verify result
                     if (place.geometry === undefined || place.geometry === null) {
                         return;
                     }
-                    //set latitude, longitude and zoom
+                    // set latitude, longitude and zoom
                     this.updateLocationModel(place);
                     this.updateOpeningHours(place);
 
                     this.createMap(this.componentModel.location.latitude, this.componentModel.location.longitude);
 
-                    if (this.componentState == ComponentStateType.add)
+                    if (this.componentState === ComponentStateType.add)
                         this.searchElementRef.nativeElement.focus();
                 });
             });
@@ -242,7 +233,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
 
         for (let i = 0; i < place.address_components.length; i++) {
-            let addressMember = place.address_components[i].types[0];
+            const addressMember = place.address_components[i].types[0];
             switch (addressMember) {
                 case 'country':
                     {
@@ -287,7 +278,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             this.componentModel.name += place.name;
         }
         if (place.formatted_address) {
-            if(this.componentModel.name.length > 0){
+            if (this.componentModel.name.length > 0) {
                 this.componentModel.name +=  ', ';
             }
             this.componentModel.name += place.formatted_address;
@@ -310,33 +301,31 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
             -	Sunday closed
  */
     private updateOpeningHours(place: any) {
-        debugger;
         this.componentModel.availabilities = [];
         // if is permanently closed then, send common availability = true and closed on day 0  = true
         if (place.permanently_closed) {
             this.componentModel.commonAvailability = true;
-            let availability = new AddressAvailabilityModel();
+            const availability = new AddressAvailabilityModel();
             availability.id = -1;
             availability.day = 0;
             availability.isClosed = true;
             this.componentModel.availabilities.push(availability);
-        }
-        else if (place.opening_hours) {
-            let availabilitiesList = new Array<AddressAvailabilityModel>();
+        } else if (place.opening_hours) {
+            const availabilitiesList = new Array<AddressAvailabilityModel>();
             /**
              * periods[] is an array of opening periods covering seven days, starting from Sunday, in chronological order. Each period contains:
                 -  open contains a pair of day and time objects describing when the place opens:
                      - day a number from 0–6, corresponding to the days of the week, starting on Sunday. For example, 2 means Tuesday.
                      - time may contain a time of day in 24-hour hhmm format. Values are in the range 0000–2359. The time will be reported in the place’s time zone.
-                - close may contain a pair of day and time objects describing when the place closes. Note: If a place is always open, the close section will be missing from the response. 
+                - close may contain a pair of day and time objects describing when the place closes. Note: If a place is always open, the close section will be missing from the response.
                  Clients can rely on always-open being represented as an open period containing day with value 0 and time with value 0000, and no close.
                      */
             // if is always open
-            if (place.opening_hours.periods && place.opening_hours.periods.length == 1
-                && place.opening_hours.periods[0].open && place.opening_hours.periods[0].open.day == 0 && place.opening_hours.periods[0].open.hours == 0
-                && place.opening_hours.periods[0].open.minutes == 0 && !place.opening_hours.periods[0].close) {
+            if (place.opening_hours.periods && place.opening_hours.periods.length === 1
+                && place.opening_hours.periods[0].open && place.opening_hours.periods[0].open.day === 0 && place.opening_hours.periods[0].open.hours === 0
+                && place.opening_hours.periods[0].open.minutes === 0 && !place.opening_hours.periods[0].close) {
                 this.componentModel.commonAvailability = true;
-                let availability = new AddressAvailabilityModel();
+                const availability = new AddressAvailabilityModel();
                 availability.id = -1;
                 availability.day = 0;
                 availability.amStart = '00:00';
@@ -344,40 +333,36 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                 availability.pmStart = '24:00';
                 availability.pmStop = '24:00';
                 this.componentModel.availabilities.push(availability);
-            }
-            else {
+            } else {
                 for (let day = 1; day <= 7; day++) {
-                    let googleDayIndex = day == 7 ? 0 : day;
+                    const googleDayIndex = day === 7 ? 0 : day;
 
-                    let availability = new AddressAvailabilityModel();
+                    const availability = new AddressAvailabilityModel();
                     availability.id = -1;
                     availability.day = day;
 
-                    let periods = place.opening_hours.periods.filter(item => item.open && item.open.day == googleDayIndex);
+                    const periods = place.opening_hours.periods.filter(item => item.open && item.open.day === googleDayIndex);
                     if (periods && periods.length > 0) {
-                        let periodStart = periods[0];
+                        const periodStart = periods[0];
                         if (!periodStart.close) {
                             availability.amStart = '00:00';
                             availability.amStop = '24:00';
-                        }
-                        else {
-                            availability.amStart = ("0" + periodStart.open.hours).slice(-2) + ':' + ("0" + periodStart.open.minutes).slice(-2);
-                            availability.amStop = ("0" + (periodStart.close.hours == 0 ? 24 :periodStart.close.hours )).slice(-2) + ':' + ("0" + periodStart.close.minutes).slice(-2);
+                        } else {
+                            availability.amStart = ('0' + periodStart.open.hours).slice(-2) + ':' + ('0' + periodStart.open.minutes).slice(-2);
+                            availability.amStop = ('0' + (periodStart.close.hours === 0 ? 24 : periodStart.close.hours )).slice(-2) + ':' + ('0' + periodStart.close.minutes).slice(-2);
                         }
 
-                        let periodEnd = periods.length > 1 ? periods[1] : null;
+                        const periodEnd = periods.length > 1 ? periods[1] : null;
 
                         if (periodEnd) {
-                            availability.pmStart = ("0" + periodEnd.open.hours).slice(-2) + ':' + ("0" + periodEnd.open.minutes).slice(-2);
-                            availability.pmStop = ("0" + (periodStart.close.hours == 0 ? 24 :periodStart.close.hours )).slice(-2) + ':' + ("0" + periodEnd.close.minutes).slice(-2);
-                        }
-                        else {
+                            availability.pmStart = ('0' + periodEnd.open.hours).slice(-2) + ':' + ('0' + periodEnd.open.minutes).slice(-2);
+                            availability.pmStop = ('0' + (periodStart.close.hours === 0 ? 24 : periodStart.close.hours )).slice(-2) + ':' + ('0' + periodEnd.close.minutes).slice(-2);
+                        } else {
                             availability.pmStart = availability.amStop;
                             availability.pmStop = availability.amStop;
                         }
 
-                    }
-                    else {
+                    } else {
                         availability.isClosed = true;
                     }
 
@@ -387,8 +372,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                 }
             }
 
-        }
-        else {
+        } else {
             this.generateAvailabilities();
         }
     }
@@ -398,18 +382,18 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
      */
     private createMap(latitude: number, longitude: number) {
         this.mapsAPILoader.load().then(() => {
-            var myLatlng = new google.maps.LatLng(latitude, longitude);
-            var mapOptions = {
+            const myLatlng = new google.maps.LatLng(latitude, longitude);
+            const mapOptions = {
                 zoom: this.zoomLevel,
                 center: myLatlng,
-                scrollwheel: false, //we disable de scroll over the map, it is a really annoing when you scroll through page
+                scrollwheel: false, // we disable de scroll over the map, it is a really annoing when you scroll through page
             }
 
-            var map = new google.maps.Map(document.getElementById("regularMap"), mapOptions);
+            const map = new google.maps.Map(document.getElementById('regularMap'), mapOptions);
 
-            var marker = new google.maps.Marker({
+            const marker = new google.maps.Marker({
                 position: myLatlng,
-                title: "Map"
+                title: 'Map'
             });
 
             marker.setMap(map);
@@ -460,12 +444,12 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
 
     private generateAvailabilities() {
-        let availabilitiesList = new Array<AddressAvailabilityModel>();
+        const availabilitiesList = new Array<AddressAvailabilityModel>();
         if (!this.componentModel.commonAvailability) {
             this.componentModel.availabilities = [];
             if (this.componentModel.availabilities.length < 7) {
                 for (let day = 1; day <= 7; day++) {
-                    let availability = new AddressAvailabilityModel();
+                    const availability = new AddressAvailabilityModel();
                     availability.id = -1;
                     availability.day = day;
                     if (day > 5) {
@@ -474,9 +458,8 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
                     availabilitiesList.push(availability);
                 }
             }
-        }
-        else {
-            let availability = new AddressAvailabilityModel();
+        } else {
+            const availability = new AddressAvailabilityModel();
             availability.id = -1;
             availability.day = 0;
             availabilitiesList.push(availability);
@@ -486,22 +469,21 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     /**
      * update component model with facilities
-     * @param paramsList 
+     * @param paramsList
      */
     private updateModelWithFacilities(paramsList: FacilityModel[]) {
         ///// remove items from address that are no longer in facility params list
-        this.componentModel.facilities = this.componentModel.facilities.filter(item => paramsList.filter(paramitem => paramitem.id == item.facilityId).length > 0);
+        this.componentModel.facilities = this.componentModel.facilities.filter(item => paramsList.filter(paramitem => paramitem.id === item.facilityId).length > 0);
 
-        // update component model 
+        // update component model
         for (let i = 0; i < paramsList.length; i++) {
-            let paramModel = this.componentModel.facilities.find(item => item.facilityId == paramsList[i].id);
+            const paramModel = this.componentModel.facilities.find(item => item.facilityId === paramsList[i].id);
             let modelItem = null;
             if (paramModel) {
                 modelItem = paramModel;
                 modelItem.description = paramsList[i].description
                 modelItem.iconName = paramsList[i].iconName
-            }
-            else {
+            } else {
                 modelItem = new AddressFacilityModel();
                 modelItem.id = -1;
                 modelItem.addressId = this.componentModel.id;
@@ -516,22 +498,21 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     /**
      * update component model with requirments
-     * @param paramsList 
+     * @param paramsList
      */
     private updateModelWithRequirements(paramsList: RequirementModel[]) {
         ///// remove facilities from address that are no longer in facility params list
-        this.componentModel.requirements = this.componentModel.requirements.filter(item => paramsList.filter(paramitem => paramitem.id == item.requirementId).length > 0);
+        this.componentModel.requirements = this.componentModel.requirements.filter(item => paramsList.filter(paramitem => paramitem.id === item.requirementId).length > 0);
 
         // update component model requirements
         for (let i = 0; i < paramsList.length; i++) {
-            let paramModel = this.componentModel.requirements.find(item => item.requirementId == paramsList[i].id);
+            const paramModel = this.componentModel.requirements.find(item => item.requirementId === paramsList[i].id);
             let modelItem = null;
             if (paramModel) {
                 modelItem = paramModel;
                 modelItem.description = paramsList[i].description;
                 modelItem.iconName = paramsList[i].iconName;
-            }
-            else {
+            } else {
                 modelItem = new RequirementModel();
                 modelItem.id = -1;
                 modelItem.addressId = this.componentModel.id;
@@ -546,21 +527,20 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
     /**
      * update component model with truks
-     * @param paramsList 
+     * @param paramsList
      */
     private updateModelWithTrucks(paramsList: TruckModel[]) {
         ///// remove facilities from address that are no longer in facility params list
-        this.componentModel.trucks = this.componentModel.trucks.filter(item => paramsList.filter(paramitem => paramitem.id == item.truckId).length > 0);
+        this.componentModel.trucks = this.componentModel.trucks.filter(item => paramsList.filter(paramitem => paramitem.id === item.truckId).length > 0);
         // update component model trucks
         for (let i = 0; i < paramsList.length; i++) {
-            let paramModel = this.componentModel.trucks.find(item => item.truckId == paramsList[i].id);
+            const paramModel = this.componentModel.trucks.find(item => item.truckId === paramsList[i].id);
             let modelItem = null;
             if (paramModel) {
                 modelItem = paramModel;
                 modelItem.description = paramsList[i].description;
                 modelItem.iconName = paramsList[i].iconName;
-            }
-            else {
+            } else {
                 modelItem = new TruckModel();
                 modelItem.id = -1;
                 modelItem.addressId = this.componentModel.id;
@@ -578,15 +558,15 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
      */
     private initDatetimePicker() {
         //  Init Bootstrap Select Picker
-        if ($(".selectpicker").length != 0) {
-            $(".selectpicker").selectpicker();
+        if ($('.selectpicker').length !== 0) {
+            $('.selectpicker').selectpicker();
         }
         $('.datetimepicker').datetimepicker({
             icons: {
-                time: "fa fa-clock-o",
-                date: "fa fa-calendar",
-                up: "fa fa-chevron-up",
-                down: "fa fa-chevron-down",
+                time: 'fa fa-clock-o',
+                date: 'fa fa-calendar',
+                up: 'fa fa-chevron-up',
+                down: 'fa fa-chevron-down',
                 previous: 'fa fa-chevron-left',
                 next: 'fa fa-chevron-right',
                 today: 'fa fa-screenshot',
@@ -597,7 +577,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
 
     emailValidator(email: string): boolean {
-        var EMAIL_REGEXP = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        const EMAIL_REGEXP = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
         if (!EMAIL_REGEXP.test(email)) {
             return false;
@@ -606,22 +586,21 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
 
     private getDay(day: number): string {
-        let weekdays = [
-            "Monday", "Tuesday",
-            "Wednesday", "Thursday", "Friday",
-            "Saturday", "Sunday"
+        const weekdays = [
+            'Monday', 'Tuesday',
+            'Wednesday', 'Thursday', 'Friday',
+            'Saturday', 'Sunday'
         ];
         if (day > 0) {
             return weekdays[day - 1];
-        }
-        else {
+        } else {
             return weekdays[0] + ' - ' + weekdays[6];
         }
     }
 
     private moveToAddressSearch() {
-        if (this.componentState == ComponentStateType.add) {
-            let element = document.getElementById("searchControl");
+        if (this.componentState === ComponentStateType.add) {
+            const element = document.getElementById('searchControl');
             if (element) {
                 element.focus();
             }
