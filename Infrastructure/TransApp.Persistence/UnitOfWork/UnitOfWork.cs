@@ -44,6 +44,8 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<ShipmentSenderFacility> _shipmentSenderFacilityRepository;
         private GenericRepository<ShipmentSenderRequirement> _shipmentSenderRequirementRepository;
         private GenericRepository<ShipmentSenderTruck> _shipmentSenderTruckRepository;
+        private GenericRepository<ShipmentReceiverAvailability> _shipmentReceiverAvailabilityRepository;
+        private GenericRepository<ShipmentSenderAvailability> _shipmentSenderAvailabilityRepository;
         private IShipmentTransporterRepository _shipmentTransporterRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
@@ -433,6 +435,33 @@ namespace TransApp.Persistence.UnitOfWork
                 return _shipmentSenderTruckRepository;
             }
         }
+
+        public GenericRepository<ShipmentReceiverAvailability> ShipmentReceiverAvailabilityRepository
+        {
+            get
+            {
+                if (this._shipmentReceiverAvailabilityRepository == null)
+                {
+                    this._shipmentReceiverAvailabilityRepository = new GenericRepository<ShipmentReceiverAvailability>("ShipmentReceiverAvailability", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentReceiverAvailabilityRepository;
+            }
+        }
+
+        public GenericRepository<ShipmentSenderAvailability> ShipmentSenderAvailabilityRepository
+        {
+            get
+            {
+                if (this._shipmentSenderAvailabilityRepository == null)
+                {
+                    this._shipmentSenderAvailabilityRepository =
+                        new GenericRepository<ShipmentSenderAvailability>("ShipmentSenderAvailability",
+                            _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentSenderAvailabilityRepository;
+            }
+        }
+
         public IShipmentTransporterRepository ShipmentTransporterRepository
         {
             get

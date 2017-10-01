@@ -98,10 +98,10 @@ namespace TransApp.Tests.Address
             //avalability
             List<AvailabilityEntityModel> listAvailabilityModels = new EditableList<AvailabilityEntityModel>();
             AvailabilityEntityModel availability= new AvailabilityEntityModel();
-           // availability.AmStart = new TimeSpan(11, 00, 00);
+            availability.AmStart = "07:00";
            // availability.AmStop = new TimeSpan(12, 00, 00);
            // availability.PmStart = new TimeSpan(15, 00, 00);
-           // availability.PmStop = new TimeSpan(16, 00, 00);
+          //  availability.PmStop = new TimeSpan(16, 00, 00);
             availability.Day = 1;
             availability.UserIdCreated = 100000;
             availability.UserIdModified = 999;

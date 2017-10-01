@@ -75,9 +75,16 @@ Where 1=1 ");
             return sb.ToString();
         }
 
-        public async Task Delete(string predicate, IDbTransaction transaction)
+        public void DeleteShipmentTransporter(string predicate, IDbTransaction transaction)
         {
-            await Delete(predicate, transaction);
+            try
+            {
+                 Delete(predicate, transaction);
+            }
+            catch (Exception ex)
+            {
+                
+            }
         }
 
         public async Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null)

@@ -144,6 +144,10 @@ namespace TransApp.Persistence.Repository
                         result.ShipmentSenderTrucks = resultExtra.ShipmentSenderTrucks;
                     if (resultExtra.ShipmentTransporters != null)
                         result.ShipmentTransporters = resultExtra.ShipmentTransporters;
+                    if (resultExtra.ShipmentReceiverAvailability != null)
+                        result.ShipmentReceiverAvailability = resultExtra.ShipmentReceiverAvailability;
+                    if (resultExtra.ShipmentSenderAvailability != null)
+                        result.ShipmentSenderAvailability = resultExtra.ShipmentSenderAvailability;
                 }
             }
             return result;
@@ -155,6 +159,8 @@ namespace TransApp.Persistence.Repository
             var lookupShipment = new Dictionary<int, List<int>>();
             var lookupSenderTruck = new Dictionary<int, List<int>>();
             var lookupTransporter = new Dictionary<int, List<int>>();
+            var lookupReceiverAvailability = new Dictionary<int, List<int>>();
+            var lookupSenderAvailability = new Dictionary<int, List<int>>();
 
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
@@ -163,9 +169,9 @@ namespace TransApp.Persistence.Repository
                     await
                         cn
                             .QueryAsync
-                            <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentDto
+                            <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentReceiverAvailability, ShipmentSenderAvailability, ShipmentDto
                             >(GetQueryExtra(id),
-                                (shipment, shipmentSenderTruck, shipmentTransporter) =>
+                                (shipment, shipmentSenderTruck, shipmentTransporter, shipmentReceiverAvailability, shipmentSenderAvailability) =>
                                 {
                                     ShipmentDto entity;
 
@@ -204,8 +210,30 @@ namespace TransApp.Persistence.Repository
                                         }
                                     }
 
+                                    if (shipmentReceiverAvailability != null)
+                                    {
+                                        if (
+                                            !lookupReceiverAvailability.ExistsList(entity.Shipment.Id, shipmentReceiverAvailability.Id))
+                                        {
+                                            if (entity.ShipmentReceiverAvailability == null)
+                                                entity.ShipmentReceiverAvailability = new List<ShipmentReceiverAvailability>();
+                                            entity.ShipmentReceiverAvailability.Add(shipmentReceiverAvailability);
+                                        }
+                                    }
+
+                                    if (shipmentSenderAvailability != null)
+                                    {
+                                        if (
+                                            !lookupSenderAvailability.ExistsList(entity.Shipment.Id, shipmentSenderAvailability.Id))
+                                        {
+                                            if (entity.ShipmentSenderAvailability == null)
+                                                entity.ShipmentSenderAvailability = new List<ShipmentSenderAvailability>();
+                                            entity.ShipmentSenderAvailability.Add(shipmentSenderAvailability);
+                                        }
+                                    }
+
                                     return entity;
-                                }, "SplitSenderTruck,SplitTransporter");
+                                }, "SplitSenderTruck,SplitTransporter,SplitReceiverAvailability,SplitSenderAvailability");
             }
             return lookup.Values.FirstOrDefault();
         }
@@ -519,12 +547,40 @@ SplitTransporter='',[ShipmentTransporter].[Id]
       ,[ShipmentTransporter].[UserIdCreated]
       ,[ShipmentTransporter].[DateCreated]
       ,[ShipmentTransporter].[UserIdModified]
-      ,[ShipmentTransporter].[DateModified]
+      ,[ShipmentTransporter].[DateModified],
+SplitReceiverAvailability='',[ShipmentReceiverAvailability].[Id]
+      ,[ShipmentReceiverAvailability].[ShipmentId]
+      ,[ShipmentReceiverAvailability].[Day]
+      ,[ShipmentReceiverAvailability].[AmStart]
+      ,[ShipmentReceiverAvailability].[AmStop]
+      ,[ShipmentReceiverAvailability].[PmStart]
+      ,[ShipmentReceiverAvailability].[PmStop]
+      ,[ShipmentReceiverAvailability].[IsClosed]
+      ,[ShipmentReceiverAvailability].[UserIdCreated]
+      ,[ShipmentReceiverAvailability].[DateCreated]
+      ,[ShipmentReceiverAvailability].[UserIdModified]
+      ,[ShipmentReceiverAvailability].[DateModified],
+SplitSenderAvailability='',[ShipmentSenderAvailability].[Id]
+      ,[ShipmentSenderAvailability].[ShipmentId]
+      ,[ShipmentSenderAvailability].[Day]
+      ,[ShipmentSenderAvailability].[AmStart]
+      ,[ShipmentSenderAvailability].[AmStop]
+      ,[ShipmentSenderAvailability].[PmStart]
+      ,[ShipmentSenderAvailability].[PmStop]
+      ,[ShipmentSenderAvailability].[IsClosed]
+      ,[ShipmentSenderAvailability].[UserIdCreated]
+      ,[ShipmentSenderAvailability].[DateCreated]
+      ,[ShipmentSenderAvailability].[UserIdModified]
+      ,[ShipmentSenderAvailability].[DateModified]
 from [Shipment] 
 left outer
 join [ShipmentSenderTruck] on [ShipmentSenderTruck].ShipmentId = [Shipment].Id
 left outer
 join [ShipmentTransporter] on [ShipmentTransporter].ShipmentId = [Shipment].Id
+left outer
+join [ShipmentReceiverAvailability] on [ShipmentReceiverAvailability].ShipmentId = [Shipment].Id
+left outer
+join [ShipmentSenderAvailability] on [ShipmentSenderAvailability].ShipmentId = [Shipment].Id
 where [Shipment].Id =  " + id);
             return sb.ToString();
         }

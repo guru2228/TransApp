@@ -34,14 +34,18 @@ namespace TransApp.Domain.Services
             CreateMap<FacilityDto, FacilityParameterModel>();
             CreateMap<TruckDto, TruckParameterModel>();
             CreateMap<RequirementDto, RequirementParameterModel>();
-            CreateMap<AvailabilityEntityModel, AddressAvailability>();
-            CreateMap<FacilityEntityModel, AddressFacility>();
-            CreateMap<RequirementEntityModel, AddressRequirement>();
-            CreateMap<TruckEntityModel, AddressTruck>();
-            CreateMap<AddressAvailability, AvailabilityEntityModel>();
-            CreateMap<AddressFacility, FacilityEntityModel>();
-            CreateMap<AddressRequirement, RequirementEntityModel>();
-            CreateMap<AddressTruck, TruckEntityModel>();
+
+            CreateMap<AvailabilityEntityModel, AddressAvailability>().ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<AddressAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.AddressId));
+
+            CreateMap<FacilityEntityModel, AddressFacility>().ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<AddressFacility, FacilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.AddressId));
+
+            CreateMap<RequirementEntityModel, AddressRequirement>().ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<AddressRequirement, RequirementEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.AddressId));
+
+            CreateMap<TruckEntityModel, AddressTruck>().ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<AddressTruck, TruckEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.AddressId));
 
             CreateMap<ShipmentDetailModel, ShipmentDetail>();
             CreateMap<ShipmentDetail, ShipmentDetailModel>();
@@ -65,6 +69,12 @@ namespace TransApp.Domain.Services
 
             CreateMap<TruckEntityModel, ShipmentSenderTruck>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId)); 
             CreateMap<ShipmentSenderTruck, TruckEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
+
+            CreateMap<AvailabilityEntityModel, ShipmentReceiverAvailability>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<ShipmentReceiverAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
+
+            CreateMap<AvailabilityEntityModel, ShipmentSenderAvailability>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId));
+            CreateMap<ShipmentSenderAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
         }
     }
 }

@@ -39,8 +39,7 @@ namespace TransApp.Tests.Shipment
         public async Task Test_SaveShipment_AddOnlyMaster_Is_Ok()
         {
             ShipmentModel currentShipment = new ShipmentModel();
-            currentShipment.ReceiverAvailability = new AvailabilityEntityModel();
-            currentShipment.SenderAvailability = new AvailabilityEntityModel();
+            
             currentShipment.Id = -1;
             currentShipment.CustomerId = 1;
             currentShipment.DeliveryDate = DateTime.Now;
@@ -48,22 +47,14 @@ namespace TransApp.Tests.Shipment
             currentShipment.DateCreated = DateTime.Now;
             currentShipment.PickUpDate = DateTime.Now;
             currentShipment.PoNumber = "12345678";
-            currentShipment.ReceiverAvailability.AmStop = "11:30";
             currentShipment.ReceiverAddressId = 70;
-            currentShipment.ReceiverAvailability.AmStart = "08:00";
             currentShipment.ReceiverContactPerson = "dan MIhai";
             currentShipment.ReceiverPhone = "4443333";
-            currentShipment.ReceiverAvailability.PmStart = "15:00";
-            currentShipment.ReceiverAvailability.PmStop = "18:00";
             currentShipment.ReceiverRemark = "Iași Buc";
             currentShipment.Reference = "aaaa";
             currentShipment.SenderAddressId = 70;
-            currentShipment.SenderAvailability.AmStart = "07:00";
-            currentShipment.SenderAvailability.AmStop = "11:34";
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
-            currentShipment.SenderAvailability.PmStart = "18:00";
-            currentShipment.SenderAvailability.PmStop = "20:00";
             currentShipment.SenderRemark = "Iași to see availability";
             currentShipment.ShipmentStatusId = 1;
             currentShipment.TotalPrice = 5554;
@@ -89,9 +80,21 @@ namespace TransApp.Tests.Shipment
         public async Task Test_SaveShipment_Full_Is_Ok()
         {
             ShipmentModel currentShipment = new ShipmentModel();
-            currentShipment.ReceiverAvailability = new AvailabilityEntityModel();
-           currentShipment.SenderAvailability = new AvailabilityEntityModel();
-            
+            currentShipment.ReceiverAvailabilities = new EditableList<AvailabilityEntityModel>();
+            currentShipment.SenderAvailabilities = new EditableList<AvailabilityEntityModel>();
+            AvailabilityEntityModel receiver = new AvailabilityEntityModel();
+            receiver.AmStop = "11:30";
+            receiver.AmStart = "08:00";
+            receiver.PmStart = "15:00";
+            receiver.PmStop = "18:00";
+            AvailabilityEntityModel sender = new AvailabilityEntityModel();
+            sender.AmStart = "07:00";
+            sender.AmStop = "11:34";
+            sender.PmStart = "18:00";
+            sender.PmStop = "20:00";
+            currentShipment.ReceiverAvailabilities.Add(receiver);
+            currentShipment.SenderAvailabilities.Add(sender);
+
             currentShipment.Id = -1;
             currentShipment.CustomerId = 1;
             currentShipment.DeliveryDate = DateTime.Now;
@@ -99,22 +102,14 @@ namespace TransApp.Tests.Shipment
             currentShipment.DateCreated = DateTime.Now;
             currentShipment.PickUpDate = DateTime.Now;
             currentShipment.PoNumber = "12345678";
-            currentShipment.ReceiverAvailability.AmStop = "11:30";
             currentShipment.ReceiverAddressId = 70;
-            currentShipment.ReceiverAvailability.AmStart = "08:00";
             currentShipment.ReceiverContactPerson = "dan MIhai";
             currentShipment.ReceiverPhone = "4443333";
-            currentShipment.ReceiverAvailability.PmStart = "15:00";
-            currentShipment.ReceiverAvailability.PmStop = "18:00";
             currentShipment.ReceiverRemark = "Iași Buc";
             currentShipment.Reference = "aaaa";
             currentShipment.SenderAddressId = 70;
-            currentShipment.SenderAvailability.AmStart = "07:00";
-            currentShipment.SenderAvailability.AmStop = "11:34";
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
-            currentShipment.SenderAvailability.PmStart = "18:00";
-            currentShipment.SenderAvailability.PmStop = "20:00";
             currentShipment.SenderRemark = "Iași to see availability";
             currentShipment.ShipmentStatusId = 1;
             currentShipment.TotalPrice = 5554;
@@ -271,7 +266,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(14);
+                    await _shipmentService.Get(18);
 
                 await _shipmentService.DeleteShipment(currentShipmentModel);
             }

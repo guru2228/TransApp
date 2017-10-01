@@ -118,6 +118,10 @@ namespace TransApp.Persistence.UnitOfWork
 
         GenericRepository<ShipmentSenderTruck> ShipmentSenderTruckRepository { get; }
 
+        GenericRepository<ShipmentReceiverAvailability> ShipmentReceiverAvailabilityRepository { get; }
+
+        GenericRepository<ShipmentSenderAvailability> ShipmentSenderAvailabilityRepository { get; }
+
         IShipmentTransporterRepository ShipmentTransporterRepository { get; }
 
         #endregion

@@ -64,22 +64,66 @@ namespace TransApp.Domain.Services.Shipment
                     DateModified = currentShipment.Shipment.DateModified,
 
                 };
-                result.SenderAvailability = new AvailabilityEntityModel
-                {
-                    AmStop = new DateTime(currentShipment.Shipment.SenderAmStop.Ticks).ToString("HH:mm"),
-                   PmStart = new DateTime(currentShipment.Shipment.SenderPmStart.Ticks).ToString("HH:mm"),
-                   AmStart = new DateTime(currentShipment.Shipment.SenderAmStart.Ticks).ToString("HH:mm"),
-                    PmStop = new DateTime(currentShipment.Shipment.SenderPmStop.Ticks).ToString("HH:mm"),
-                };
-                result.ReceiverAvailability = new AvailabilityEntityModel
-                {
-                    AmStop = new DateTime(currentShipment.Shipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
-                    PmStart = new DateTime(currentShipment.Shipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
-                    AmStart = new DateTime(currentShipment.Shipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
-                    PmStop = new DateTime(currentShipment.Shipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
-                };
+                if (currentShipment.ShipmentReceiverAvailability != null)
+                    result.ReceiverAvailabilities =
+                        currentShipment.ShipmentReceiverAvailability.Select(availability => new AvailabilityEntityModel
+                        {
+                            Id = availability.Id,
+                            EntityId = availability.ShipmentId,
+                            IsClosed = availability.IsClosed,
+                            AmStart =
+                                availability.AmStart.HasValue
+                                    ? new DateTime(availability.AmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            AmStop =
+                                availability.AmStop.HasValue
+                                    ? new DateTime(availability.AmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStart =
+                                availability.PmStart.HasValue
+                                    ? new DateTime(availability.PmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStop =
+                                availability.PmStop.HasValue
+                                    ? new DateTime(availability.PmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            Day = availability.Day,
+                            DateCreated = availability.DateCreated,
+                            DateModified = availability.DateModified,
+                            UserIdCreated = availability.UserIdCreated,
+                            UserIdModified = availability.UserIdModified
+                        }).ToList();
 
-               
+                if (currentShipment.ShipmentSenderAvailability != null)
+                    result.SenderAvailabilities =
+                        currentShipment.ShipmentSenderAvailability.Select(availability => new AvailabilityEntityModel
+                        {
+                            Id = availability.Id,
+                            EntityId = availability.ShipmentId,
+                            IsClosed = availability.IsClosed,
+                            AmStart =
+                                availability.AmStart.HasValue
+                                    ? new DateTime(availability.AmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            AmStop =
+                                availability.AmStop.HasValue
+                                    ? new DateTime(availability.AmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStart =
+                                availability.PmStart.HasValue
+                                    ? new DateTime(availability.PmStart.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            PmStop =
+                                availability.PmStop.HasValue
+                                    ? new DateTime(availability.PmStop.Value.Ticks).ToString("HH:mm")
+                                    : string.Empty,
+                            Day = availability.Day,
+                            DateCreated = availability.DateCreated,
+                            DateModified = availability.DateModified,
+                            UserIdCreated = availability.UserIdCreated,
+                            UserIdModified = availability.UserIdModified
+                        }).ToList();
+
                 if (currentShipment.Shipment.UserIdCreated.HasValue)
                 {
                     var userCreated =
@@ -171,21 +215,6 @@ namespace TransApp.Domain.Services.Shipment
                             UserModified = currentShipment.UserModified
                         };
 
-                        shipmentModel.SenderAvailability = new AvailabilityEntityModel
-                        {
-                            AmStop = new DateTime(currentShipment.SenderAmStop.Ticks).ToString("HH:mm"),
-                            PmStart = new DateTime(currentShipment.SenderPmStart.Ticks).ToString("HH:mm"),
-                            AmStart = new DateTime(currentShipment.SenderAmStart.Ticks).ToString("HH:mm"),
-                            PmStop = new DateTime(currentShipment.SenderPmStop.Ticks).ToString("HH:mm"),
-                        };
-                        shipmentModel.ReceiverAvailability = new AvailabilityEntityModel
-                        {
-                            AmStop = new DateTime(currentShipment.ReceiverAmStop.Ticks).ToString("HH:mm"),
-                            PmStart = new DateTime(currentShipment.ReceiverPmStart.Ticks).ToString("HH:mm"),
-                            AmStart = new DateTime(currentShipment.ReceiverAmStart.Ticks).ToString("HH:mm"),
-                            PmStop = new DateTime(currentShipment.ReceiverPmStop.Ticks).ToString("HH:mm"),
-                        };
-
                         result.Add(shipmentModel);
                     }
                 }
@@ -259,6 +288,126 @@ namespace TransApp.Domain.Services.Shipment
                     }
                 }
             }
+
+            if (currentShipment.ReceiverAvailabilities != null)
+            {
+                //// if all passed model has no id set, then clean existing availabilities
+                if (currentShipment.ReceiverAvailabilities.All(item => item.Id == -1))
+                {
+                    _unitOfWork.ShipmentReceiverAvailabilityRepository.Delete("ShipmentId=" + currentShipment.Id,
+                        transaction);
+                }
+
+                foreach (var aAvailabilityModel in currentShipment.ReceiverAvailabilities)
+                {
+                    var aAvailability = new ShipmentReceiverAvailability()
+                    {
+                        Id = aAvailabilityModel.Id,
+                        ShipmentId = aAvailabilityModel.EntityId,
+                        Day = aAvailabilityModel.Day,
+                        IsClosed = aAvailabilityModel.IsClosed,
+                    };
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStart))
+                        aAvailability.AmStart =
+                            TimeSpan.Parse(aAvailabilityModel.AmStart.Length == 2
+                                ? aAvailabilityModel.AmStart + ":00"
+                                : aAvailabilityModel.AmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStop))
+                        aAvailability.AmStop =
+                            TimeSpan.Parse(aAvailabilityModel.AmStop.Length == 2
+                                ? aAvailabilityModel.AmStop + ":00"
+                                : aAvailabilityModel.AmStop);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStart))
+                        aAvailability.PmStart =
+                            TimeSpan.Parse(aAvailabilityModel.PmStart.Length == 2
+                                ? aAvailabilityModel.PmStart + ":00"
+                                : aAvailabilityModel.PmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStop))
+                        aAvailability.PmStop =
+                            TimeSpan.Parse(aAvailabilityModel.PmStop.Length == 2
+                                ? aAvailabilityModel.PmStop + ":00"
+                                : aAvailabilityModel.PmStop);
+                    aAvailability.DateModified = DateTime.Now;
+                    aAvailability.UserIdModified = userId;
+                    if (aAvailability.Id <= 0)
+                    {
+                        //if (currentShipment.CommonAvailability)
+                        //{
+                        //    aAvailability.Day = 0;
+                        //}
+                        aAvailability.DateCreated = DateTime.Now;
+                        aAvailability.UserIdCreated = userId;
+                        aAvailability.ShipmentId = dest.Id;
+                        aAvailabilityModel.Id =
+                            await
+                                _unitOfWork.ShipmentReceiverAvailabilityRepository.AddAsync(aAvailability, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.ShipmentReceiverAvailabilityRepository.UpdateAsync(aAvailability, transaction);
+                    }
+                }
+            }
+
+            if (currentShipment.SenderAvailabilities != null)
+            {
+                //// if all passed model has no id set, then clean existing availabilities
+                if (currentShipment.SenderAvailabilities.All(item => item.Id == -1))
+                {
+                    _unitOfWork.ShipmentSenderAvailabilityRepository.Delete("ShipmentId=" + currentShipment.Id,
+                        transaction);
+                }
+
+                foreach (var aAvailabilityModel in currentShipment.SenderAvailabilities)
+                {
+                    var aAvailability = new ShipmentSenderAvailability()
+                    {
+                        Id = aAvailabilityModel.Id,
+                        ShipmentId = aAvailabilityModel.EntityId,
+                        Day = aAvailabilityModel.Day,
+                        IsClosed = aAvailabilityModel.IsClosed,
+                    };
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStart))
+                        aAvailability.AmStart =
+                            TimeSpan.Parse(aAvailabilityModel.AmStart.Length == 2
+                                ? aAvailabilityModel.AmStart + ":00"
+                                : aAvailabilityModel.AmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.AmStop))
+                        aAvailability.AmStop =
+                            TimeSpan.Parse(aAvailabilityModel.AmStop.Length == 2
+                                ? aAvailabilityModel.AmStop + ":00"
+                                : aAvailabilityModel.AmStop);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStart))
+                        aAvailability.PmStart =
+                            TimeSpan.Parse(aAvailabilityModel.PmStart.Length == 2
+                                ? aAvailabilityModel.PmStart + ":00"
+                                : aAvailabilityModel.PmStart);
+                    if (!string.IsNullOrEmpty(aAvailabilityModel.PmStop))
+                        aAvailability.PmStop =
+                            TimeSpan.Parse(aAvailabilityModel.PmStop.Length == 2
+                                ? aAvailabilityModel.PmStop + ":00"
+                                : aAvailabilityModel.PmStop);
+                    aAvailability.DateModified = DateTime.Now;
+                    aAvailability.UserIdModified = userId;
+                    if (aAvailability.Id <= 0)
+                    {
+                        //if (currentShipment.CommonAvailability)
+                        //{
+                        //    aAvailability.Day = 0;
+                        //}
+                        aAvailability.DateCreated = DateTime.Now;
+                        aAvailability.UserIdCreated = userId;
+                        aAvailability.ShipmentId = dest.Id;
+                        aAvailabilityModel.Id =
+                            await _unitOfWork.ShipmentSenderAvailabilityRepository.AddAsync(aAvailability, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.ShipmentSenderAvailabilityRepository.UpdateAsync(aAvailability, transaction);
+                    }
+                }
+            }
+
             if (currentShipment.Transporters != null)
             {
                 foreach (ShipmentTransporterModel aShipmentTransporterModel in currentShipment.Transporters)
@@ -465,7 +614,17 @@ namespace TransApp.Domain.Services.Shipment
                 }
                 if (currentShipment.Transporters != null)
                 {
-                    await _unitOfWork.ShipmentTransporterRepository
+                     _unitOfWork.ShipmentTransporterRepository
+                        .DeleteShipmentTransporter("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.ReceiverAvailabilities != null)
+                {
+                    _unitOfWork.ShipmentReceiverAvailabilityRepository
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                }
+                if (currentShipment.SenderAvailabilities != null)
+                {
+                     _unitOfWork.ShipmentSenderAvailabilityRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);

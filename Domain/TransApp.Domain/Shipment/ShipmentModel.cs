@@ -27,7 +27,7 @@ namespace TransApp.Domain.Shipment
 
         public string SenderRemark { get; set; }
 
-        public AvailabilityEntityModel SenderAvailability { get; set; }
+     
 
         public int? ReceiverAddressId { get; set; }
 
@@ -37,7 +37,7 @@ namespace TransApp.Domain.Shipment
 
         public string ReceiverRemark { get; set; }
 
-        public AvailabilityEntityModel ReceiverAvailability { get; set; }
+       
 
         public decimal? TotalPrice { get; set; }
 
@@ -74,5 +74,8 @@ namespace TransApp.Domain.Shipment
         public List<TruckEntityModel> SenderTrucks { get; set; }
 
         public List<ShipmentTransporterModel> Transporters { get; set; }
+        public List<AvailabilityEntityModel> ReceiverAvailabilities { get; set; }
+
+        public List<AvailabilityEntityModel> SenderAvailabilities { get; set; }
     }
 }

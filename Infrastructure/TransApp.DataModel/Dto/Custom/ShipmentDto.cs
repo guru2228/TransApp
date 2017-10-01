@@ -13,5 +13,7 @@ namespace TransApp.DataModel.Dto.Custom
         public List<ShipmentSenderRequirement> ShipmentSenderRequirements { get; set; }
         public List<ShipmentSenderTruck> ShipmentSenderTrucks { get; set; }
         public List<ShipmentTransporter> ShipmentTransporters { get; set; }
+        public List<ShipmentReceiverAvailability> ShipmentReceiverAvailability { get; set; }
+        public List<ShipmentSenderAvailability> ShipmentSenderAvailability { get; set; }
     }
 }
