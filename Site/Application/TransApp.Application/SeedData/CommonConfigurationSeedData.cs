@@ -146,6 +146,15 @@ namespace TransApp.Application.SeedData
                     FR = "Confirmed"
                 });
 
+                await CreateShipmentStatus("OPEN", "local_shipping", new Dictionary
+                {
+                    DateCreated = DateTime.Now,
+                    UserIdCreated = 1,
+                    EN = "Open Market",
+                    NL = "Open Market",
+                    FR = "Open Market"
+                });
+
                 //Create Shipment Status
                 await CreatepackType("Box", "local_shipping", new Dictionary
                 {

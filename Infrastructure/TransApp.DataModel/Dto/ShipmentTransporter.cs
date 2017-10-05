@@ -42,6 +42,8 @@ namespace TransApp.DataModel.Dto
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
+        public DateTime? ExpiredDate { get; set; }
+       
 
     }
 

@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto
 {
-    public class Shipment : IDataAccessObject
+    public class ShipmentHistory : IDataAccessObject
     {
         public int Id { get; set; }
+
+        public int ShipmentId { get; set; }
 
         public string Reference { get; set; }
 

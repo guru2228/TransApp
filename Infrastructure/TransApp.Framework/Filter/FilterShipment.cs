@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using TransApp.Core.ShipmentTransporter;
 
 namespace TransApp.Framework.Filter
 {
@@ -12,10 +13,9 @@ namespace TransApp.Framework.Filter
         public int Amount { get; set; }
         public int? ShipmentStatusId { get; set; }
         public int? TransporterId { get; set; }
-        public bool Unassigned { get; set; }
-        public bool OpenMarket { get; set; }
-        public bool Assigned { get; set; }
-        public bool Confirmed { get; set; }
+        public ShipmentTransporterStatus ShipmentTransporterStatus { get; set; }
+        public bool Declined { get; set; }
+        public bool Pending { get; set; }
 
     }
 }

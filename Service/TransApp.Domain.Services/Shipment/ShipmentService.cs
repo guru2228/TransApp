@@ -683,6 +683,8 @@ namespace TransApp.Domain.Services.Shipment
                 {
                     assigned.LastDateTime = shipmentsAssigned.LastDateTime;
                 }
+                assigned.Declined = shipmentsAssigned.Declined;
+                assigned.Pending = shipmentsAssigned.Pending;
             }
             result.Add(assigned);
             ShipmentTransporterFilterModel openMarket = new ShipmentTransporterFilterModel

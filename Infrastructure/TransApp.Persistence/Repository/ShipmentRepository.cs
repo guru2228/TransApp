@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Dapper;
+using TransApp.Core.ShipmentTransporter;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Framework.Filter;
@@ -405,7 +406,7 @@ where [Shipment].Id =  " + id);
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@CustomerId", customerId);
                 cn.Open();
-                return (await cn.QueryAsync<dynamic>(GetQueryCompleted(), d)).FirstOrDefault();
+                return (await cn.QueryAsync<dynamic>(GetQueryCommon("CON"), d)).FirstOrDefault();
             }
         }
         public async Task<dynamic> GetShipmentsAssignedAmount(int customerId)
@@ -426,7 +427,7 @@ where [Shipment].Id =  " + id);
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@CustomerId", customerId);
                 cn.Open();
-                return (await cn.QueryAsync<dynamic>(GetQueryOpenMarket(), d)).FirstOrDefault();
+                return (await cn.QueryAsync<dynamic>(GetQueryCommon("OPEN"), d)).FirstOrDefault();
             }
         }
 
@@ -439,50 +440,48 @@ where [Shipment].Id =  " + id);
             from Shipment where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null");
             return sb.ToString();
         }
-
-        private string GetQueryCompleted()
-        {
-            var sb = new StringBuilder();
-            sb.Append(@"
-            select  count(Shipment.Id) As Amount,
- (select max(Shipment.DateModified)from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null) as LastDateTime
- from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null");
-            return sb.ToString();
-        }
+        
 
         private string GetQueryAssigned()
         {
             var sb = new StringBuilder();
             sb.Append(@"
-            select  count(Shipment.Id) As Amount,
- (select max(Shipment.DateModified)from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null) as LastDateTime
- from Shipment inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is not null");
+ select  count(distinct Shipment.Id) As Amount,
+ (select max(Shipment.DateModified) from Shipment 
+ inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code='ASS'
+ where Shipment.CustomerId=@CustomerId) as LastDateTime,
+ (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
+  inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=1
+  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+  and ShipmentStatus.code='ASS'
+  where Shipment.CustomerId=@CustomerId 
+  ) as Declined,
+  (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
+   inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0
+  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+  and ShipmentStatus.code='ASS'
+  where Shipment.CustomerId=@CustomerId ) as Pending
+ from Shipment 
+ inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+ and ShipmentStatus.code='ASS'
+ where Shipment.CustomerId=@CustomerId ");
             return sb.ToString();
         }
 
-        private string GetQueryOpenMarket()
+        private string GetQueryCommon(string code)
         {
             var sb = new StringBuilder();
             sb.Append(@"
            select  count(distinct Shipment.Id) As Amount,
- (select max(ShipmentTransporter.DateModified)from Shipment inner join ShipmentTransporter on ShipmentTransporter.ShipmentId=Shipment.Id
- and ShipmentTransporter.Assigned=0 and ShipmentTransporter.Declined=0 and ShipmentTransporter.Accepted=0 and ShipmentTransporter.Selected=0
+ (select max(Shipment.DateModified) from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is null) as LastDateTime
- from Shipment inner join ShipmentTransporter on ShipmentTransporter.ShipmentId=Shipment.Id
- and ShipmentTransporter.Assigned=0 and ShipmentTransporter.Declined=0 and ShipmentTransporter.Accepted=0 and ShipmentTransporter.Selected=0
+ and ShipmentStatus.code=" + code + @"
+ where Shipment.CustomerId=@CustomerId) as LastDateTime
+ from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=''
- where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null and Shipment.TransporterId is null");
+ and ShipmentStatus.code=" + code + @"
+ where Shipment.CustomerId=@CustomerId ");
             return sb.ToString();
         }
 
@@ -608,18 +607,10 @@ where [Shipment].Id =  " + id);
       ,[Shipment].[SenderContactPerson]
       ,[Shipment].[SenderPhone]
       ,[Shipment].[SenderRemark]
-      ,[Shipment].[SenderAmStart]
-      ,[Shipment].[SenderAmStop]
-      ,[Shipment].[SenderPmStart]
-      ,[Shipment].[SenderPmStop]
       ,[Shipment].[ReceiverAddressId]
       ,[Shipment].[ReceiverContactPerson]
       ,[Shipment].[ReceiverPhone]
       ,[Shipment].[ReceiverRemark]
-      ,[Shipment].[ReceiverAmStart]
-      ,[Shipment].[ReceiverAmStop]
-      ,[Shipment].[ReceiverPmStart]
-      ,[Shipment].[ReceiverPmStop]
       ,[Shipment].[TotalPrice]
       ,[Shipment].[TotalVolume]
       ,[Shipment].[TotalQuatity]
@@ -647,6 +638,22 @@ where 1=1");
             if (filter.TransporterId.HasValue)
             {
                 sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId is null");
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId is null");
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId is null");
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId is null");
             }
 
             sb.Append(@" ) AS RowConstrainedResult
