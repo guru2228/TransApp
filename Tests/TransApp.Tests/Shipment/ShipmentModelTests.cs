@@ -132,7 +132,7 @@ namespace TransApp.Tests.Shipment
                 Width = 232
             };
             shipmentDetail.Add(aShipmentDetailModel);
-            currentShipment.ShipmentDetails = shipmentDetail;
+            currentShipment.ShipmentDetails_Toberomoved = shipmentDetail;
 
             List<FacilityEntityModel> shipmentReceiverFacilities =
                 new EditableList<FacilityEntityModel>();
@@ -286,7 +286,7 @@ namespace TransApp.Tests.Shipment
                 ShipmentModel currentShipmentModel =
                     await _shipmentService.Get(15);
 
-                foreach (var av in currentShipmentModel.ShipmentDetails)
+                foreach (var av in currentShipmentModel.ShipmentDetails_Toberomoved)
                 {
                     av.Length = 454545;
                 }

@@ -4,6 +4,7 @@ import { ShipmentDetailModel } from 'app/shipment/models/shipment-detail-model';
 import { FacilityEntityModel } from 'app/shared/common/models/entity/facility-entity-model';
 import { TruckEntityModel } from 'app/shared/common/models/entity/truck-entity-model';
 import { RequirementEntityModel } from 'app/shared/common/models/entity/requirement-entity-model';
+import { ShipmentDetailRowModel } from 'app/shipment/models/shipment-detail-row-model ';
 
 export class ShipmentModel {
   public id: number;
@@ -39,7 +40,7 @@ export class ShipmentModel {
   public totalWeight: number;
   public shipmentStatusId: number;
   public transporterId: number;
-  public shipmentDetails: Array<ShipmentDetailModel>;
+  public shipmentDetails: Array<ShipmentDetailRowModel>;
   public shipmentTransporters: Array<ShipmentTransporterModel>;
 
   public userIdCreated: number;

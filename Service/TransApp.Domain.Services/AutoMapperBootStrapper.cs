@@ -34,6 +34,7 @@ namespace TransApp.Domain.Services
             CreateMap<FacilityDto, FacilityParameterModel>();
             CreateMap<TruckDto, TruckParameterModel>();
             CreateMap<RequirementDto, RequirementParameterModel>();
+            CreateMap<PackTypeDto, PackTypeParameterModel>();
 
             CreateMap<AvailabilityEntityModel, AddressAvailability>().ForMember(dest => dest.AddressId, opt => opt.MapFrom(src => src.EntityId));
             CreateMap<AddressAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.AddressId));

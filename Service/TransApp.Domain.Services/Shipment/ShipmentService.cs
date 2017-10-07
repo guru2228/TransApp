@@ -142,7 +142,7 @@ namespace TransApp.Domain.Services.Shipment
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
-                result.ShipmentDetails =
+                result.ShipmentDetails_Toberomoved =
                     Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
                         currentShipment.ShipmentDetails);
                 result.ReceiverFacilities =
@@ -263,9 +263,9 @@ namespace TransApp.Domain.Services.Shipment
             var transaction = _unitOfWork.BeginTransaction();
             await _unitOfWork.ShipmentRepository.SaveShipment(userId, dest, transaction);
             currentShipment.Id = dest.Id;
-            if (currentShipment.ShipmentDetails != null)
+            if (currentShipment.ShipmentDetails_Toberomoved != null)
             {
-                foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails)
+                foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails_Toberomoved)
                 {
                     ShipmentDetail aShipmentDetail =
                         Mapper.Map<ShipmentDetailModel, ShipmentDetail>(aShipmentDetailModel);
@@ -576,7 +576,7 @@ namespace TransApp.Domain.Services.Shipment
                 };
 
                 var transaction = _unitOfWork.BeginTransaction();
-                if (currentShipment.ShipmentDetails != null)
+                if (currentShipment.ShipmentDetails_Toberomoved != null)
                 {
                     _unitOfWork.ShipmentDetailRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);

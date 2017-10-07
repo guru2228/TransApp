@@ -59,15 +59,15 @@ namespace TransApp.Domain.Services.Common
             return new List<TruckParameterModel>();
         }
 
-        public async Task<List<PackTypeModel>> GetTypes(string language)
+        public async Task<List<PackTypeParameterModel>> GetPackTypes(string language)
         {
             var typeList =
-              await _unitOfWork.PackTypeRepository.GetTypes(language);
+              await _unitOfWork.PackTypeRepository.GetPackTypes(language);
             if (typeList != null)
             {
-                return Mapper.Map<List<PackTypeDto>, List<PackTypeModel>>(typeList);
+                return Mapper.Map<List<PackTypeDto>, List<PackTypeParameterModel>>(typeList);
             }
-            return new List<PackTypeModel>();
+            return new List<PackTypeParameterModel>();
         }
 
         public async Task<List<RequirementParameterModel>> GetRequirements(string language)

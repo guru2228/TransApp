@@ -18,7 +18,7 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public async Task<List<PackTypeDto>> GetTypes(string language)
+        public async Task<List<PackTypeDto>> GetPackTypes(string language)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {

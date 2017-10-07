@@ -2,11 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TransApp.Domain.Common;
 using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
-using TransApp.Domain.Shipment;
 
 namespace TransApp.Site.ApiControllers
 {
@@ -66,6 +64,19 @@ namespace TransApp.Site.ApiControllers
         public async Task<List<TruckParameterModel>> GetTrucks(string language)
         {
             var items =await _commonService.GetTrucks(language);
+            return items;
+        }
+
+        /// <summary>
+        /// Get facilities list
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getPackTypes/{language}")]
+        public async Task<List<PackTypeParameterModel>> GetPackTypes(string language)
+        {
+            var items = await _commonService.GetPackTypes(language);
             return items;
         }
     }

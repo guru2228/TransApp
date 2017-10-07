@@ -27,10 +27,15 @@ import { TruckEntityModel } from 'app/shared/common/models/entity/truck-entity-m
 import { ShipmentDetailModel } from 'app/shipment/models/shipment-detail-model';
 import { ShipmentTransporterModel } from 'app/shipment/models/shipment-transporter-model';
 import { ShipmentService } from 'app/shipment/services/shipment.service';
+import { PackTypeParameterModel } from 'app/shared/common/models/parameter/pack-type-parameter-model';
+import { ShipmentDetailRowModel } from 'app/shipment/models/shipment-detail-row-model ';
 
 declare var google: any;
 declare var $: any;
-
+declare interface TableData {
+  headerRow: string[];
+  dataRows: string[][];
+}
 
 @Component({
   moduleId: module.id,
@@ -56,6 +61,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   facilitiesData: any;
   requirementsData: any;
   truksData: any;
+  packTypes: any;
 
   constructor(
     private router: Router,
@@ -72,6 +78,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   ) {
     // set datepickerlocale
   }
+
 
   ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
@@ -121,7 +128,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.componentModel.receiverRequirements = new Array<RequirementEntityModel>();
         this.componentModel.receiverTrucks = new Array<TruckEntityModel>();
 
-        this.componentModel.shipmentDetails = new Array<ShipmentDetailModel>();
+        this.componentModel.shipmentDetails = new Array<ShipmentDetailRowModel>();
         this.componentModel.shipmentTransporters = new Array<ShipmentTransporterModel>();
 
         observer.next(true);
@@ -156,11 +163,14 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.parametersDataService.getFacilities(this.translateService.currentLanguage),
         this.parametersDataService.getRequirements(this.translateService.currentLanguage),
         this.parametersDataService.getTruks(this.translateService.currentLanguage),
+        this.parametersDataService.getPackTypes(this.translateService.currentLanguage),
       ])
         .subscribe(data => {
           this.facilitiesData = data[0] as any;
           this.requirementsData = data[1] as any;
           this.truksData = data[2] as any;
+          this.packTypes = data[3];
+
           this.componentModel.senderFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.componentModel.senderFacilities);
           this.componentModel.senderRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.componentModel.senderRequirements);
           this.componentModel.senderTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.componentModel.senderTrucks);
@@ -190,6 +200,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.senderSelectedAddress = result as AddressModel;
         console.log(result);
 
+        this.componentModel.senderAddressId = address.id;
         this.componentModel.senderAddressInfo = this.senderSelectedAddress.location.street + ', ' + this.senderSelectedAddress.location.streetNumber
           + ', ' + this.senderSelectedAddress.location.zipCode + ', ' + this.senderSelectedAddress.location.city;
         this.componentModel.senderContactPerson = this.senderSelectedAddress.contactPerson;
@@ -229,11 +240,11 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
 
-   /**
-   * On sender address selected
-   * @param event
-   * @param address
-   */
+  /**
+  * On sender address selected
+  * @param event
+  * @param address
+  */
   onReceiverAddressSelected(event: MdOptionSelectionChange, address: AddressModel) {
     this.receiverSelectedAddress = address as AddressModel;
     this.addressService.get(address.id, this.translateService.currentLanguage).subscribe(result => {
@@ -241,6 +252,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.receiverSelectedAddress = result as AddressModel;
         console.log(result);
 
+        this.componentModel.receiverAddressId = address.id;
         this.componentModel.receiverAddressInfo = this.receiverSelectedAddress.location.street + ', ' + this.receiverSelectedAddress.location.streetNumber
           + ', ' + this.receiverSelectedAddress.location.zipCode + ', ' + this.receiverSelectedAddress.location.city;
         this.componentModel.receiverContactPerson = this.receiverSelectedAddress.contactPerson;
@@ -331,20 +343,52 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
 
+  onAddPackageClick(): boolean {
+    debugger;
+    if (!this.componentModel.shipmentDetails) {
+      this.componentModel.shipmentDetails = [];
+    }
 
-  onSubmit(value: any): void {
+    const shipmentpackage = new ShipmentDetailRowModel();
+
+    const shipmentMaster = new ShipmentDetailModel();
+    shipmentMaster.id = -1;
+    shipmentpackage.master = shipmentMaster;
+
+
+
+    this.componentModel.shipmentDetails.push(shipmentpackage);
+    return false;
+  }
+
+  onMasterPackTypeChange(currentShipmentRow: ShipmentDetailRowModel): void {
+debugger;
+    if (currentShipmentRow.master.packTypeId == 1) {
+      const shipmentExtra = new ShipmentDetailModel();
+      shipmentExtra.id = -1;
+      currentShipmentRow.extras = [];
+      currentShipmentRow.extras.push(shipmentExtra);
+    } else {
+      currentShipmentRow.extras = [];
+    }
+  }
+
+onSubmit(value: any): void {
     console.log(value);
   }
 
-  save(model: ShipmentModel, isValid: boolean) {
-    console.log(model, isValid);
-    console.log(this.componentModel);
-
-    this.shipmentService.save(this.componentModel).subscribe(resut=>{
+save(model: ShipmentModel, isValid: boolean) {
+  console.log(model, isValid);
+  console.log(this.componentModel);
+  if (isValid) {
+    this.shipmentService.save(this.componentModel).subscribe(resut => {
       alert("saved");
     },
-  error => {
-    console.log(error);
-  });
+      error => {
+        console.log(error);
+      });
+  }else{
+    /// do something
   }
+}
 }

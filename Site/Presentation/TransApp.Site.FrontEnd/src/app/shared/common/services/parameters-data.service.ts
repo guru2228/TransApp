@@ -10,6 +10,7 @@ import { RequirementParameterModel } from 'app/shared/common/models/parameter/re
 import { FacilityEntityModel } from 'app/shared/common/models/entity/facility-entity-model';
 import { RequirementEntityModel } from 'app/shared/common/models/entity/requirement-entity-model';
 import { TruckEntityModel } from 'app/shared/common/models/entity/truck-entity-model';
+import { PackTypeParameterModel } from 'app/shared/common/models/parameter/pack-type-parameter-model';
 
 @Injectable()
 export class ParametersDataService {
@@ -57,13 +58,27 @@ export class ParametersDataService {
       .catch(this.errorHandler.throwError);
   }
 
+
+  /**
+ * getTruks
+ * @param language
+ */
+  getPackTypes(language: string): Observable<PackTypeParameterModel[]> {
+    return this.http.get(this.serviceUrl +
+      'getPackTypes' +
+      '/' +
+      language)
+      .map((res: Response) => res.json())
+      .catch(this.errorHandler.throwError);
+  }
+
   /**
    * update component model with facilities
    * @param entityId
    * @param parametersList
    * @param updatedEntitiesList
    */
-   generateFacilityEntitiesList(entityId: number, parametersList: FacilityParameterModel[], updatedEntitiesList: FacilityEntityModel[]): FacilityEntityModel[] {
+  generateFacilityEntitiesList(entityId: number, parametersList: FacilityParameterModel[], updatedEntitiesList: FacilityEntityModel[]): FacilityEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<FacilityEntityModel>();
     ///// remove items from updated that are no longer in facility params list
@@ -96,7 +111,7 @@ export class ParametersDataService {
  * @param parametersList
  * @param updatedEntitiesList
  */
-   generateRequirementsEntitiesList(entityId: number, parametersList: RequirementParameterModel[], updatedEntitiesList: RequirementEntityModel[]) : RequirementEntityModel[] {
+  generateRequirementsEntitiesList(entityId: number, parametersList: RequirementParameterModel[], updatedEntitiesList: RequirementEntityModel[]): RequirementEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<RequirementEntityModel>();
     ///// remove facilities from entities that are no longer in facility params list
@@ -130,7 +145,7 @@ export class ParametersDataService {
  * @param parametersList
  * @param updatedEntitiesList
  */
-   generateTruksEntitiesList(entityId: number, parametersList: TruckParameterModel[], updatedEntitiesList: TruckEntityModel[]):TruckEntityModel[] {
+  generateTruksEntitiesList(entityId: number, parametersList: TruckParameterModel[], updatedEntitiesList: TruckEntityModel[]): TruckEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<TruckEntityModel>();
     ///// remove facilities from entities that are no longer in facility params list

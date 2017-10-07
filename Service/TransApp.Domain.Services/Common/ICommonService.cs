@@ -23,6 +23,6 @@ namespace TransApp.Domain.Services.Common
 
         Task<List<TruckParameterModel>> GetTrucks(string language);
 
-        Task<List<PackTypeModel>> GetTypes(string language);
+        Task<List<PackTypeParameterModel>> GetPackTypes(string language);
     }
 }

@@ -27,7 +27,7 @@ namespace TransApp.Domain.Shipment
 
         public string SenderRemark { get; set; }
 
-     
+
 
         public int? ReceiverAddressId { get; set; }
 
@@ -37,7 +37,7 @@ namespace TransApp.Domain.Shipment
 
         public string ReceiverRemark { get; set; }
 
-       
+
 
         public decimal? TotalPrice { get; set; }
 
@@ -63,7 +63,12 @@ namespace TransApp.Domain.Shipment
 
         public DateTime? DateModified { get; set; }
 
-        public List<ShipmentDetailModel> ShipmentDetails { get; set; }
+       public List<ShipmentDetailRowModel> ShipmentDetails { get; set; }
+
+        /// <summary>
+        /// TODO Replace it with property ShipmentDetails, remove this one.
+        /// </summary>
+        public List<ShipmentDetailModel> ShipmentDetails_Toberomoved { get; set; }
 
         public List<FacilityEntityModel> ReceiverFacilities { get; set; }
         public List<RequirementEntityModel> ReceiverRequirements { get; set; }

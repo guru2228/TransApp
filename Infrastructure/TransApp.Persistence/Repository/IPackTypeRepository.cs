@@ -10,6 +10,6 @@ namespace TransApp.Persistence.Repository
 {
     public interface IPackTypeRepository: ILocalizedGenericRepository<PackType>
     {
-        Task<List<PackTypeDto>> GetTypes(string language);
+        Task<List<PackTypeDto>> GetPackTypes(string language);
     }
 }
