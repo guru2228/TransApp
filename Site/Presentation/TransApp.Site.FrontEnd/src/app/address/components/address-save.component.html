@@ -7,7 +7,7 @@
                     <div class="card">
                         <div class="card-content">
                             <form id="searchForm" #searchForm="ngForm" [hidden]="componentState !== 0 ">
-                                <div [ngClass]="'form-group label-floating ' + ((!searchControl || !searchControl.valid ) && formAddress.submitted ? ' has-error' : '') ">
+                                <div [ngClass]="'form-group label-floating ' + ((!searchControl || !searchControl.valid ) && formAddress.submitted ? ' has-error' : '')">
                                     <label for="" class="control-label">
                                             Search by address
                                             <span class="star">*</span>
@@ -119,7 +119,7 @@
                                 <span>
                                         {{getDay(availability.day)}}
                                     </span>
-                                <address-availability-slider [availability]="availability"></address-availability-slider>
+                                <address-availability-slider [sliderid]="'slider_address'" [availability]="availability"></address-availability-slider>
                             </div>
                         </div>
                     </div>

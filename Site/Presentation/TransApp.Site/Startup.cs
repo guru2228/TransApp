@@ -26,6 +26,7 @@ using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
+using TransApp.Domain.Services.Shipment;
 using TransApp.Framework;
 using TransApp.Persistence;
 using TransApp.Persistence.UnitOfWork;
@@ -233,6 +234,7 @@ namespace TransApp.Site
             // addresses
             services.AddSingleton<ICommonService, CommonService>();
             services.AddSingleton<IAddressesService, AddressesService>();
+            services.AddSingleton<IShipmentService, ShipmentService>();
         }
 
 

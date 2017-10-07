@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input,  OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Params, RouterModule, Router, Routes } from '@angular/router';
 import { AvailabilityEntityModel } from 'app/shared/common/models/entity/availability-entity-model';
@@ -10,7 +10,10 @@ const moment = require('moment/moment');
   selector: 'address-availability-slider',
   templateUrl: './address-availability-slider.component.html'
 }) as any)
-export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit {
+export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
+  @Input('sliderid')
+  sliderid: string;
+
   @Input('availability')
   availability: AvailabilityEntityModel;
 
@@ -22,15 +25,32 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
   private pmStart_initial_timestamp: number;
   private pmStop_initial_timestamp: number;
 
-
-  ngOnInit(): void {
-    this.initInitialDates();
+  ngOnChanges(changes: SimpleChanges) {
+    const availability: SimpleChange = changes.availability;
+    this.availability = availability.currentValue;
+    this.initializeData();
   }
 
-  ngAfterViewInit(): void {
-    const noUiSlider = require('nouislider');
-    if (!this.availability.isClosed) {
-      this.initSlider(noUiSlider);
+  ngOnInit(): void {
+    this.initializeData();
+  }
+
+  onClosedDayClick() {
+    this.availability.isClosed = !this.availability.isClosed;
+    this.initializeData();
+  }
+
+  initializeData(): void {
+    if (this.availability !== null) {
+      this.getTimestamps();
+      const self = this;
+      setTimeout(function () {
+        if (self.availability !== null) {
+          if (!self.availability.isClosed) {
+            self.initSliderControl( self);
+          }
+        }
+      }, 500);
     }
   }
 
@@ -38,7 +58,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
    * Based on day number get closest date with this day
    * based on this date init initial hours for intervals and for amstart and pmstart
    */
-  private initInitialDates() {
+  private getTimestamps() {
     // get closest date by current day
     let date = new Date();
     if (this.availability.day > 0) {
@@ -63,69 +83,64 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
         const hoursArray = this.availability.amStart.split(':');
         this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-        this.availability.amStart = this.toFormat(this.amStart_initial_timestamp)
+       // this.availability.amStart = this.toFormat(this.amStart_initial_timestamp)
       }
 
       if (this.availability.amStop && this.availability.amStop.length > 0) {
         const hoursArray = this.availability.amStop.split(':');
         this.amStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-        this.availability.amStop = this.toFormat(this.amStop_initial_timestamp)
+       // this.availability.amStop = this.toFormat(this.amStop_initial_timestamp)
       }
 
       if (this.availability.pmStart && this.availability.pmStart.length > 0) {
         const hoursArray = this.availability.pmStart.split(':');
         this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-        this.availability.pmStart = this.toFormat(this.pmStart_initial_timestamp)
+       // this.availability.pmStart = this.toFormat(this.pmStart_initial_timestamp)
       }
 
       if (this.availability.pmStop && this.availability.pmStop.length > 0) {
         const hoursArray = this.availability.pmStop.split(':');
         this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-        this.availability.pmStop = this.toFormat(this.pmStop_initial_timestamp)
+       // this.availability.pmStop = this.toFormat(this.pmStop_initial_timestamp)
       }
     }
   }
 
-  onClosedDayClick() {
-    this.availability.isClosed = !this.availability.isClosed;
-    this.initInitialDates();
 
-    if (!this.availability.isClosed) {
-      const self = this;
-      setTimeout(function () {
-        const noUiSlider = require('nouislider');
-        self.initSlider(noUiSlider);
-      }, 500);
-
-    }
-  }
   /**
    * Init selection slider
    */
-  private initSlider(noUiSlider: any) {
+  private initSliderControl(context: any) {
 
-    const self = this;
-    const sliderAvailability = document.getElementById('slider_availability_' + self.availability.day) as any;
+    const noUiSlider = require('nouislider');
+
+    const self = context;
+    const sliderAvailability = document.getElementById(this.sliderid + '_' + self.availability.day) as any;
     const itWasInitializedAlready = sliderAvailability && sliderAvailability.querySelectorAll('.noUi-origin').length > 0;
-    if (!itWasInitializedAlready) {
-      noUiSlider.create(sliderAvailability, {
-        // Create two timestamps to define a range.
-        range: {
-          min: self.range_min_timestamp,
-          max: self.range_max_timestamp
-        },
-        format: { to: self.toFormat, from: Number },
-        connect: [false, true, true, true, true],
-        // Steps of one week
-        step: 15 * 60 * 1000,
-        // Two more timestamps indicate the handle starting positions.
-        start: [self.amStart_initial_timestamp, self.amStop_initial_timestamp, self.pmStart_initial_timestamp, self.pmStop_initial_timestamp],
-        tooltips: [true, true, true, true]
-      });
 
+    const sliderConfig = {
+      // Create two timestamps to define a range.
+      range: {
+        min: self.range_min_timestamp,
+        max: self.range_max_timestamp
+      },
+      format: { to: self.toFormat, from: Number },
+      connect: [false, true, true, true, true],
+      // Steps of one week
+      step: 15 * 60 * 1000,
+      // Two more timestamps indicate the handle starting positions.
+      start: [self.amStart_initial_timestamp, self.amStop_initial_timestamp, self.pmStart_initial_timestamp, self.pmStop_initial_timestamp],
+      tooltips: [true, true, true, true]
+    };
+
+    if (!itWasInitializedAlready) {
+      noUiSlider.create(sliderAvailability, sliderConfig );
+    } else {
+      sliderAvailability.noUiSlider.updateOptions(sliderConfig );
+    }
       //// set different collors between intervals
       const connect = sliderAvailability.querySelectorAll('.noUi-origin');
       const classes = ['sliderinfo', 'sliderwarning', 'slidersuccess', '', ''];
@@ -137,7 +152,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, AfterViewInit
       sliderAvailability.noUiSlider.on('update', function (values, handle) {
         self.onSlide(values, handle);
       });
-    }
+
   }
 
   /**

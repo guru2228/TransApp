@@ -63,7 +63,7 @@ export class ParametersDataService {
    * @param parametersList
    * @param updatedEntitiesList
    */
-   generateFacilityEntitiesList(entityId: number, parametersList: FacilityParameterModel[], updatedEntitiesList: FacilityEntityModel[]) {
+   generateFacilityEntitiesList(entityId: number, parametersList: FacilityParameterModel[], updatedEntitiesList: FacilityEntityModel[]): FacilityEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<FacilityEntityModel>();
     ///// remove items from updated that are no longer in facility params list
@@ -87,6 +87,7 @@ export class ParametersDataService {
         updatedEntitiesList.push(modelItem);
       }
     }
+    return updatedEntitiesList;
   }
 
   /**
@@ -95,7 +96,7 @@ export class ParametersDataService {
  * @param parametersList
  * @param updatedEntitiesList
  */
-   generateRequirementsEntitiesList(entityId: number, parametersList: RequirementParameterModel[], updatedEntitiesList: RequirementEntityModel[]) {
+   generateRequirementsEntitiesList(entityId: number, parametersList: RequirementParameterModel[], updatedEntitiesList: RequirementEntityModel[]) : RequirementEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<RequirementEntityModel>();
     ///// remove facilities from entities that are no longer in facility params list
@@ -120,6 +121,7 @@ export class ParametersDataService {
         updatedEntitiesList.push(modelItem);
       }
     }
+    return updatedEntitiesList;
   }
 
   /**
@@ -128,7 +130,7 @@ export class ParametersDataService {
  * @param parametersList
  * @param updatedEntitiesList
  */
-   generateTruksEntitiesList(entityId: number, parametersList: TruckParameterModel[], updatedEntitiesList: TruckEntityModel[]) {
+   generateTruksEntitiesList(entityId: number, parametersList: TruckParameterModel[], updatedEntitiesList: TruckEntityModel[]):TruckEntityModel[] {
     if (updatedEntitiesList == null)
       updatedEntitiesList = new Array<TruckEntityModel>();
     ///// remove facilities from entities that are no longer in facility params list
@@ -152,5 +154,6 @@ export class ParametersDataService {
         updatedEntitiesList.push(modelItem);
       }
     }
+    return updatedEntitiesList;
   }
 }

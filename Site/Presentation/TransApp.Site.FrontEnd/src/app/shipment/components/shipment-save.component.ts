@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-
+import { FormBuilder, FormGroup, Validators, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DateAdapter, NativeDateAdapter } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
@@ -26,6 +26,7 @@ import { AvailabilityEntityModel } from 'app/shared/common/models/entity/availab
 import { TruckEntityModel } from 'app/shared/common/models/entity/truck-entity-model';
 import { ShipmentDetailModel } from 'app/shipment/models/shipment-detail-model';
 import { ShipmentTransporterModel } from 'app/shipment/models/shipment-transporter-model';
+import { ShipmentService } from 'app/shipment/services/shipment.service';
 
 declare var google: any;
 declare var $: any;
@@ -47,10 +48,14 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   senderSearchAddressControl = new FormControl();
   receiverSearchAddressControl = new FormControl();
 
-  senderAddress: AddressModel;
-  receiverAddress: AddressModel;
+  senderSelectedAddress: AddressModel;
+  receiverSelectedAddress: AddressModel;
   senderFoundAddresses: AddressModel[];
   receiverFoundAddresses: AddressModel[];
+
+  facilitiesData: any;
+  requirementsData: any;
+  truksData: any;
 
   constructor(
     private router: Router,
@@ -58,11 +63,15 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     private authenticationService: AuthenticationService,
     private helperService: HelperService,
     private addressService: AddressService,
+    private shipmentService: ShipmentService,
     private parametersDataService: ParametersDataService,
     private translateService: TranslateService,
     private errorHandler: GlobalErrorHandler,
-    private notificationService: NotificationService
-  ) { }
+    private notificationService: NotificationService,
+    private dateAdapter: DateAdapter<NativeDateAdapter>
+  ) {
+    // set datepickerlocale
+  }
 
   ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
@@ -70,6 +79,8 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     // create search FormControl
     this.senderSearchAddressControl = new FormControl();
     this.receiverSearchAddressControl = new FormControl();
+    this.senderFoundAddresses = new Array<AddressModel>();
+    this.receiverFoundAddresses = new Array<AddressModel>();
 
     // get component state
     this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
@@ -82,7 +93,11 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         })
       }
     });
-    this.initSearchAddresses();
+    this.initSenderSearchAddresses();
+    this.initReceiverSearchAddresses();
+  }
+
+  ngAfterViewInit() {
   }
 
   /**
@@ -92,21 +107,23 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
     return Observable.create(observer => {
       if (componentState === ComponentStateType.add) {
-
         this.componentModel = new ShipmentModel();
         this.componentModel.id = -1;
-        this.componentModel.senderAvailability = new AvailabilityEntityModel();
+        this.componentModel.customerId = this.currentUser.customerId;
+
+        this.componentModel.senderAddressInfo = '';
         this.componentModel.senderFacilities = new Array<FacilityEntityModel>();
         this.componentModel.senderRequirements = new Array<RequirementEntityModel>();
         this.componentModel.senderTrucks = new Array<TruckEntityModel>();
         // receiver region
-        this.componentModel.receiverAvailability = new AvailabilityEntityModel();
+        this.componentModel.receiverAddressInfo = '';
         this.componentModel.receiverFacilities = new Array<FacilityEntityModel>();
         this.componentModel.receiverRequirements = new Array<RequirementEntityModel>();
         this.componentModel.receiverTrucks = new Array<TruckEntityModel>();
 
         this.componentModel.shipmentDetails = new Array<ShipmentDetailModel>();
         this.componentModel.shipmentTransporters = new Array<ShipmentTransporterModel>();
+
         observer.next(true);
       } else {
         /*let addressId = 0;
@@ -141,14 +158,16 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.parametersDataService.getTruks(this.translateService.currentLanguage),
       ])
         .subscribe(data => {
+          this.facilitiesData = data[0] as any;
+          this.requirementsData = data[1] as any;
+          this.truksData = data[2] as any;
+          this.componentModel.senderFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.componentModel.senderFacilities);
+          this.componentModel.senderRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.componentModel.senderRequirements);
+          this.componentModel.senderTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.componentModel.senderTrucks);
 
-          this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data[0] as any, this.componentModel.senderFacilities);
-          this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id,data[1] as any, this.componentModel.senderRequirements);
-          this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data[2] as any, this.componentModel.senderTrucks);
-
-          this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data[0] as any, this.componentModel.receiverFacilities);
-          this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id,data[1] as any, this.componentModel.receiverRequirements);
-          this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data[2] as any, this.componentModel.receiverTrucks);
+          this.componentModel.receiverFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.componentModel.receiverFacilities);
+          this.componentModel.receiverRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.componentModel.receiverRequirements);
+          this.componentModel.receiverTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.componentModel.receiverTrucks);
 
           observer.next(true);
           //   resolve(true);
@@ -159,26 +178,140 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     });
   }
 
+  /**
+   * On sender address selected
+   * @param event
+   * @param address
+   */
   onSenderAddressSelected(event: MdOptionSelectionChange, address: AddressModel) {
+    this.senderSelectedAddress = address as AddressModel;
+    this.addressService.get(address.id, this.translateService.currentLanguage).subscribe(result => {
+      if (result) {
+        this.senderSelectedAddress = result as AddressModel;
+        console.log(result);
+
+        this.componentModel.senderAddressInfo = this.senderSelectedAddress.location.street + ', ' + this.senderSelectedAddress.location.streetNumber
+          + ', ' + this.senderSelectedAddress.location.zipCode + ', ' + this.senderSelectedAddress.location.city;
+        this.componentModel.senderContactPerson = this.senderSelectedAddress.contactPerson;
+        this.componentModel.senderPhone = this.senderSelectedAddress.phone;
+        this.componentModel.senderRemark = this.senderSelectedAddress.remark;
+        this.componentModel.senderFacilities = this.senderSelectedAddress.facilities;
+        this.componentModel.senderRequirements = this.senderSelectedAddress.requirements;
+        this.componentModel.senderTrucks = this.senderSelectedAddress.trucks;
+
+        this.componentModel.senderFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.senderSelectedAddress.facilities);
+        this.componentModel.senderRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.senderSelectedAddress.requirements);
+        this.componentModel.senderTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.senderSelectedAddress.trucks);
+
+        if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+          this.componentModel.senderAvailabilities = [];
+          if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+            this.componentModel.senderAvailabilities.push(this.getAvailability(this.componentModel.pickUpDate, this.senderSelectedAddress.availabilities));
+          }
+        }
+      }
+    }, error => {
+      this.errorHandler.handleError(error);
+    })
   }
 
+  /**
+   * On pickupdate selected
+   * @param event
+   */
+  onPickupDateSelected(event: any) {
+    if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+      this.componentModel.senderAvailabilities = [];
+      if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+        this.componentModel.senderAvailabilities.push(this.getAvailability(this.componentModel.pickUpDate, this.senderSelectedAddress.availabilities));
+      }
+    }
+  }
+
+
+   /**
+   * On sender address selected
+   * @param event
+   * @param address
+   */
   onReceiverAddressSelected(event: MdOptionSelectionChange, address: AddressModel) {
+    this.receiverSelectedAddress = address as AddressModel;
+    this.addressService.get(address.id, this.translateService.currentLanguage).subscribe(result => {
+      if (result) {
+        this.receiverSelectedAddress = result as AddressModel;
+        console.log(result);
+
+        this.componentModel.receiverAddressInfo = this.receiverSelectedAddress.location.street + ', ' + this.receiverSelectedAddress.location.streetNumber
+          + ', ' + this.receiverSelectedAddress.location.zipCode + ', ' + this.receiverSelectedAddress.location.city;
+        this.componentModel.receiverContactPerson = this.receiverSelectedAddress.contactPerson;
+        this.componentModel.receiverPhone = this.receiverSelectedAddress.phone;
+        this.componentModel.receiverRemark = this.receiverSelectedAddress.remark;
+        this.componentModel.receiverFacilities = this.receiverSelectedAddress.facilities;
+        this.componentModel.receiverRequirements = this.receiverSelectedAddress.requirements;
+        this.componentModel.receiverTrucks = this.receiverSelectedAddress.trucks;
+
+        this.componentModel.receiverFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.receiverSelectedAddress.facilities);
+        this.componentModel.receiverRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.receiverSelectedAddress.requirements);
+        this.componentModel.receiverTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.receiverSelectedAddress.trucks);
+
+        this.componentModel.receiverAvailabilities = [];
+        if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
+          this.componentModel.receiverAvailabilities.push(this.getAvailability(this.componentModel.deliveryDate, this.receiverSelectedAddress.availabilities));
+        }
+      }
+    }, error => {
+      this.errorHandler.handleError(error);
+    })
   }
 
-  private initSearchAddresses() {
+  /**
+   * On pickupdate selected
+   * @param event
+   */
+  onDeliveryDateSelected(event: any) {
+    if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
+      this.componentModel.receiverAvailabilities = [];
+      if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
+        this.componentModel.receiverAvailabilities.push(this.getAvailability(this.componentModel.deliveryDate, this.receiverSelectedAddress.availabilities));
+      }
+    }
+  }
+
+  private getAvailability(selectedData: Date, availabilities: AvailabilityEntityModel[]) {
+    let pickupDateDay = selectedData.getDay();
+    pickupDateDay = pickupDateDay === 0 ? 7 : pickupDateDay;
+
+    if (availabilities.length === 1 && availabilities[0].day === 0) {
+      return availabilities[0];
+    } else {
+      return availabilities.find(item => item.day === pickupDateDay);
+    }
+  }
+
+
+
+  private initSenderSearchAddresses() {
     this.senderSearchAddressControl.valueChanges.startWith(null)
       .debounceTime(600)
       .subscribe(term => {
         const searchTerm = term && term.length > 0 ? term : '';
-        this.searchAddresses(searchTerm);
+        this.searchSenderAddresses(searchTerm);
       });
   }
 
-  private searchAddresses(searchTerm: string) {
+  private initReceiverSearchAddresses() {
+    this.receiverSearchAddressControl.valueChanges.startWith(null)
+      .debounceTime(600)
+      .subscribe(term => {
+        const searchTerm = term && term.length > 0 ? term : '';
+        this.searchReceiverAddresses(searchTerm);
+      });
+  }
+
+  private searchSenderAddresses(searchTerm: string) {
     if (this.currentUser && this.currentUser.customerId) {
       this.addressService.getAll(this.currentUser.customerId, searchTerm, 0, 1000, this.translateService.currentLanguage)
         .subscribe(result => {
-
           this.senderFoundAddresses = result;
         }, error => {
           this.errorHandler.handleError(error);
@@ -186,10 +319,32 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  private searchReceiverAddresses(searchTerm: string) {
+    if (this.currentUser && this.currentUser.customerId) {
+      this.addressService.getAll(this.currentUser.customerId, searchTerm, 0, 1000, this.translateService.currentLanguage)
+        .subscribe(result => {
+          this.receiverFoundAddresses = result;
+        }, error => {
+          this.errorHandler.handleError(error);
+        });
+    }
   }
+
+
 
   onSubmit(value: any): void {
     console.log(value);
+  }
+
+  save(model: ShipmentModel, isValid: boolean) {
+    console.log(model, isValid);
+    console.log(this.componentModel);
+
+    this.shipmentService.save(this.componentModel).subscribe(resut=>{
+      alert("saved");
+    },
+  error => {
+    console.log(error);
+  });
   }
 }

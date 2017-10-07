@@ -73,7 +73,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     this.currentUser = this.authenticationService.getCurrentUser();
     // create search FormControl
     this.searchControl = new FormControl();
-
     // get component state
     this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
     // load required data
@@ -142,6 +141,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           addressId = params['id'];
           this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
             this.componentModel = result as AddressModel;
+            console.log(this.componentModel);
             const self = this;
             // settimeout used to let angular template engine to render map element (everything is displayed only when component model )
             setTimeout(function () {
@@ -169,9 +169,9 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         this.parametersDataService.getTruks(this.translateService.currentLanguage),
       ])
         .subscribe(data => {
-          this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data[0] as any, this.componentModel.facilities);
-          this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, data[1] as any, this.componentModel.requirements);
-          this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data[2] as any, this.componentModel.trucks);
+          this.componentModel.facilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data[0] as any, this.componentModel.facilities);
+          this.componentModel.requirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, data[1] as any, this.componentModel.requirements);
+          this.componentModel.trucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data[2] as any, this.componentModel.trucks);
           observer.next(true);
         }, error => {
           this.errorHandler.handleError(error);

@@ -1,5 +1,5 @@
 <div class="main-content">
-    <div class="container-fluid">
+    <div class="container-fluid" *ngIf="componentModel">
         <form #formShipment="ngForm" novalidate class="form-horizontal" novalidate (ngSubmit)="save(formShipment.value, formShipment.valid)">
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
@@ -12,18 +12,17 @@
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.reference  && componentModel.reference.length > 0 ? '' : 'is-empty ' + ((!componentModel.reference ) && formShipment.submitted ? ' has-error' : '')) ">
                                 <label for="" class="control-label ">
-                                Transapp shipment reference
-                              <span class="star">*</span>
-                          </label>
+                                    Transapp shipment reference
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" name="reference">
                             </div>
 
-
                             <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ' + ((!componentModel.poNumber ) && formShipment.submitted ? ' has-error' : '')) ">
                                 <label for="" class="control-label ">
-                                PO Number
-                              <span class="star">*</span>
-                          </label>
+                                    PO Number
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.poNumber" id="poNumber" name="poNumber">
                             </div>
 
@@ -32,78 +31,74 @@
                 </div>
             </div>
             <div class="row">
-                <!-- ********* Sender column ********* -->
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header card-header-icon" data-background-color="rose">
                             <i class="material-icons">send</i>
                         </div>
                         <div class="card-content">
-
                             <h4 class="card-title">Sender</h4>
 
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                              Sender
-                              <span class="star">*</span>
-                          </label>
+                            <div [ngClass]="'form-group label-floating ' + ((!senderSearchAddressControl || !senderSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
                                 <md-form-field class="autocomplete-address">
-                                    <input type="text" name="searchAddress" [formControl]="senderSearchAddressControl" placeholder="Select sender" md-min-length="0" mdInput [mdAutocomplete]="auto" aria-label="Select sender">
-                                    <md-autocomplete #auto="mdAutocomplete">
-                                        <md-option *ngFor="let address of senderFoundAddresses" [value]="address" (onSelectionChange)="onSenderAddressSelected($event, address)">
+                                    <input type="text" name="senderSearchAddress" [formControl]="senderSearchAddressControl" placeholder="Type here to search for a sender" md-min-length="0" mdInput [mdAutocomplete]="senderAutocomplete" aria-label="Select sender">
+                                    <md-autocomplete #senderAutocomplete="mdAutocomplete" id="plm11">
+                                        <md-option *ngFor="let address of senderFoundAddresses" [value]="address.name" (onSelectionChange)="onSenderAddressSelected($event, address)">
                                             {{ address.name }}
                                         </md-option>
+                                        <md-option *ngIf='!senderFoundAddresses || senderFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onSenderAddressSelected($event, null)">
+                                            No results found. Click here to create a new address
+                                        </md-option>
                                     </md-autocomplete>
-                                    <h4 *ngIf='!senderFoundAddresses || senderFoundAddresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
                                 </md-form-field>
                             </div>
 
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div class="form-group label-floating">
-                                <md-datepicker-toggle mdSuffix [for]="resultPicker">
+                                <md-datepicker-toggle mdSuffix [for]="pickupDatePicker">
                                 </md-datepicker-toggle>
                                 <md-input-container>
-                                    <input mdInput [mdDatepicker]="resultPicker" [(ngModel)]="componentModel.pickUpDate" id="pickUpDate" name="pickUpDate" placeholder="Pickup date">
+                                    <input mdInput [mdDatepicker]="pickupDatePicker" [(ngModel)]="componentModel.pickUpDate" id="pickUpDate" name="pickUpDate" (dateChange)="onPickupDateSelected($event)" placeholder="Pickup date">
                                 </md-input-container>
-                                <md-datepicker #resultPicker [touchUi]="touch" [startView]="'month'">
+                                <md-datepicker #pickupDatePicker [touchUi]="touch" [startView]="'month'">
                                 </md-datepicker>
                             </div>
 
-                            <div class="form-group label-floating">
+                            <div [ngClass]="'form-group label-floating ' + ((componentModel.senderAddressInfo  && componentModel.senderAddressInfo.length > 0) ? '' : 'is-empty') + (!componentModel.senderAddressInfo  && formShipment.submitted ? ' has-error' : '') ">
                                 <label for="" class="control-label">
-                              Pickup adress
-                              <span class="star">*</span>
-                          </label>
-                                <textarea class="form-control" [(ngModel)]="senderAddress.name" id="senderAddress" name="senderAddress" rows="2" disabled></textarea>
+                                    Pickup adress
+                                    <span class="star">*</span>
+                                </label>
+                                <textarea class="form-control" name="senderAddress" [value]="componentModel.senderAddressInfo" rows="2" disabled></textarea>
                             </div>
 
                             <!-- Opening hours -->
                             <h3>Opening hours</h3>
                             <div class="form-group label-floating">
-                                <address-availability-slider [availability]="componentModel.senderAvailability"></address-availability-slider>
+                                <address-availability-slider *ngIf="componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1" [sliderid]="'slider_sender'" [availability]="componentModel.senderAvailabilities[0]"></address-availability-slider>
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.senderContactPerson  && componentModel.senderContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
                                 <label for="" class="control-label ">
-                              Contactperson
-                              <span class="star">*</span>
-                          </label>
+                                    Contactperson
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.senderContactPerson" id="senderContactPerson" name="senderContactPerson">
                             </div>
 
                             <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.senderPhone  && componentModel.senderPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.senderPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
                                 <label for="" class="control-label">
-                              Phone
-                              <span class="star">*</span>
-                          </label>
+                                    Phone
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.senderPhone" id="senderPhone" name="senderPhone">
                             </div>
 
-                            <div class="form-group label-floating">
+                            <div [ngClass]="'form-group label-floating ' + ((componentModel.senderRemark  && componentModel.senderRemark.length > 0) ? '' : 'is-empty') ">
                                 <label for="" class="control-label">
-                              Info
-                          </label>
+                                    Info
+                                </label>
                                 <textarea class="form-control" rows="5" [(ngModel)]="componentModel.senderRemark" id="senderRemark" name="senderRemark"></textarea>
                             </div>
 
@@ -111,13 +106,13 @@
                             <h3>Facilities</h3>
                             <div class="input-group" *ngFor="let facility of componentModel.senderFacilities">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{facility.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{facility.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="facilityactive_{{facility.facilityId}}"> {{facility.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -126,13 +121,13 @@
                             <h3>Truck</h3>
                             <div class="input-group" *ngFor="let truck of componentModel.senderTrucks">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{truck.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{truck.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="truckactive_{{truck.truckId}}"> {{truck.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="truckactive_{{truck.truckId}}"> {{truck.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -141,93 +136,90 @@
                             <h3>Transport requirements</h3>
                             <div class="input-group" *ngFor="let requirement of componentModel.senderRequirements">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{requirement.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{requirement.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
+
                         </div>
                     </div>
                 </div>
-                <!-- ********* Receiver column ********* -->
+                <!--  ***************** Receiver *************** -->
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-header card-header-icon" data-background-color="rose">
                             <i class="material-icons">call_received</i>
                         </div>
-
                         <div class="card-content">
-
                             <h4 class="card-title">Receiver</h4>
 
-                            <div class="form-group label-floating">
-                                <label for="" class="control-label">
-                              Receiver
-                              <span class="star">*</span>
-                          </label>
+                            <div [ngClass]="'form-group label-floating ' + ((!receiverSearchAddressControl || !receiverSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
                                 <md-form-field class="autocomplete-address">
-                                    <input type="text" name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" placeholder="Select receiver" md-min-length="0" mdInput [mdAutocomplete]="auto" aria-label="Select receiver">
-                                    <md-autocomplete #auto="mdAutocomplete">
-                                        <md-option *ngFor="let address of receiverFoundAddresses" [value]="address" (onSelectionChange)="onReceiverAddressSelected($event, address)">
+                                    <input type="text" name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" placeholder="Type here to search for a receiver" md-min-length="0" mdInput [mdAutocomplete]="receiverAutocomplete" aria-label="Select receiver">
+                                    <md-autocomplete #receiverAutocomplete="mdAutocomplete">
+                                        <md-option *ngFor="let address of receiverFoundAddresses" [value]="address.name" (onSelectionChange)="onReceiverAddressSelected($event, address)">
                                             {{ address.name }}
                                         </md-option>
+                                        <md-option *ngIf='!receiverFoundAddresses || receiverFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onReceiverAddressSelected($event, null)">
+                                            No results found. Click here to create a new address
+                                        </md-option>
                                     </md-autocomplete>
-                                    <h4 *ngIf='!receiverFoundAddresses || receiverFoundAddresses.length <=0'>No results found. Click <a href="javascript:void(0)">here</a> to create a new address</h4>
                                 </md-form-field>
                             </div>
 
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div class="form-group label-floating">
-                                <md-datepicker-toggle mdSuffix [for]="resultPicker">
+                                <md-datepicker-toggle mdSuffix [for]="deliveryDatePicker">
                                 </md-datepicker-toggle>
                                 <md-input-container>
-                                    <input mdInput [(ngModel)]="componentModel.deliveryDate" id="deliveryDate" name="deliveryDate" [mdDatepicker]="resultPicker" placeholder="Pickup date">
+                                    <input mdInput [mdDatepicker]="deliveryDatePicker" [(ngModel)]="componentModel.deliveryDate" id="deliveryDate" name="deliveryDate" (dateChange)="onDeliveryDateSelected($event)" placeholder="Delivery date">
                                 </md-input-container>
-                                <md-datepicker #resultPicker [touchUi]="touch" [startView]="'month'">
+                                <md-datepicker #deliveryDatePicker [touchUi]="touch" [startView]="'month'">
                                 </md-datepicker>
                             </div>
 
-                            <div class="form-group label-floating">
+                            <div [ngClass]="'form-group label-floating ' + ((componentModel.receiverAddressInfo  && componentModel.receiverAddressInfo.length > 0) ? '' : 'is-empty') + (!componentModel.receiverAddressInfo  && formShipment.submitted ? ' has-error' : '') ">
                                 <label for="" class="control-label">
-                              Pickup adress
-                              <span class="star">*</span>
-                          </label>
-                                <textarea [(ngModel)]="receiverAddress.name" id="receiverAddress" name="receiverAddress" class="form-control" rows="2" disabled></textarea>
+                                    Pickup adress
+                                    <span class="star">*</span>
+                                </label>
+                                <textarea class="form-control" name="receiverAddressInfo" [value]="componentModel.receiverAddressInfo" rows="2" disabled></textarea>
                             </div>
 
                             <!-- Opening hours -->
                             <h3>Opening hours</h3>
                             <div class="form-group label-floating">
-                                <address-availability-slider [availability]="componentModel.receiverAvailability"></address-availability-slider>
+                                <address-availability-slider *ngIf="componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1" [sliderid]="'slider_receiver'" [availability]="componentModel.receiverAvailabilities[0]"></address-availability-slider>
                             </div>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.receiverContactPerson  && componentModel.receiverContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.receiverContactPerson  && componentModel.receiverContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.receiverContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
                                 <label for="" class="control-label ">
-                              Contactperson
-                              <span class="star">*</span>
-                          </label>
+                                    Contactperson
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.receiverContactPerson" id="receiverContactPerson" name="receiverContactPerson">
                             </div>
 
                             <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.receiverPhone  && componentModel.receiverPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.receiverPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
                                 <label for="" class="control-label">
-                              Phone
-                              <span class="star">*</span>
-                          </label>
+                                    Phone
+                                    <span class="star">*</span>
+                                </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.receiverPhone" id="receiverPhone" name="receiverPhone">
                             </div>
 
-                            <div class="form-group label-floating">
+                            <div [ngClass]="'form-group label-floating ' + ((componentModel.receiverRemark  && componentModel.receiverRemark.length > 0) ? '' : 'is-empty') ">
                                 <label for="" class="control-label">
-                              Info
-                          </label>
+                                    Info
+                                </label>
                                 <textarea class="form-control" rows="5" [(ngModel)]="componentModel.receiverRemark" id="receiverRemark" name="receiverRemark"></textarea>
                             </div>
 
@@ -235,13 +227,13 @@
                             <h3>Facilities</h3>
                             <div class="input-group" *ngFor="let facility of componentModel.receiverFacilities">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{facility.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{facility.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="receiver_facilityactive_{{facility.facilityId}}"> {{facility.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="receiver_facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -250,13 +242,13 @@
                             <h3>Truck</h3>
                             <div class="input-group" *ngFor="let truck of componentModel.receiverTrucks">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{truck.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{truck.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="receiver_truckactive_{{truck.truckId}}"> {{truck.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="receiver_truckactive_{{truck.truckId}}"> {{truck.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
@@ -265,19 +257,18 @@
                             <h3>Transport requirements</h3>
                             <div class="input-group" *ngFor="let requirement of componentModel.receiverRequirements">
                                 <span class="input-group-addon">
-                              <i class="material-icons">{{requirement.iconName}}</i>
-                          </span>
+                                    <i class="material-icons">{{requirement.iconName}}</i>
+                                </span>
                                 <div class="form-group label-floating">
                                     <div class="togglebutton">
                                         <label>
-                                      <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="receiver_requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
-                                  </label>
+                                            <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="receiver_requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                        </label>
                                     </div>
                                 </div>
                             </div>
 
                         </div>
-
                     </div>
                 </div>
             </div>
@@ -299,22 +290,22 @@
                                                 <div class="form-group label-floating">
                                                     <label class="control-label"></label>
                                                     <select name="country" class="form-control">
-                                                  <option disabled="" selected="">Choose Quantity</option>
-                                                  <option value="1"> 1 </option>
-                                                  <option value="2"> 2 </option>
-                                                  <option value="3"> 3 </option>
-                                                  <option value="...">...</option>
-                                              </select>
+                                                        <option disabled="" selected="">Choose Quantity</option>
+                                                        <option value="1"> 1 </option>
+                                                        <option value="2"> 2 </option>
+                                                        <option value="3"> 3 </option>
+                                                        <option value="...">...</option>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group label-floating">
                                                     <label class="control-label"></label>
                                                     <select name="country" class="form-control">
-                                                  <option disabled="" selected="">Choose type</option>
-                                                  <option value="Box"> Box </option>
-                                                  <option value="...">...</option>
-                                              </select>
+                                                        <option disabled="" selected="">Choose type</option>
+                                                        <option value="Box"> Box </option>
+                                                        <option value="...">...</option>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td>
@@ -343,26 +334,27 @@
                                             </td>
                                         </tr>
 
+
                                         <tr>
                                             <td colspan="2"></td>
                                             <td>
                                                 <div class="form-group label-floating">
                                                     <select name="country" class="form-control">
-                                                  <option disabled="" selected="">Choose Quantity</option>
-                                                  <option value="1"> 1 </option>
-                                                  <option value="2"> 2 </option>
-                                                  <option value="3"> 3 </option>
-                                                  <option value="...">...</option>
-                                              </select>
+                                                        <option disabled="" selected="">Choose Quantity</option>
+                                                        <option value="1"> 1 </option>
+                                                        <option value="2"> 2 </option>
+                                                        <option value="3"> 3 </option>
+                                                        <option value="...">...</option>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td>
                                                 <div class="form-group label-floating">
                                                     <select name="country" class="form-control">
-                                                  <option disabled="" selected="">Choose type</option>
-                                                  <option value="Box"> Box </option>
-                                                  <option value="...">...</option>
-                                              </select>
+                                                        <option disabled="" selected="">Choose type</option>
+                                                        <option value="Box"> Box </option>
+                                                        <option value="...">...</option>
+                                                    </select>
                                                 </div>
                                             </td>
                                             <td>
@@ -387,8 +379,8 @@
                     <div class="card">
                         <div class="card-content text-center">
                             <span class="input-group-addon">
-                          <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
-                      </span>
+                                <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
+                            </span>
                             <div class="form-group label-floating">
                                 <h4>Total quantity: 4 items</h4>
                             </div>
@@ -399,8 +391,8 @@
                     <div class="card">
                         <div class="card-content text-center">
                             <span class="input-group-addon">
-                          <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
-                      </span>
+                                <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
+                            </span>
                             <div class="form-group label-floating">
                                 <h4>Total volume: 8172 m2</h4>
                             </div>
@@ -411,8 +403,8 @@
                     <div class="card">
                         <div class="card-content text-center">
                             <span class="input-group-addon">
-                          <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
-                      </span>
+                                <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
+                            </span>
                             <div class="form-group label-floating">
                                 <h4>Total weight: 1530 kg</h4>
                             </div>
@@ -420,6 +412,10 @@
                     </div>
                 </div>
             </div>
+            <div class="card-footer text-center">
+                <button type="submit" class="btn btn-rose btn-fill">Save</button>
+            </div>
         </form>
+
     </div>
 </div>

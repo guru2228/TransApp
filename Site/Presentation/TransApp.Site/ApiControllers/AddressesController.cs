@@ -120,7 +120,6 @@ namespace TransApp.Site.ApiControllers
                 searchFilter.CustomFilter = searchTerm;
             }
 
-            //TODO Bogdan implement this
             var addresses = await _addressesService.GetAll(searchFilter);
             return addresses;
         }
@@ -152,15 +151,6 @@ namespace TransApp.Site.ApiControllers
             //TODO Bogdan implement this
             var count = await _addressesService.GetAllCount(searchFilter);
             return count;
-        }
-
-        [Authorize(Policy = "TransAppUser")]
-        [HttpGet("search/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
-        public async Task<IEnumerable<AddressModel>> Search(int customerId, int startItem, int numberOfRetrievedItems, int language, [FromQuery]string searchTerm)
-        {
-            //TODO Bogdan implement this
-
-            return new List<AddressModel>();
         }
     }
 }

@@ -11,6 +11,7 @@ import { MdModule } from "app/shared/md/md.module";
 import { ShipmentOverviewComponent } from "app/shipment/components/shipment-overview.component";
 import { ShipmentSaveComponent } from "app/shipment/components/shipment-save.component";
 import { CommonAppModule } from 'app/shared/common/common-app.module';
+import { ShipmentService } from 'app/shipment/services/shipment.service';
 
 @NgModule({
     imports: [
@@ -34,6 +35,7 @@ import { CommonAppModule } from 'app/shared/common/common-app.module';
         ShipmentSaveComponent
     ],
     providers: [
+      ShipmentService
     ]
 })
 export class ShipmentModule { }

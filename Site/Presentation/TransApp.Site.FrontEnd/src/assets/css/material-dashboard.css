@@ -269,7 +269,7 @@
 /*
  Animate.css - http://daneden.me/animate
  Licensed under the MIT license - http://opensource.org/licenses/MIT
- 
+
  Copyright (c) 2015 Daniel Eden
  */
 
@@ -2359,7 +2359,7 @@ body .fc {
  Acceptable font-family overrides for individual icons:
      "Arial", sans-serif
      "Times New Roman", serif
- 
+
  NOTE: use percentage font sizes or else old IE chokes
  */
 
@@ -2565,7 +2565,7 @@ fieldset[disabled] .fc button.btn-primary.active {
      border-top-left-radius: 4px;
      border-bottom-left-radius: 4px;
  }
- 
+
  .fc-state-default.fc-corner-right { /* non-theme
      border-top-right-radius: 4px;
      border-bottom-right-radius: 4px;

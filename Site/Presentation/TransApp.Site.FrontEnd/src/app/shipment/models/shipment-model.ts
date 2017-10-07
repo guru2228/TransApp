@@ -17,19 +17,21 @@ export class ShipmentModel {
   public senderContactPerson: string;
   public senderPhone: string;
   public senderRemark: string;
-  public senderAvailability: AvailabilityEntityModel;
+  public senderAvailabilities: AvailabilityEntityModel[];
   public senderFacilities: Array<FacilityEntityModel>;
   public senderRequirements: Array<RequirementEntityModel>;
   public senderTrucks: Array<TruckEntityModel>;
+  public senderAddressInfo: string;
   // receiver region
   public receiverAddressId: number;
   public receiverContactPerson: string;
   public receiverPhone: string;
   public receiverRemark: string;
-  public receiverAvailability: AvailabilityEntityModel;
+  public receiverAvailabilities: AvailabilityEntityModel[];
   public receiverFacilities: Array<FacilityEntityModel>;
   public receiverRequirements: Array<RequirementEntityModel>;
   public receiverTrucks: Array<TruckEntityModel>;
+  public receiverAddressInfo: string;
 
   public totalPrice: number;
   public totalVolume: number;
