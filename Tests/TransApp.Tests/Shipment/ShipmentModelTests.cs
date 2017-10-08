@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TransApp.Core.ShipmentTransporter;
 using TransApp.Domain.Addresses;
 using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Services;
@@ -265,6 +266,63 @@ namespace TransApp.Tests.Shipment
             {
                 List<ShipmentModel> currentAddressModel =
                     await _shipmentService.GetAll(new FilterShipment {CustomerId = 1, StartItem = 0, Amount = 5});
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_GetShipmentByStatuses_Is_Ok()
+        {
+            try
+            {
+                FilterShipment f = new FilterShipment {CustomerId = 1, StartItem = 0,
+                    Amount = 5,
+                    ShipmentTransporterStatus = ShipmentTransporterStatus.None
+                };
+                List<ShipmentModel> model =
+                    await _shipmentService.GetAll(f);
+
+                f.ShipmentTransporterStatus = ShipmentTransporterStatus.Completed;
+                model =
+                   await _shipmentService.GetAll(f);
+
+                f.ShipmentTransporterStatus = ShipmentTransporterStatus.OpenMarket;
+                model =
+                   await _shipmentService.GetAll(f);
+
+                f.ShipmentTransporterStatus = ShipmentTransporterStatus.Unassigned;
+                model =
+                   await _shipmentService.GetAll(f);
+
+                f.ShipmentTransporterStatus= ShipmentTransporterStatus.Assigned;
+                model =
+                   await _shipmentService.GetAll(f);
+                f.Declined=true;
+                model =
+                   await _shipmentService.GetAll(f);
+
+                f.Declined = false;
+                f.Pending = true;
+                model =
+                   await _shipmentService.GetAll(f);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_GetShipmentGroups()
+        {
+            try
+            {
+                List<ShipmentTransporterFilterModel> result = await _shipmentService.GetShipmentFilter(1);
             }
             catch (Exception ex)
             {

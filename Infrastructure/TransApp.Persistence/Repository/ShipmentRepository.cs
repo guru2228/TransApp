@@ -244,8 +244,23 @@ namespace TransApp.Persistence.Repository
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
+                DynamicParameters d = new DynamicParameters();
+                {
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+                    {
+                        d.Add("@StatusCode", "ASS");
+                    }
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+                    {
+                        d.Add("@StatusCode", "OPEN");
+                    }
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+                    {
+                        d.Add("@StatusCode", "COM");
+                    }
+                }
                 cn.Open();
-                return (await cn.QueryAsync<ShipmentSimpleDto>(GetQueryFiltered(filter))).ToList();
+                return (await cn.QueryAsync<ShipmentSimpleDto>(GetQueryFiltered(filter), d)).ToList();
             }
         }
 
@@ -397,8 +412,9 @@ where [Shipment].Id =  " + id);
             {
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@CustomerId", customerId);
+                d.Add("@Code", "CON");
                 cn.Open();
-                return (await cn.QueryAsync<dynamic>(GetQueryCommon("CON"), d)).FirstOrDefault();
+                return (await cn.QueryAsync<dynamic>(GetQueryCommon(), d)).FirstOrDefault();
             }
         }
         public async Task<dynamic> GetShipmentsAssignedAmount(int customerId)
@@ -407,6 +423,7 @@ where [Shipment].Id =  " + id);
             {
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@CustomerId", customerId);
+                d.Add("@Code", "ASS");
                 cn.Open();
                 return (await cn.QueryAsync<dynamic>(GetQueryAssigned(), d)).FirstOrDefault();
             }
@@ -418,8 +435,9 @@ where [Shipment].Id =  " + id);
             {
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@CustomerId", customerId);
+                d.Add("@Code", "OPEN");
                 cn.Open();
-                return (await cn.QueryAsync<dynamic>(GetQueryCommon("OPEN"), d)).FirstOrDefault();
+                return (await cn.QueryAsync<dynamic>(GetQueryCommon(), d)).FirstOrDefault();
             }
         }
 
@@ -441,38 +459,38 @@ where [Shipment].Id =  " + id);
  select  count(distinct Shipment.Id) As Amount,
  (select max(Shipment.DateModified) from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code='ASS'
+ and ShipmentStatus.code=@Code
  where Shipment.CustomerId=@CustomerId) as LastDateTime,
  (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
   inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=1
   inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
-  and ShipmentStatus.code='ASS'
+  and ShipmentStatus.code=@Code
   where Shipment.CustomerId=@CustomerId 
   ) as Declined,
   (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
    inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0
   inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
-  and ShipmentStatus.code='ASS'
+  and ShipmentStatus.code=@Code
   where Shipment.CustomerId=@CustomerId ) as Pending
  from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code='ASS'
+ and ShipmentStatus.code=@Code
  where Shipment.CustomerId=@CustomerId ");
             return sb.ToString();
         }
 
-        private string GetQueryCommon(string code)
+        private string GetQueryCommon()
         {
             var sb = new StringBuilder();
             sb.Append(@"
            select  count(distinct Shipment.Id) As Amount,
  (select max(Shipment.DateModified) from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=" + code + @"
+ and ShipmentStatus.code=@Code
  where Shipment.CustomerId=@CustomerId) as LastDateTime
  from Shipment 
  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=" + code + @"
+ and ShipmentStatus.code=@Code
  where Shipment.CustomerId=@CustomerId ");
             return sb.ToString();
         }
@@ -610,6 +628,7 @@ where [Shipment].Id =  " + id);
 from Shipment 
 left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Shipment.UserIdCreated
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Shipment.UserIdModified
+left outer join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
 where 1=1");
             if (filter.CustomerId.HasValue)
             {
@@ -629,15 +648,25 @@ where 1=1");
             }
             if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
             {
-                sb.Append(" and Shipment.ShipmentStatusId is null");
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                if (filter.Declined)
+                {
+                    sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
+                    where  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=1)");
+                }
+                else if (filter.Pending)
+                {
+                    sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
+                    where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
+                }
             }
             if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
             {
-                sb.Append(" and Shipment.ShipmentStatusId is null");
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
             }
             if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
             {
-                sb.Append(" and Shipment.ShipmentStatusId is null");
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
             }
 
             sb.Append(@" ) AS RowConstrainedResult
