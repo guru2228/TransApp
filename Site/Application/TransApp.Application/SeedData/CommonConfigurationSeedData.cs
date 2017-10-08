@@ -162,8 +162,9 @@ namespace TransApp.Application.SeedData
                     UserIdCreated = 1,
                     EN = "Box",
                     NL = "Box",
-                    FR = "Box"
-                });
+                    FR = "Box",
+
+                }, false);
                 await CreatepackType("PAL", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
@@ -171,7 +172,7 @@ namespace TransApp.Application.SeedData
                     EN = "Pallet",
                     NL = "Pallet",
                     FR = "Pallet"
-                });
+                }, true);
             }
         }
 
@@ -361,7 +362,7 @@ namespace TransApp.Application.SeedData
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        private static async Task<int> CreatepackType(string code, string iconName, Dictionary dictionary,
+        private static async Task<int> CreatepackType(string code, string iconName, Dictionary dictionary,bool hasExtra,
        IDbTransaction transaction = null)
         {
             var item = _unitOfWork.PackTypeRepository.Get("Code='" + code + "'");
@@ -375,6 +376,7 @@ namespace TransApp.Application.SeedData
                     DateModified = DateTime.Now,
                     UserIdCreated = 1000,
                     Code = code,
+                    HasExtra = hasExtra,
                     DictionaryId = dictionaryId
                 };
                 return await _unitOfWork.PackTypeRepository.AddAsync(item);

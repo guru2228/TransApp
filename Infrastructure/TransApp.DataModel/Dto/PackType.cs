@@ -13,6 +13,8 @@ namespace TransApp.DataModel.Dto
 
         public int? DictionaryId { get; set; }
 
+        public bool HasExtra { get; set; }
+
         public int? UserIdCreated { get; set; }
 
         public DateTime? DateCreated { get; set; }
@@ -22,5 +24,4 @@ namespace TransApp.DataModel.Dto
         public DateTime? DateModified { get; set; }
 
     }
-
 }

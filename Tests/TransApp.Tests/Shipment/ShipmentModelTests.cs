@@ -121,7 +121,7 @@ namespace TransApp.Tests.Shipment
             currentShipment.UserIdModified = 999;
 
             //we must see with parentdetailid
-            List<ShipmentDetailModel> shipmentDetail = new EditableList<ShipmentDetailModel>();
+            List<ShipmentDetailRowModel> shipmentDetail = new List<ShipmentDetailRowModel>();
             ShipmentDetailModel aShipmentDetailModel = new ShipmentDetailModel
             {
                 Height = 1,
@@ -131,8 +131,22 @@ namespace TransApp.Tests.Shipment
                 Weight = 11,
                 Width = 232
             };
-            shipmentDetail.Add(aShipmentDetailModel);
-            currentShipment.ShipmentDetails_Toberomoved = shipmentDetail;
+            ShipmentDetailModel aShipmentDetailModel2 = new ShipmentDetailModel
+            {
+                Height = 1,
+                Length = 10,
+                Quantity = 111,
+                PackTypeId = 1,
+                Weight = 11,
+                Width = 232
+            };
+            ShipmentDetailRowModel detail = new ShipmentDetailRowModel();
+            detail.Master = aShipmentDetailModel;
+            List<ShipmentDetailModel> extras = new EditableList<ShipmentDetailModel>();
+            extras.Add(aShipmentDetailModel2);
+            detail.Extras = extras;
+            shipmentDetail.Add(detail);
+            currentShipment.ShipmentDetails = shipmentDetail;
 
             List<FacilityEntityModel> shipmentReceiverFacilities =
                 new EditableList<FacilityEntityModel>();
@@ -266,7 +280,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(18);
+                    await _shipmentService.Get(21);
 
                 await _shipmentService.DeleteShipment(currentShipmentModel);
             }
@@ -284,11 +298,18 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(15);
+                    await _shipmentService.Get(21);
 
-                foreach (var av in currentShipmentModel.ShipmentDetails_Toberomoved)
+                foreach (var av in currentShipmentModel.ShipmentDetails)
                 {
-                    av.Length = 454545;
+                    av.Master.Length = 54545555;
+                    if (av.Extras.Any())
+                    {
+                        foreach (var extra in av.Extras)
+                        {
+                            extra.Height = 77777;
+                        }
+                    }
                 }
                 foreach (var av in currentShipmentModel.ReceiverFacilities)
                 {

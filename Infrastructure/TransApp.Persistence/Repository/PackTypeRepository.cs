@@ -36,6 +36,7 @@ namespace TransApp.Persistence.Repository
             var sb = new StringBuilder();
             sb.Append(@" select PackType.Id
       ,PackType.[Code]
+      ,PackType.[HasExtra]
       ,PackType.[DictionaryId]
       ,PackType.[UserIdCreated]
       ,PackType.[DateCreated]

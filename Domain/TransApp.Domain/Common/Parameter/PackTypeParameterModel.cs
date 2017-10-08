@@ -8,6 +8,8 @@ namespace TransApp.Domain.Common.Parameter
 
         public string Code { get; set; }
 
+        public bool HasExtra { get; set; }
+
         public int? DictionaryId { get; set; }
 
         public int? UserIdCreated { get; set; }

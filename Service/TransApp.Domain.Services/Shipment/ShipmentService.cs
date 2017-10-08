@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -142,9 +143,25 @@ namespace TransApp.Domain.Services.Shipment
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
-                result.ShipmentDetails_Toberomoved =
-                    Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
-                        currentShipment.ShipmentDetails);
+                
+                if (currentShipment.ShipmentDetails != null)
+                {
+                    List<ShipmentDetailRowModel> shipmentDetailModelList = new List<ShipmentDetailRowModel>();
+                    var masterDetails = currentShipment.ShipmentDetails.FindAll(a => !a.ParentDetailId.HasValue).ToList();
+                    foreach (ShipmentDetail master in masterDetails)
+                    {
+                        ShipmentDetailRowModel shipmentDetailModel = new ShipmentDetailRowModel();
+                        shipmentDetailModel.Master = Mapper.Map<ShipmentDetail, ShipmentDetailModel>(master);
+                        var details =
+                            currentShipment.ShipmentDetails.FindAll(
+                                a => a.ParentDetailId.HasValue && a.ParentDetailId == master.Id).ToList();
+                        shipmentDetailModel.Extras = Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
+                            details);
+                        shipmentDetailModelList.Add(shipmentDetailModel);
+                    }
+                    result.ShipmentDetails = shipmentDetailModelList;
+                }
+
                 result.ReceiverFacilities =
                     Mapper.Map<List<ShipmentReceiverFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentReceiverFacilities);
@@ -263,27 +280,20 @@ namespace TransApp.Domain.Services.Shipment
             var transaction = _unitOfWork.BeginTransaction();
             await _unitOfWork.ShipmentRepository.SaveShipment(userId, dest, transaction);
             currentShipment.Id = dest.Id;
-            if (currentShipment.ShipmentDetails_Toberomoved != null)
+
+            if (currentShipment.ShipmentDetails != null)
             {
-                foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails_Toberomoved)
+                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in currentShipment.ShipmentDetails)
                 {
-                    ShipmentDetail aShipmentDetail =
-                        Mapper.Map<ShipmentDetailModel, ShipmentDetail>(aShipmentDetailModel);
-                    if (aShipmentDetail != null)
+                    aShipmentDetailRowModel.Master.ShipmentId = dest.Id;
+                    await SaveShipmentDetails(aShipmentDetailRowModel.Master, userId, transaction);
+                    if (aShipmentDetailRowModel.Extras != null && aShipmentDetailRowModel.Extras.Any())
                     {
-                        aShipmentDetail.DateModified = DateTime.Now;
-                        aShipmentDetail.UserIdModified = userId;
-                        if (aShipmentDetail.Id <= 0)
+                        foreach (ShipmentDetailModel aShipmentDetailModel in aShipmentDetailRowModel.Extras)
                         {
-                            aShipmentDetail.DateCreated = DateTime.Now;
-                            aShipmentDetail.UserIdCreated = userId;
-                            aShipmentDetail.ShipmentId = dest.Id;
-                            aShipmentDetailModel.Id =
-                                await _unitOfWork.ShipmentDetailRepository.AddAsync(aShipmentDetail, transaction);
-                        }
-                        else
-                        {
-                            await _unitOfWork.ShipmentDetailRepository.UpdateAsync(aShipmentDetail, transaction);
+                            aShipmentDetailModel.ShipmentId = dest.Id;
+                            await SaveShipmentDetails(aShipmentDetailModel, userId, transaction,
+                                aShipmentDetailRowModel.Master.Id);
                         }
                     }
                 }
@@ -576,7 +586,8 @@ namespace TransApp.Domain.Services.Shipment
                 };
 
                 var transaction = _unitOfWork.BeginTransaction();
-                if (currentShipment.ShipmentDetails_Toberomoved != null)
+
+                if (currentShipment.ShipmentDetails != null)
                 {
                     _unitOfWork.ShipmentDetailRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
@@ -702,6 +713,36 @@ namespace TransApp.Domain.Services.Shipment
             result.Add(openMarket);
             return result;
 
+        }
+
+        public async Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction, int? parentId = null)
+        {
+            ShipmentDetail aShipmentDetailChild =
+                                 Mapper.Map<ShipmentDetailModel, ShipmentDetail>(shipmentDetailModel);
+            if (aShipmentDetailChild != null)
+            {
+                aShipmentDetailChild.DateModified = DateTime.Now;
+                aShipmentDetailChild.UserIdModified = userId;
+                aShipmentDetailChild.ParentDetailId = parentId;
+                if (aShipmentDetailChild.Id <= 0)
+                {
+                    aShipmentDetailChild.DateCreated = DateTime.Now;
+                    aShipmentDetailChild.UserIdCreated = userId;
+                    aShipmentDetailChild.ShipmentId = shipmentDetailModel.ShipmentId;
+                    shipmentDetailModel.Id =
+                        await _unitOfWork.ShipmentDetailRepository.AddAsync(aShipmentDetailChild, transaction);
+                }
+                else
+                {
+                    await _unitOfWork.ShipmentDetailRepository.UpdateAsync(aShipmentDetailChild, transaction);
+                }
+            }
+        }
+
+        public async Task DeleteShipmentById(int shipmentId)
+        {
+            ShipmentModel currentShipmentModel = await Get(shipmentId);
+            await DeleteShipment(currentShipmentModel);
         }
     }
 }

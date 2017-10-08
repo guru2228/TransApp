@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TransApp.DataModel.Dto;
@@ -36,5 +37,9 @@ namespace TransApp.Domain.Services.Shipment
         Task DeleteShipment(ShipmentModel currentShipment);
 
         Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId);
+
+        Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null, int? parentId = null);
+
+        Task DeleteShipmentById(int shipmentId);
     }
 }
