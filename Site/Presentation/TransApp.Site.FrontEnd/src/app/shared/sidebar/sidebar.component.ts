@@ -31,7 +31,7 @@ export class SidebarComponent implements OnInit {
     }
 
     scroll() {
-        this.helperService.scrollOnTop;
+        this.helperService.scrollOnTop();
     }
 
     ngOnInit() {

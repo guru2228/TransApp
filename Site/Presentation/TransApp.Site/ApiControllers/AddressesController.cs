@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using TransApp.Application.Query;
 using TransApp.Application.QueryHandler;
 using TransApp.Core.Exceptions;
-using TransApp.DataModel.Dto;
 using TransApp.Domain.Addresses;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
@@ -102,12 +98,19 @@ namespace TransApp.Site.ApiControllers
         /// <param name="startItem"></param>
         /// <param name="numberOfRetrievedItems"></param>
         /// <param name="language"></param>
+        /// <param name="searchTerm"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAll/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
         public async Task<IEnumerable<AddressModel>> GetAll(int customerId, int startItem, int numberOfRetrievedItems,
             int language, [FromQuery]string searchTerm)
         {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+
             var searchFilter = new FilterAddress
             {
                 CustomerId = customerId,
@@ -130,12 +133,19 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         /// <param name="customerId"></param>
         /// <param name="language"></param>
+        /// <param name="searchTerm"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getCount/{customerId}/{language}")]
         public async Task<int> GetCount(int customerId,
             int language, [FromQuery]string searchTerm)
         {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+
             var searchFilter = new FilterAddress
             {
                 CustomerId = customerId,

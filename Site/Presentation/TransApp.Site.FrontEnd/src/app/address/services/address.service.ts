@@ -81,7 +81,6 @@ export class AddressService {
    * @param medicalEncryptedData
    * @param componentName
    * @param language
-   * @param clinicalNote
    */
   save(model: AddressModel) {
     const headers = new Headers({ 'Content-Type': 'application/json' });
@@ -99,7 +98,6 @@ export class AddressService {
   * @param medicalEncryptedData
   * @param componentName
   * @param language
-  * @param clinicalNote
   */
   delete(addressId: number) {
     const headers = new Headers({ 'Content-Type': 'application/json' });

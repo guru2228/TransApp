@@ -81,6 +81,9 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
 
       if (this.availability.amStart && this.availability.amStart.length > 0) {
         const hoursArray = this.availability.amStart.split(':');
+        if (hoursArray.length === 1) {
+          hoursArray.push('00');
+        }
         this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
        // this.availability.amStart = this.toFormat(this.amStart_initial_timestamp)
@@ -88,6 +91,9 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
 
       if (this.availability.amStop && this.availability.amStop.length > 0) {
         const hoursArray = this.availability.amStop.split(':');
+        if (hoursArray.length === 1) {
+          hoursArray.push('00');
+        }
         this.amStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
        // this.availability.amStop = this.toFormat(this.amStop_initial_timestamp)
@@ -95,6 +101,9 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
 
       if (this.availability.pmStart && this.availability.pmStart.length > 0) {
         const hoursArray = this.availability.pmStart.split(':');
+        if (hoursArray.length === 1) {
+          hoursArray.push('00');
+        }
         this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
        // this.availability.pmStart = this.toFormat(this.pmStart_initial_timestamp)
@@ -102,6 +111,9 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
 
       if (this.availability.pmStop && this.availability.pmStop.length > 0) {
         const hoursArray = this.availability.pmStop.split(':');
+        if (hoursArray.length === 1) {
+          hoursArray.push('00');
+        }
         this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
        // this.availability.pmStop = this.toFormat(this.pmStop_initial_timestamp)

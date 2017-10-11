@@ -31,4 +31,21 @@ export class NotificationService {
         }
       });
   }
+
+  /**
+  * Show notification
+  * @param message  notification message
+  * @param notificationType type: allowed types ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary']
+  * @param horizontalPosition vertical position, allowed: 'left', 'center','right'
+  * @param verticalPosition horizontal position, allowed: 'bottom', 'top'
+  */
+  showLoading(message = 'Loading') {
+    const notify = $.notify(message, {
+      type: 'info',
+      allow_dismiss: false,
+      showProgressbar: true,
+      delay: 500,
+      timer: 1000,
+    });
+  }
 }

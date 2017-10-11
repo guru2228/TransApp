@@ -336,13 +336,13 @@
                                             <tr *ngFor="let rowExtra of detailRow.extras; let rowExtraIndex = index">
                                                 <td colspan="2"></td>
                                                 <td>
-                                                    <div class="form-group label-floating">
+                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.quantity || rowExtra.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
                                                         <label class="control-label">Quantity</label>
                                                         <input class="form-control" type="number" [(ngModel)]="rowExtra.quantity" name="shipmentDetail_quantity_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
                                                     </div>
                                                 </td>
                                                 <td style="min-width: 150px;">
-                                                    <div class="form-group label-floating">
+                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.packTypeId || rowExtra.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
                                                         <label class="control-label">Choose pack type</label>
                                                         <select [(ngModel)]="rowExtra.packTypeId" name="shipmentDetail_packtype_{{detailRowIndex}}_{{rowExtraIndex}}" class="form-control">
                                                       <option *ngFor="let packtype of packTypes" [ngValue]="packtype.id">{{packtype.description}}</option>
@@ -350,7 +350,7 @@
                                                     </div>
                                                 </td>
                                                 <td>
-                                                    <div class="form-group label-floating">
+                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.length || rowExtra.length <= 0) && formShipment.submitted ? ' has-error' : '')">
                                                         <label class="control-label">Length(cm)</label>
                                                         <input class="form-control" type="number" [(ngModel)]="rowExtra.length" name="shipmentDetail_length_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
                                                     </div>

@@ -1,15 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using TransApp.Application.Query;
-using TransApp.Application.QueryHandler;
 using TransApp.Core.Exceptions;
-using TransApp.Domain.Addresses;
-using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Shipment;
 using TransApp.Domain.Shipment;
@@ -17,8 +12,6 @@ using TransApp.Framework.Filter;
 
 namespace TransApp.Site.ApiControllers
 {
-
-
     [Route("api/[controller]")]
     public class ShipmentsController : Controller
     {        
@@ -89,29 +82,88 @@ namespace TransApp.Site.ApiControllers
         }
 
         /// <summary>
+        /// Get shipment filters
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getShipmentFilters/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        public async Task<IEnumerable<ShipmentTransporterFilterModel>> GetShipmentFilters(int customerId, string language)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError,
+                    "Provided customer is not assigned to your account");
+            }
+
+            var filters = await _shipmentService.GetShipmentFilter(currentUser.CustomerId.Value);
+            return filters;
+        }
+
+
+        /// <summary>
         /// Get all shipments for a customer.
         /// Retrive shipments based on page number and page size
         /// </summary>
+        /// <param name=")"></param>
         /// <param name="customerId"></param>
+        /// <param name="shipmentStatus"></param>
         /// <param name="startItem"></param>
         /// <param name="numberOfRetrievedItems"></param>
         /// <param name="language"></param>
-        /// <param name="searchTerm"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAll/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
-        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int startItem, int numberOfRetrievedItems,
-            int language, [FromQuery]string searchTerm)
+        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int shipmentStatus, int startItem, int numberOfRetrievedItems,
+            int language)
         {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+
             var searchFilter = new FilterShipment
             {
-                CustomerId = customerId,
+                CustomerId = currentUser.CustomerId.Value,
+                ShipmentStatusId = shipmentStatus,
                 StartItem = startItem,
                 Amount = numberOfRetrievedItems
             };
 
             var shipments = await _shipmentService.GetAll(searchFilter);
             return shipments;
+        }
+
+        /// <summary>
+        ///  Get number of shipments, used for paging
+        /// </summary>
+        /// <param name=")"></param>
+        /// <param name="customerId"></param>
+        /// <param name="shipmentStatus"></param>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getCount/{customerId}/{language}")]
+        public async Task<int> GetCount(int customerId, int shipmentStatus, 
+            int language)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+
+            var searchFilter = new FilterShipment
+            {
+                CustomerId = currentUser.CustomerId.Value,
+                ShipmentStatusId = shipmentStatus,
+                StartItem = 0,
+                Amount = 10000
+            };
+
+            var shipments = await _shipmentService.GetAll(searchFilter);
+            return shipments.Count;
         }
     }
 }

@@ -10,6 +10,11 @@ namespace TransApp.Domain.Shipment
     public class ShipmentTransporterFilterModel
     {
         /// <summary>
+        /// Description
+        /// </summary>
+        public string Description => StatusType.ToString();
+
+        /// <summary>
         /// Assigned,Unassigned,Complete,Accepted
         /// </summary>
         public ShipmentTransporterStatus StatusType { get; set; }
