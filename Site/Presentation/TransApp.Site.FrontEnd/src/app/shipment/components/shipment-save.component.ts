@@ -281,6 +281,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
    * @param event
    */
   onDeliveryDateSelected(event: any) {
+    debugger;
     if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
       this.componentModel.receiverAvailabilities = [];
       if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {

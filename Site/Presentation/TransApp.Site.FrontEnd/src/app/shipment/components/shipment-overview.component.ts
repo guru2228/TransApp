@@ -1,23 +1,52 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 
 import { TableData } from "app/shared/md/md-table/md-table.component";
-import { ShipmentRow } from "app/shipment/models/shipment-row";
 import { ShipmentModel } from 'app/shipment/models/shipment-model';
-var moment = require('moment/moment');
+import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
+import { ShipmentService } from 'app/shipment/services/shipment.service';
+import { NotificationService } from 'app/shared/common/services/notification.service';
+import { AuthenticationService } from 'app/authentication/services/authentication.service';
+import { ShipmentTransporterStatus } from 'app/shipment/models/shipment-transporter-status';
+import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
+import { TranslateService } from 'app/shared/common/services/localization/translate.service';
+import { Subscription } from 'rxjs/Subscription';
+import { HelperService } from 'app/shared/common/services/helperService';
+import { ShipmentTransporterFilterModel } from 'app/shipment/models/shipment-transporter-filter-model';
+import { ShipmentRowViewModel } from 'app/shipment/models/shipment-row-viewmodel';
 
+const moment = require('moment/moment');
 declare var $: any;
+declare var swal: any;
 
 @Component({
   selector: 'app-shipment-overview',
   templateUrl: './shipment-overview.component.html'
 })
-export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
-  // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
-  shipmentModel: ShipmentRow[] = [];
+export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
   headerRow: string[];
 
+  // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
+  componentModel: ShipmentRowViewModel[] = [];
+  filters: ShipmentTransporterFilterModel[];
+  currentUser: ApplicationUser;
+  // search term
+  currentAddressId = -1;
+  currentPage = 0;
+  pagesCollection: Array<number>;
+  pageSize = 20;
+
+  selectedShipmentStatus: ShipmentTransporterStatus;
+
+  private subscriptionReceiveUpdatedShipment: Subscription;
+
   constructor(private router: Router,
+    private shipmentService: ShipmentService,
+    private notificationService: NotificationService,
+    private authenticationService: AuthenticationService,
+    private translateService: TranslateService,
+    private helperService: HelperService,
+    private errorHandler: GlobalErrorHandler,
     private route: ActivatedRoute) {
 
   }
@@ -25,26 +54,182 @@ export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
   public ngOnInit() {
     this.headerRow = ['Pickup data', 'Delivery date', 'From', 'Destination', 'Quantity', 'Transport company', 'Price'];
 
-    /*       let shipment = new ShipmentModel();
-          // shipment.deliverydate = new Date();
-         //  shipment.pickupdate = new Date();
-          // shipment.from = 'Joske, Belgium, Brakel';
-         //  shipment.destionation = 'Polleke, France, Quimper';
-         //  shipment.quantity = 100;
-   //shipment.transporter = 'DHL';
-         //  shipment.price = 100;
+    this.currentUser = this.authenticationService.getCurrentUser();
+    this.getShipmentFilters();
 
-           for (let i = 0; i < 10; i++) {
-               shipment.id = i;
-              // shipment.deliverydate = moment(shipment.deliverydate).format('YYYY-MM-DD');
-             //  shipment.pickupdate = moment(shipment.pickupdate).format('YYYY-MM-DD');
+    this.getNumberOfShipments('', false);
 
-           //    let shipmentRow = new ShipmentRow();
-               shipmentRow.shipment = shipment;
-               shipmentRow.viewActions = i == 2 ? true : false;
-               this.shipmentModel.push(shipmentRow);
-           } */
+    this.getShipments();
   }
+
+  /**
+   * Get addresses
+   */
+  private getShipments() {
+    this.notificationService.showLoading();
+
+    if (this.currentUser && this.currentUser.customerId) {
+      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentStatus, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
+        this.componentModel = [];
+        if (result && result.length > 0) {
+          if (this.route.firstChild) {
+            this.currentAddressId = +this.route.firstChild.snapshot.params['id']
+          }
+          for (let i = 0; i < result.length; i++) {
+            const shipmentRow = new ShipmentRowViewModel();
+            shipmentRow.shipment = result[i];
+            // if url contains edit then open it by default
+            shipmentRow.viewActions = result[i].id === this.currentAddressId;
+            this.componentModel.push(shipmentRow);
+          }
+        }
+      }, error => {
+        this.errorHandler.handleError(error);
+      });
+    }
+  }
+
+  /**
+   * Get addresses count for current filters
+   */
+  private getNumberOfShipments(searchQueryParam: string, ignoreQueryString: boolean) {
+    this.pagesCollection = null;
+    if (searchQueryParam.length <= 0 && !ignoreQueryString) {
+      this.route.queryParams.subscribe(params => {
+        searchQueryParam = params['searchquery'] ? params['searchquery'].toString() : '';
+      });
+    }
+    if (this.currentUser && this.currentUser.customerId) {
+      this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentStatus, this.translateService.currentLanguage).subscribe(result => {
+        this.pagesCollection = [];
+        let numberOfPages = Math.ceil(result / this.pageSize);
+        numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
+        const self = this;
+        setTimeout(function () {
+          for (let i = 0; i < numberOfPages; i++) {
+            self.pagesCollection.push(i);
+          }
+        }, 100);
+      }, error => {
+        this.errorHandler.handleError(error);
+      });
+    }
+  }
+
+  /**
+   * Get addresses
+   */
+  private getShipmentFilters() {
+    this.notificationService.showLoading();
+    if (this.currentUser && this.currentUser.customerId) {
+      this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
+        this.filters = result;
+      }, error => {
+        this.errorHandler.handleError(error);
+      });
+    }
+  }
+
+  private register_updateSavedModel_handler() {
+    this.subscriptionReceiveUpdatedShipment = this.shipmentService.shipmentModelReceivedHandler$.subscribe(shipment => {
+      if (shipment != null) {
+        const modelToUpdate = this.componentModel.filter(item => item.shipment.id === shipment.id)[0];
+        if (modelToUpdate) {
+          modelToUpdate.shipment = shipment;
+          this.helperService.scrollOnTop();
+        }
+        this.shipmentService.resetSendShipmentModelHandler();
+      }
+    }, error => {
+      this.errorHandler.handleError(error);
+    });
+  }
+  /**
+   * Show row available actions on click
+   * */
+  onClickShowActions(shipmentRow: ShipmentRowViewModel, index: number) {
+    for (let i = 0; i < this.componentModel.length; i++) {
+      if (i !== index)
+        this.componentModel[i].viewActions = false;
+      this.componentModel[i].viewEdit = false;
+    }
+    shipmentRow.viewActions = !shipmentRow.viewActions;
+    if (shipmentRow.viewActions) {
+      shipmentRow.viewEdit = false;
+      this.router.navigate(['/shipment-overview']);
+    }
+
+    setTimeout(function () {
+      // $('#actionsRowContent').slideToggle('slow');
+    }, 500);
+  }
+
+  /**
+   * Show edit address
+   * */
+  onClickEditAddress(shipmentRow: ShipmentRowViewModel) {
+    this.notificationService.showLoading();
+
+    shipmentRow.viewActions = false;
+
+    this.router.navigate(['./shipment-edit/' + shipmentRow.shipment.id], { relativeTo: this.route });
+
+    shipmentRow.viewEdit = !shipmentRow.viewEdit;
+  }
+
+  /** Show edit address */
+  onClickDeleteAddress(shipmentId: number) {
+    const self = this;
+    swal({
+      title: 'Are you sure?',
+      text: 'You won\'t be able to revert this!',
+      type: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Yes, delete it!'
+    })
+      // delete confirmed
+      .then(function () {
+        self.shipmentService.delete(shipmentId).subscribe(result => {
+          if (result) {
+            swal(
+              'Deleted!',
+              'Your shipment has been deleted.',
+              'success'
+            );
+            // update model
+            self.componentModel = self.componentModel.filter(item => item.shipment.id !== shipmentId);
+          } else {
+            swal(
+              'Not Deleted!',
+              'An error occured. Your shipment has not been deleted.  Please contact an administrator.',
+              'error'
+            );
+          }
+        }, error => {
+          swal(
+            'Not Deleted!',
+            'An error occured. Your shipment has not been deleted.  Please contact an administrator.',
+            'error'
+          );
+          self.errorHandler.handleError(error);
+        });
+      },
+      // delete canceled
+      function (dismiss) {
+        // dismiss can be 'cancel', 'overlay',
+        // 'close', and 'timer'
+        if (dismiss === 'cancel') {
+          swal(
+            'Cancelled',
+            'Your shipment is safe :)',
+            'error'
+          )
+        }
+      });
+  }
+
   ngAfterViewInit() {
     var breakCards = true;
     if (breakCards == true) {
@@ -78,7 +263,12 @@ export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
     $('[rel="tooltip"]').tooltip();
   }
 
-  /** Show row available actions on click */
+  ngOnDestroy(): void {
+    if (this.subscriptionReceiveUpdatedShipment) {
+      this.subscriptionReceiveUpdatedShipment.unsubscribe();
+    }
+  }
+  /** Show row available actions on click
   onClickShowActions(shipmentRow: ShipmentRow, index: number) {
     for (let i = 0; i < this.shipmentModel.length; i++) {
       if (i !== index)
@@ -90,15 +280,14 @@ export class ShipmentOverviewComponent implements OnInit, AfterViewInit {
       this.router.navigate(['/shipment-overview']);
     }
     setTimeout(function () {
-      // $('#actionsRowContent').slideToggle('slow');
 
     }, 500);
   }
+*/
 
-
-  /** Show edit shipment */
+  /** Show edit shipment
   onClickEditShipment(shipmentRow: ShipmentRow) {
     shipmentRow.viewEdit = !shipmentRow.viewEdit;
     this.router.navigate(['./shipment-edit/1'], { relativeTo: this.route });
-  }
+  } */
 }

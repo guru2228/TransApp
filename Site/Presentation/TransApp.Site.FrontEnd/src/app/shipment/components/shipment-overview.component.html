@@ -72,9 +72,9 @@
             <div class="col-md-12">
                 <!--   <div class="nav-center">
                     <ul class="nav nav-pills nav-pills-warning nav-pills-icons" role="tablist">
-                        
+
                     color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
-            
+
                         <li>
                             <a href="#description-1" role="tab" data-toggle="tab">
                                 <i class="material-icons">info</i> Unassigned
@@ -109,13 +109,18 @@
                     <!-- <div class="card-header card-header-icon" data-background-color="rose">
                         <i class="material-icons">assignment</i>
                     </div> -->
-                    <div class="card-content table-full-width">
+                    <div *ngIf="componentModel && componentModel.length > 0" class="card-content table-full-width">
                         <!--<h4 class="card-title">Regular Table with Colors</h4>-->
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th *ngFor="let cell of headerRow">{{ cell }}</th>
+                                        <th>Pickup date</th>
+                                        <th>Delivery date</th>
+                                        <th>From</th>
+                                        <th>Destination</th>
+                                        <th>Transport company</th>
+                                        <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
