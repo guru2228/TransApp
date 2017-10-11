@@ -21,7 +21,7 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public async Task<AddressDto> GetFullAddressById(int id)
+        public async Task<AddressDto> GetFullAddressById(int id, int? customerId = null)
         {
             var lookup = new Dictionary<int, AddressDto>();
             var lookupAddress = new Dictionary<int, List<int>>();
@@ -38,7 +38,7 @@ namespace TransApp.Persistence.Repository
                         cn
                             .QueryAsync
                             <Address, AddressAvailability, AddressFacility, AddressRequirement, AddressTruck, AddressDto
-                            >(GetQuery(id),
+                            >(GetQuery(id, customerId),
                                 (address, addressAvailability, addressFacility, addressRequirement, addressTruck) =>
                                 {
                                     AddressDto entity;
@@ -161,7 +161,7 @@ namespace TransApp.Persistence.Repository
             await DeleteAsync(address, transaction);
         }
 
-        private string GetQuery(int id)
+        private string GetQuery(int id, int? customerId = null)
         {
             var sb = new StringBuilder();
             sb.Append(@"select 
@@ -236,7 +236,10 @@ join AddressRequirement on AddressRequirement.AddressId = Address.Id
 left outer
 join AddressTruck on AddressTruck.AddressId = Address.Id
 where Address.Id = " + id);
-
+            if (customerId.HasValue)
+            {
+                sb.Append(" AND Address.CustomerId=" + customerId.Value);
+            }
             return sb.ToString();
         }
 

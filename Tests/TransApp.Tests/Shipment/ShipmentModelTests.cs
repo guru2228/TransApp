@@ -250,7 +250,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(14);
+                    await _shipmentService.Get(22,1);
             }
             catch (Exception ex)
             {
@@ -398,6 +398,60 @@ namespace TransApp.Tests.Shipment
                     av.Accepted = false;
                 }
                 await _shipmentService.SaveShipment(1000, currentShipmentModel);
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+            Assert.IsTrue(true);
+        }
+
+
+        [TestMethod]
+        public async Task Test_AssignToOpenMarket_Is_Ok()
+        {
+            if (await _shipmentService.AssignToOpenMarket(1000, 22))
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsFalse(true);
+        }
+
+        [TestMethod]
+        public async Task Test_MoveToUnassigned_Is_Ok()
+        {
+            if (await _shipmentService.MoveToUnassigned(1000, 22))
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsFalse(true);
+        }
+
+        [TestMethod]
+        public async Task Test_ConfirmTransporter_Is_Ok()
+        {
+            if (await _shipmentService.ConfirmTransporter(1000, 22,1))
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsFalse(true);
+        }
+
+        [TestMethod]
+        public async Task Test_ShipmentGetAllCount_Is_Ok()
+        {
+            try
+            {
+                var amount =
+                   await _shipmentService.GetAllCount(new FilterShipment()
+                   {
+                       CustomerId = 1,
+                       StartItem = 0,
+                       Amount = 15,
+                   });
             }
             catch (Exception ex)
             {

@@ -15,7 +15,7 @@ namespace TransApp.Persistence.Repository
         /// Get address by id
         /// </summary>
         /// <param name="id"></param>
-        Task<AddressDto> GetFullAddressById(int id);
+        Task<AddressDto> GetFullAddressById(int id,int? customerId=null);
         
         Task<List<AddressSimpleDto>> GetAll(FilterAddress filter);
 

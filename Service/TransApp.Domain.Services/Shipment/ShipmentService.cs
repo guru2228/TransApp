@@ -30,10 +30,10 @@ namespace TransApp.Domain.Services.Shipment
             _cacheService = cacheService;
         }
 
-        public async Task<ShipmentModel> Get(int shipmentId)
+        public async Task<ShipmentModel> Get(int shipmentId, int? customerId = null)
         {
             var currentShipment =
-                await _unitOfWork.ShipmentRepository.GetShipmentById(shipmentId);
+                await _unitOfWork.ShipmentRepository.GetShipmentById(shipmentId, customerId);
             if (currentShipment != null)
             {
                 ShipmentModel result = new ShipmentModel
@@ -55,7 +55,7 @@ namespace TransApp.Domain.Services.Shipment
                     SenderContactPerson = currentShipment.Shipment.SenderContactPerson,
                     ReceiverContactPerson = currentShipment.Shipment.ReceiverContactPerson,
                     Reference = currentShipment.Shipment.Reference,
-         
+
                     ReceiverRemark = currentShipment.Shipment.ReceiverRemark,
                     ReceiverPhone = currentShipment.Shipment.ReceiverPhone,
                     SenderAddressId = currentShipment.Shipment.SenderAddressId,
@@ -143,11 +143,12 @@ namespace TransApp.Domain.Services.Shipment
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
-                
+
                 if (currentShipment.ShipmentDetails != null)
                 {
                     List<ShipmentDetailRowModel> shipmentDetailModelList = new List<ShipmentDetailRowModel>();
-                    var masterDetails = currentShipment.ShipmentDetails.FindAll(a => !a.ParentDetailId.HasValue).ToList();
+                    var masterDetails =
+                        currentShipment.ShipmentDetails.FindAll(a => !a.ParentDetailId.HasValue).ToList();
                     foreach (ShipmentDetail master in masterDetails)
                     {
                         ShipmentDetailRowModel shipmentDetailModel = new ShipmentDetailRowModel();
@@ -182,8 +183,8 @@ namespace TransApp.Domain.Services.Shipment
                     Mapper.Map<List<ShipmentSenderRequirement>, List<RequirementEntityModel>>(
                         currentShipment.ShipmentSenderRequirements);
                 result.SenderTrucks =
-                   Mapper.Map<List<ShipmentSenderTruck>, List<TruckEntityModel>>(
-                       currentShipment.ShipmentSenderTrucks);
+                    Mapper.Map<List<ShipmentSenderTruck>, List<TruckEntityModel>>(
+                        currentShipment.ShipmentSenderTrucks);
 
                 return result;
 
@@ -422,7 +423,8 @@ namespace TransApp.Domain.Services.Shipment
             {
                 foreach (ShipmentTransporterModel aShipmentTransporterModel in currentShipment.Transporters)
                 {
-                    ShipmentTransporter aShipmentTransporter = Mapper.Map<ShipmentTransporterModel, ShipmentTransporter>(aShipmentTransporterModel);
+                    ShipmentTransporter aShipmentTransporter =
+                        Mapper.Map<ShipmentTransporterModel, ShipmentTransporter>(aShipmentTransporterModel);
                     await _unitOfWork.ShipmentTransporterRepository.Save(userId, aShipmentTransporter, transaction);
                 }
             }
@@ -442,20 +444,27 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentReceiverFacility.ShipmentId = dest.Id;
                             aShipmentReceiverFacility.UserIdCreated = userId;
                             aShipmentReceiverFacilityModel.Id =
-                                await _unitOfWork.ShipmentReceiverFacilityRepository.AddAsync(aShipmentReceiverFacility, transaction);
+                                await
+                                    _unitOfWork.ShipmentReceiverFacilityRepository.AddAsync(aShipmentReceiverFacility,
+                                        transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentReceiverFacilityRepository.UpdateAsync(aShipmentReceiverFacility, transaction);
+                            await
+                                _unitOfWork.ShipmentReceiverFacilityRepository.UpdateAsync(aShipmentReceiverFacility,
+                                    transaction);
                         }
                     }
                 }
             }
             if (currentShipment.ReceiverRequirements != null)
             {
-                foreach (RequirementEntityModel aShipmentReceiverRequirementModel in currentShipment.ReceiverRequirements)
+                foreach (
+                    RequirementEntityModel aShipmentReceiverRequirementModel in currentShipment.ReceiverRequirements)
                 {
-                    ShipmentReceiverRequirement aShipmentReceiverRequirement = Mapper.Map<RequirementEntityModel, ShipmentReceiverRequirement>(aShipmentReceiverRequirementModel);
+                    ShipmentReceiverRequirement aShipmentReceiverRequirement =
+                        Mapper.Map<RequirementEntityModel, ShipmentReceiverRequirement>(
+                            aShipmentReceiverRequirementModel);
                     if (aShipmentReceiverRequirement != null)
                     {
                         aShipmentReceiverRequirement.DateModified = DateTime.Now;
@@ -465,11 +474,16 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentReceiverRequirement.DateCreated = DateTime.Now;
                             aShipmentReceiverRequirement.ShipmentId = dest.Id;
                             aShipmentReceiverRequirement.UserIdCreated = userId;
-                            aShipmentReceiverRequirementModel.Id = await _unitOfWork.ShipmentReceiverRequirementRepository.AddAsync(aShipmentReceiverRequirement, transaction);
+                            aShipmentReceiverRequirementModel.Id =
+                                await
+                                    _unitOfWork.ShipmentReceiverRequirementRepository.AddAsync(
+                                        aShipmentReceiverRequirement, transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentReceiverRequirementRepository.UpdateAsync(aShipmentReceiverRequirement, transaction);
+                            await
+                                _unitOfWork.ShipmentReceiverRequirementRepository.UpdateAsync(
+                                    aShipmentReceiverRequirement, transaction);
                         }
                     }
                 }
@@ -479,7 +493,8 @@ namespace TransApp.Domain.Services.Shipment
             {
                 foreach (TruckEntityModel aShipmentReceiverTruckModel in currentShipment.ReceiverTrucks)
                 {
-                    ShipmentReceiverTruck aShipmentReceiverTruck = Mapper.Map<TruckEntityModel, ShipmentReceiverTruck>(aShipmentReceiverTruckModel);
+                    ShipmentReceiverTruck aShipmentReceiverTruck =
+                        Mapper.Map<TruckEntityModel, ShipmentReceiverTruck>(aShipmentReceiverTruckModel);
                     if (aShipmentReceiverTruck != null)
                     {
                         aShipmentReceiverTruck.DateModified = DateTime.Now;
@@ -489,11 +504,16 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentReceiverTruck.DateCreated = DateTime.Now;
                             aShipmentReceiverTruck.ShipmentId = dest.Id;
                             aShipmentReceiverTruck.UserIdCreated = userId;
-                            aShipmentReceiverTruckModel.Id = await _unitOfWork.ShipmentReceiverTruckRepository.AddAsync(aShipmentReceiverTruck, transaction);
+                            aShipmentReceiverTruckModel.Id =
+                                await
+                                    _unitOfWork.ShipmentReceiverTruckRepository.AddAsync(aShipmentReceiverTruck,
+                                        transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentReceiverTruckRepository.UpdateAsync(aShipmentReceiverTruck, transaction);
+                            await
+                                _unitOfWork.ShipmentReceiverTruckRepository.UpdateAsync(aShipmentReceiverTruck,
+                                    transaction);
                         }
                     }
                 }
@@ -503,7 +523,8 @@ namespace TransApp.Domain.Services.Shipment
             {
                 foreach (FacilityEntityModel aShipmentSenderFacilityModel in currentShipment.SenderFacilities)
                 {
-                    ShipmentSenderFacility aShipmentSenderFacility = Mapper.Map<FacilityEntityModel, ShipmentSenderFacility>(aShipmentSenderFacilityModel);
+                    ShipmentSenderFacility aShipmentSenderFacility =
+                        Mapper.Map<FacilityEntityModel, ShipmentSenderFacility>(aShipmentSenderFacilityModel);
                     if (aShipmentSenderFacility != null)
                     {
                         aShipmentSenderFacility.DateModified = DateTime.Now;
@@ -513,11 +534,16 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentSenderFacility.DateCreated = DateTime.Now;
                             aShipmentSenderFacility.ShipmentId = dest.Id;
                             aShipmentSenderFacility.UserIdCreated = userId;
-                            aShipmentSenderFacilityModel.Id = await _unitOfWork.ShipmentSenderFacilityRepository.AddAsync(aShipmentSenderFacility, transaction);
+                            aShipmentSenderFacilityModel.Id =
+                                await
+                                    _unitOfWork.ShipmentSenderFacilityRepository.AddAsync(aShipmentSenderFacility,
+                                        transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentSenderFacilityRepository.UpdateAsync(aShipmentSenderFacility, transaction);
+                            await
+                                _unitOfWork.ShipmentSenderFacilityRepository.UpdateAsync(aShipmentSenderFacility,
+                                    transaction);
                         }
                     }
                 }
@@ -527,7 +553,8 @@ namespace TransApp.Domain.Services.Shipment
             {
                 foreach (RequirementEntityModel aShipmentSenderRequirementModel in currentShipment.SenderRequirements)
                 {
-                    ShipmentSenderRequirement aShipmentSenderRequirement = Mapper.Map<RequirementEntityModel, ShipmentSenderRequirement>(aShipmentSenderRequirementModel);
+                    ShipmentSenderRequirement aShipmentSenderRequirement =
+                        Mapper.Map<RequirementEntityModel, ShipmentSenderRequirement>(aShipmentSenderRequirementModel);
                     if (aShipmentSenderRequirement != null)
                     {
                         aShipmentSenderRequirement.DateModified = DateTime.Now;
@@ -537,11 +564,16 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentSenderRequirement.DateCreated = DateTime.Now;
                             aShipmentSenderRequirement.ShipmentId = dest.Id;
                             aShipmentSenderRequirement.UserIdCreated = userId;
-                            aShipmentSenderRequirementModel.Id = await _unitOfWork.ShipmentSenderRequirementRepository.AddAsync(aShipmentSenderRequirement, transaction);
+                            aShipmentSenderRequirementModel.Id =
+                                await
+                                    _unitOfWork.ShipmentSenderRequirementRepository.AddAsync(
+                                        aShipmentSenderRequirement, transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentSenderRequirementRepository.UpdateAsync(aShipmentSenderRequirement, transaction);
+                            await
+                                _unitOfWork.ShipmentSenderRequirementRepository.UpdateAsync(aShipmentSenderRequirement,
+                                    transaction);
                         }
                     }
                 }
@@ -551,7 +583,8 @@ namespace TransApp.Domain.Services.Shipment
             {
                 foreach (TruckEntityModel aShipmentSenderTruckModel in currentShipment.SenderTrucks)
                 {
-                    ShipmentSenderTruck aShipmentSenderTruck = Mapper.Map<TruckEntityModel, ShipmentSenderTruck>(aShipmentSenderTruckModel);
+                    ShipmentSenderTruck aShipmentSenderTruck =
+                        Mapper.Map<TruckEntityModel, ShipmentSenderTruck>(aShipmentSenderTruckModel);
                     if (aShipmentSenderTruck != null)
                     {
                         aShipmentSenderTruck.DateModified = DateTime.Now;
@@ -561,11 +594,14 @@ namespace TransApp.Domain.Services.Shipment
                             aShipmentSenderTruck.DateCreated = DateTime.Now;
                             aShipmentSenderTruck.ShipmentId = dest.Id;
                             aShipmentSenderTruck.UserIdCreated = userId;
-                            aShipmentSenderTruckModel.Id = await _unitOfWork.ShipmentSenderTruckRepository.AddAsync(aShipmentSenderTruck, transaction);
+                            aShipmentSenderTruckModel.Id =
+                                await
+                                    _unitOfWork.ShipmentSenderTruckRepository.AddAsync(aShipmentSenderTruck, transaction);
                         }
                         else
                         {
-                            await _unitOfWork.ShipmentSenderTruckRepository.UpdateAsync(aShipmentSenderTruck, transaction);
+                            await
+                                _unitOfWork.ShipmentSenderTruckRepository.UpdateAsync(aShipmentSenderTruck, transaction);
                         }
                     }
                 }
@@ -595,7 +631,7 @@ namespace TransApp.Domain.Services.Shipment
                 if (currentShipment.ReceiverFacilities != null)
                 {
                     _unitOfWork.ShipmentReceiverFacilityRepository
-                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 if (currentShipment.ReceiverRequirements != null)
                 {
@@ -616,7 +652,7 @@ namespace TransApp.Domain.Services.Shipment
                 if (currentShipment.SenderRequirements != null)
                 {
                     _unitOfWork.ShipmentSenderRequirementRepository
-                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
+                        .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 if (currentShipment.SenderTrucks != null)
                 {
@@ -625,7 +661,7 @@ namespace TransApp.Domain.Services.Shipment
                 }
                 if (currentShipment.Transporters != null)
                 {
-                     _unitOfWork.ShipmentTransporterRepository
+                    _unitOfWork.ShipmentTransporterRepository
                         .DeleteShipmentTransporter("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 if (currentShipment.ReceiverAvailabilities != null)
@@ -635,7 +671,7 @@ namespace TransApp.Domain.Services.Shipment
                 }
                 if (currentShipment.SenderAvailabilities != null)
                 {
-                     _unitOfWork.ShipmentSenderAvailabilityRepository
+                    _unitOfWork.ShipmentSenderAvailabilityRepository
                         .Delete("ShipmentId=" + currentShipment.Id, transaction);
                 }
                 await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);
@@ -646,14 +682,14 @@ namespace TransApp.Domain.Services.Shipment
         public async Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId)
         {
             var shipmentsUnassigned =
-              await _unitOfWork.ShipmentRepository.GetShipmentsUnassignedAmount(customerId);
+                await _unitOfWork.ShipmentRepository.GetShipmentsUnassignedAmount(customerId);
             var shipmentsCompleted =
-               await _unitOfWork.ShipmentRepository.GetShipmentsCompletedAmount(customerId);
+                await _unitOfWork.ShipmentRepository.GetShipmentsCompletedAmount(customerId);
             var shipmentsAssigned =
-              await _unitOfWork.ShipmentRepository.GetShipmentsAssignedAmount(customerId);
+                await _unitOfWork.ShipmentRepository.GetShipmentsAssignedAmount(customerId);
             var shipmentsOpenMarket =
-              await _unitOfWork.ShipmentRepository.GetShipmentsOpenMarketAmount(customerId);
-            List<ShipmentTransporterFilterModel> result= new List<ShipmentTransporterFilterModel>();
+                await _unitOfWork.ShipmentRepository.GetShipmentsOpenMarketAmount(customerId);
+            List<ShipmentTransporterFilterModel> result = new List<ShipmentTransporterFilterModel>();
 
             ShipmentTransporterFilterModel unassigned = new ShipmentTransporterFilterModel
             {
@@ -715,10 +751,11 @@ namespace TransApp.Domain.Services.Shipment
 
         }
 
-        public async Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction, int? parentId = null)
+        public async Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId,
+            IDbTransaction transaction, int? parentId = null)
         {
             ShipmentDetail aShipmentDetailChild =
-                                 Mapper.Map<ShipmentDetailModel, ShipmentDetail>(shipmentDetailModel);
+                Mapper.Map<ShipmentDetailModel, ShipmentDetail>(shipmentDetailModel);
             if (aShipmentDetailChild != null)
             {
                 aShipmentDetailChild.DateModified = DateTime.Now;
@@ -743,6 +780,60 @@ namespace TransApp.Domain.Services.Shipment
         {
             ShipmentModel currentShipmentModel = await Get(shipmentId);
             await DeleteShipment(currentShipmentModel);
+        }
+
+        public async Task<bool> AssignToOpenMarket(int userId, int shipmentId)
+        {
+            var shipmentStatusId =
+                _unitOfWork.ShipmentStatusRepository.GetAll().FirstOrDefault(a => a.Code == "OPEN").Id;
+            return
+                await
+                    _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId,
+                        shipmentStatusId: shipmentStatusId);
+        }
+
+        public async Task<bool> MoveToUnassigned(int userId, int shipmentId)
+        {
+            try
+            {
+                var transaction = _unitOfWork.BeginTransaction();
+                await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction);
+                _unitOfWork.ShipmentTransporterRepository
+                    .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
+                _unitOfWork.Commit(transaction);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> ConfirmTransporter(int userId, int shipmentId, int transpoterId)
+        {
+            try
+            {
+                var shipmentStatusId =
+                    _unitOfWork.ShipmentStatusRepository.GetAll().FirstOrDefault(a => a.Code == "CON").Id;
+                var transaction = _unitOfWork.BeginTransaction();
+                await
+                    _unitOfWork.ShipmentRepository.UpdateShipmentTransporter(userId, shipmentId, transaction,
+                        shipmentStatusId, transpoterId);
+                _unitOfWork.ShipmentTransporterRepository
+                    .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
+                _unitOfWork.Commit(transaction);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public async Task<int> GetAllCount(FilterShipment filter)
+        {
+            return
+                await _unitOfWork.ShipmentRepository.GetAllCount(filter);
         }
     }
 }

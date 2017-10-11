@@ -28,10 +28,10 @@ namespace TransApp.Domain.Services.Addresses
             _cacheService = cacheService;
         }
 
-        public async Task<AddressModel> Get(int addressId)
+        public async Task<AddressModel> Get(int addressId, int? customerId =null)
         {
             var currentAdrress =
-                await _unitOfWork.AddressesRepository.GetFullAddressById(addressId);
+                await _unitOfWork.AddressesRepository.GetFullAddressById(addressId, customerId);
             if (currentAdrress != null)
             {
                 AddressModel result = new AddressModel

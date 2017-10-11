@@ -17,7 +17,7 @@ namespace TransApp.Domain.Services.Shipment
         /// </summary>
         /// <param name="ShipmentId"></param>
         /// <returns></returns>
-        Task<ShipmentModel> Get(int id);
+        Task<ShipmentModel> Get(int id, int? customerId = null);
 
         /// <summary>
         /// Get all shipments based on filter - only from main object
@@ -41,5 +41,13 @@ namespace TransApp.Domain.Services.Shipment
         Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null, int? parentId = null);
 
         Task DeleteShipmentById(int shipmentId);
+
+        Task<bool> AssignToOpenMarket(int userId,int shipmentId);
+
+        Task<bool> MoveToUnassigned(int userId, int shipmentId);
+
+        Task<bool> ConfirmTransporter(int userId, int shipmentId,int transpoterId );
+
+        Task<int> GetAllCount(FilterShipment filter);
     }
 }

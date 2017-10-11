@@ -15,7 +15,7 @@ namespace TransApp.Persistence.Repository
         /// Get address by id
         /// </summary>
         /// <param name="id"></param>
-        Task<ShipmentDto> GetShipmentById(int id);
+        Task<ShipmentDto> GetShipmentById(int id, int? customerId = null);
 
         Task<List<ShipmentSimpleDto>> GetShipmentFiltered(FilterShipment filter);
 
@@ -27,5 +27,12 @@ namespace TransApp.Persistence.Repository
         Task<dynamic> GetShipmentsCompletedAmount(int customerId);
         Task<dynamic> GetShipmentsAssignedAmount(int customerId);
         Task<dynamic> GetShipmentsOpenMarketAmount(int customerId);
+
+        Task<bool> UpdateShipmentStatus(int userId, int shipmentId, IDbTransaction transaction = null,
+            int? shipmentStatusId = null);
+        Task<bool> UpdateShipmentTransporter(int userId, int shipmentId, IDbTransaction transaction = null,
+           int? shipmentStatusId = null, int? transporterId = null);
+
+        Task<int> GetAllCount(FilterShipment filter);
     }
 }

@@ -15,7 +15,7 @@ namespace TransApp.Domain.Services.Addresses
         /// </summary>
         /// <param name="addressId"></param>
         /// <returns></returns>
-        Task<AddressModel> Get(int addressId);
+        Task<AddressModel> Get(int addressId, int? customerId = null);
 
         /// <summary>
         /// filter currentAddress/by customer now

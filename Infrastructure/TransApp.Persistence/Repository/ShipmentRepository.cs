@@ -21,7 +21,7 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public async Task<ShipmentDto> GetShipmentById(int id)
+        public async Task<ShipmentDto> GetShipmentById(int id, int? customerId=null)
         {
             var lookup = new Dictionary<int, ShipmentDto>();
             var lookupShipment = new Dictionary<int, List<int>>();
@@ -42,7 +42,7 @@ namespace TransApp.Persistence.Repository
                             <Shipment, ShipmentDetail, ShipmentReceiverFacility, ShipmentReceiverRequirement,
                                 ShipmentReceiverTruck,
                                 ShipmentSenderFacility, ShipmentSenderRequirement, ShipmentDto
-                            >(GetQuery(id),
+                            >(GetQuery(id,customerId),
                                 (shipment, shipmentDetail, shipmentReceiverFacility, shipmentReceiverRequirement,
                                         shipmentReceiverTruck,
                                         shipmentSenderFacility, shipmentSenderRequirement) =>
@@ -138,7 +138,7 @@ namespace TransApp.Persistence.Repository
             ShipmentDto result = lookup.Values.FirstOrDefault();
             if (result != null)
             {
-                ShipmentDto resultExtra = await GetShipmentExtraById(id);
+                ShipmentDto resultExtra = await GetShipmentExtraById(id,customerId);
                 if (resultExtra != null)
                 {
                     if (resultExtra.ShipmentSenderTrucks != null)
@@ -154,7 +154,7 @@ namespace TransApp.Persistence.Repository
             return result;
         }
 
-        public async Task<ShipmentDto> GetShipmentExtraById(int id)
+        public async Task<ShipmentDto> GetShipmentExtraById(int id, int? customerId)
         {
             var lookup = new Dictionary<int, ShipmentDto>();
             var lookupShipment = new Dictionary<int, List<int>>();
@@ -171,7 +171,7 @@ namespace TransApp.Persistence.Repository
                         cn
                             .QueryAsync
                             <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentReceiverAvailability, ShipmentSenderAvailability, ShipmentDto
-                            >(GetQueryExtra(id),
+                            >(GetQueryExtra(id,customerId),
                                 (shipment, shipmentSenderTruck, shipmentTransporter, shipmentReceiverAvailability, shipmentSenderAvailability) =>
                                 {
                                     ShipmentDto entity;
@@ -290,7 +290,7 @@ namespace TransApp.Persistence.Repository
             }
         }
 
-        private string GetQuery(int id)
+        private string GetQuery(int id, int? customerId)
         {
             var sb = new StringBuilder();
             sb.Append(@"select 
@@ -387,6 +387,10 @@ left outer
 join [ShipmentSenderRequirement] on [ShipmentSenderRequirement].ShipmentId = [Shipment].Id
 
 where [Shipment].Id =  " + id);
+            if (customerId.HasValue)
+            {
+                sb.Append(" AND Shipment.CustomerId=" + customerId.Value);
+            }
             return sb.ToString();
         }
 
@@ -439,6 +443,125 @@ where [Shipment].Id =  " + id);
                 cn.Open();
                 return (await cn.QueryAsync<dynamic>(GetQueryCommon(), d)).FirstOrDefault();
             }
+        }
+
+        public async Task<bool> UpdateShipmentStatus(int userId, int shipmentId, IDbTransaction transaction = null,
+            int? shipmentStatusId = null)
+        {
+            DataModel.Dto.Shipment currentShipment = new DataModel.Dto.Shipment
+            {
+                Id = shipmentId,
+                ShipmentStatusId = shipmentStatusId,
+                UserIdModified = userId,
+                DateModified = DateTime.Now
+            };
+            List<string> columnsToUpdateList = new List<string>();
+            columnsToUpdateList.Add("ShipmentStatusId");
+            columnsToUpdateList.Add("UserIdModified");
+            columnsToUpdateList.Add("DateModified");
+            try
+            {
+                await UpdateAsync(currentShipment, transaction, true, columnsToUpdateList);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<bool> UpdateShipmentTransporter(int userId, int shipmentId, IDbTransaction transaction = null,
+           int? shipmentStatusId = null, int? transporterId = null)
+        {
+            DataModel.Dto.Shipment currentShipment = new DataModel.Dto.Shipment
+            {
+                Id = shipmentId,
+                ShipmentStatusId = shipmentStatusId,
+                TransporterId = transporterId,
+                UserIdModified = userId,
+                DateModified = DateTime.Now
+            };
+            List<string> columnsToUpdateList = new List<string>();
+            columnsToUpdateList.Add("ShipmentStatusId");
+            columnsToUpdateList.Add("TransporterId");
+            columnsToUpdateList.Add("UserIdModified");
+            columnsToUpdateList.Add("DateModified");
+            try
+            {
+                await UpdateAsync(currentShipment, transaction, true, columnsToUpdateList);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public async Task<int> GetAllCount(FilterShipment filter)
+        {
+            using (IDbConnection cn = new SqlConnection(ConnectionString))
+            {
+                cn.Open();
+                return (await cn.QueryAsync<int>(GetShipmentQueryFilteredCount(filter))).Count();
+            }
+        }
+
+        private string GetShipmentQueryFilteredCount(FilterShipment filter)
+        {
+            if (filter.StartItem < 0)
+            {
+                filter.StartItem = 0;
+            }
+            if (filter.Amount < 0)
+            {
+                filter.Amount = 9999;
+            }
+            var sb = new StringBuilder();
+            sb.Append(@"SELECT  
+      [Shipment].[Id]
+from Shipment 
+left outer join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+where 1=1");
+            if (filter.CustomerId.HasValue)
+            {
+                sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
+            }
+            if (filter.ShipmentStatusId.HasValue)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId=" + filter.ShipmentStatusId.Value);
+            }
+            if (filter.TransporterId.HasValue)
+            {
+                sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+            {
+                sb.Append(" and Shipment.ShipmentStatusId is null");
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+            {
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                if (filter.Declined)
+                {
+                    sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
+                    where  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=1)");
+                }
+                else if (filter.Pending)
+                {
+                    sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
+                    where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
+                }
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+            {
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
+            }
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+            {
+                sb.Append(" and ShipmentStatus.code=@StatusCode");
+            }
+
+            return sb.ToString();
         }
 
         private string GetQueryUnassigned()
@@ -495,7 +618,7 @@ where [Shipment].Id =  " + id);
             return sb.ToString();
         }
 
-        private string GetQueryExtra(int id)
+        private string GetQueryExtra(int id, int? customerId)
         {
             var sb = new StringBuilder();
             sb.Append(@"select 
@@ -583,6 +706,10 @@ join [ShipmentReceiverAvailability] on [ShipmentReceiverAvailability].ShipmentId
 left outer
 join [ShipmentSenderAvailability] on [ShipmentSenderAvailability].ShipmentId = [Shipment].Id
 where [Shipment].Id =  " + id);
+            if (customerId.HasValue)
+            {
+                sb.Append(" AND Shipment.CustomerId=" + customerId.Value);
+            }
             return sb.ToString();
         }
 
