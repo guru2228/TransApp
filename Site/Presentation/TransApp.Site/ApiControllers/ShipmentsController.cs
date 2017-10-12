@@ -35,13 +35,14 @@ namespace TransApp.Site.ApiControllers
         /// Get shipment by id
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="customerId"></param>
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("get/{id}/{language}")]
-        public async Task<ShipmentModel> Get(int id, string language)
+        [HttpGet("get/{id}/{customerId}/{language}")]
+        public async Task<ShipmentModel> Get(int id, int customerId, string language)
         {
-          return await _shipmentService.Get(id);
+          return await _shipmentService.Get(id, customerId);
         }
 
 
@@ -63,14 +64,15 @@ namespace TransApp.Site.ApiControllers
         /// Delete a shipment
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="customerId"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpDelete("delete/{id}")]
-        public async Task<bool> Delete(int id)
+        [HttpDelete("delete/{id}/{customerId}")]
+        public async Task<bool> Delete(int id, int customerId)
         {
             try
             {
-                var shipment = await this.Get(id, "EN");
+                var shipment = await this.Get(id, customerId, "EN");
                 await _shipmentService.DeleteShipment(shipment);
             }
             catch (Exception)
@@ -86,7 +88,7 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getShipmentFilters/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        [HttpGet("getShipmentFilters/{customerId}/{language}")]
         public async Task<IEnumerable<ShipmentTransporterFilterModel>> GetShipmentFilters(int customerId, string language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -113,7 +115,7 @@ namespace TransApp.Site.ApiControllers
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getAll/{customerId}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        [HttpGet("getAll/{customerId}/{shipmentStatus}/{startItem}/{numberOfRetrievedItems}/{language}")]
         public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int shipmentStatus, int startItem, int numberOfRetrievedItems,
             int language)
         {
@@ -126,10 +128,11 @@ namespace TransApp.Site.ApiControllers
             var searchFilter = new FilterShipment
             {
                 CustomerId = currentUser.CustomerId.Value,
-                ShipmentStatusId = shipmentStatus,
                 StartItem = startItem,
                 Amount = numberOfRetrievedItems
             };
+            if (shipmentStatus > 0)
+                searchFilter.ShipmentStatusId = shipmentStatus;
 
             var shipments = await _shipmentService.GetAll(searchFilter);
             return shipments;
@@ -144,7 +147,7 @@ namespace TransApp.Site.ApiControllers
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getCount/{customerId}/{language}")]
+        [HttpGet("getCount/{customerId}/{shipmentStatus}/{language}")]
         public async Task<int> GetCount(int customerId, int shipmentStatus, 
             int language)
         {
@@ -157,13 +160,14 @@ namespace TransApp.Site.ApiControllers
             var searchFilter = new FilterShipment
             {
                 CustomerId = currentUser.CustomerId.Value,
-                ShipmentStatusId = shipmentStatus,
                 StartItem = 0,
                 Amount = 10000
             };
+            if (shipmentStatus > 0)
+                searchFilter.ShipmentStatusId = shipmentStatus;
 
-            var shipments = await _shipmentService.GetAll(searchFilter);
-            return shipments.Count;
+            var shipmentsCount = await _shipmentService.GetAllCount(searchFilter);
+            return shipmentsCount;
         }
     }
 }

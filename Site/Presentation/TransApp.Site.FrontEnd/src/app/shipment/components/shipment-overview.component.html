@@ -67,37 +67,8 @@
             </div>
         </div>
 
-
         <div class="row">
             <div class="col-md-12">
-                <!--   <div class="nav-center">
-                    <ul class="nav nav-pills nav-pills-warning nav-pills-icons" role="tablist">
-
-                    color-classes: "nav-pills-primary", "nav-pills-info", "nav-pills-success", "nav-pills-warning","nav-pills-danger"
-
-                        <li>
-                            <a href="#description-1" role="tab" data-toggle="tab">
-                                <i class="material-icons">info</i> Unassigned
-                            </a>
-                        </li>
-                        <li class="active">
-                            <a href="#schedule-1" role="tab" data-toggle="tab">
-                                <i class="material-icons">location_on</i> Open merket
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tasks-1" role="tab" data-toggle="tab">
-                                <i class="material-icons">gavel</i> Assigned
-                            </a>
-                        </li>
-                        <li>
-                            <a href="#tasks-2" role="tab" data-toggle="tab">
-                                <i class="material-icons">help_outline</i> Confirmed
-                            </a>
-                        </li>
-                    </ul>
-                </div>    -->
-
                 <button class="btn btn-warning">
                         <i class="material-icons">warning</i> Pending
                     </button>
@@ -119,21 +90,22 @@
                                         <th>Delivery date</th>
                                         <th>From</th>
                                         <th>Destination</th>
+                                        <th>Quantity</th>
                                         <th>Transport company</th>
                                         <th>Price</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
-                                    <ng-container *ngFor="let shipmentRow of shipmentModel; let rowindex = index">
+                                    <ng-container *ngFor="let shipmentRow of componentModel; let rowindex = index">
                                         <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
-                                            <td>{{shipmentRow.shipment.pickupdate}}</td>
-                                            <td>{{shipmentRow.shipment.deliverydate}}</td>
-                                            <td>{{shipmentRow.shipment.from}}</td>
-                                            <td>{{shipmentRow.shipment.destionation}}</td>
-                                            <td>{{shipmentRow.shipment.quantity}}</td>
-                                            <td>{{shipmentRow.shipment.transporter}}</td>
-                                            <td>{{shipmentRow.shipment.price}}</td>
+                                            <td>{{shipmentRow.shipment.pickUpDate}}</td>
+                                            <td>{{shipmentRow.shipment.deliveryDate}}</td>
+                                            <td>{{shipmentRow.shipment.senderContactPerson}}</td>
+                                            <td>{{shipmentRow.shipment.receiverContactPerson}}</td>
+                                            <td>{{shipmentRow.shipment.totalQuatity}}</td>
+                                            <td>{{shipmentRow.shipment.transporterId}}</td>
+                                            <td>{{shipmentRow.shipment.totalPrice}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
@@ -177,7 +149,22 @@
                         </div>
 
 
+                        <ul *ngIf="pagesCollection && pagesCollection.length > 0" class="pagination pagination-info">
+                            <li>
+                                <a href="javascript:void(0);" (click)="paginate((currentPage -1 < 0 ? 0 : currentPage -1))"> prev</a>
+                            </li>
+                            <li *ngFor="let page of pagesCollection;  let idx = index" [ngClass]="currentPage == page ? 'active' : ''">
+                                <a href="javascript:void(0);" (click)="paginate(page)"> {{page + 1}}</a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" (click)="paginate((currentPage +1 > pagesCollection.length -1 ? pagesCollection.length -1 : currentPage +1))"> next</a>
+                            </li>
+                        </ul>
+
                     </div>
+                    <h4 *ngIf="componentModel && componentModel.length <= 0">
+                        &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
+                    </h4>
                 </div>
             </div>
         </div>

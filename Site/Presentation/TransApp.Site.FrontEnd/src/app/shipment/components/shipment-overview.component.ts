@@ -24,8 +24,6 @@ declare var swal: any;
   templateUrl: './shipment-overview.component.html'
 })
 export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
-  headerRow: string[];
-
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
   componentModel: ShipmentRowViewModel[] = [];
   filters: ShipmentTransporterFilterModel[];
@@ -34,9 +32,9 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   currentAddressId = -1;
   currentPage = 0;
   pagesCollection: Array<number>;
-  pageSize = 20;
+  pageSize = 4;
 
-  selectedShipmentStatus: ShipmentTransporterStatus;
+  selectedShipmentStatus: ShipmentTransporterStatus = ShipmentTransporterStatus.none;
 
   private subscriptionReceiveUpdatedShipment: Subscription;
 
@@ -52,9 +50,11 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   }
   // constructor(private navbarTitleService: NavbarTitleService) { }
   public ngOnInit() {
-    this.headerRow = ['Pickup data', 'Delivery date', 'From', 'Destination', 'Quantity', 'Transport company', 'Price'];
 
     this.currentUser = this.authenticationService.getCurrentUser();
+
+    this.notificationService.showLoading();
+
     this.getShipmentFilters();
 
     this.getNumberOfShipments('', false);
@@ -66,8 +66,6 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
    * Get addresses
    */
   private getShipments() {
-    this.notificationService.showLoading();
-
     if (this.currentUser && this.currentUser.customerId) {
       this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentStatus, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
         this.componentModel = [];
@@ -76,6 +74,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
             this.currentAddressId = +this.route.firstChild.snapshot.params['id']
           }
           for (let i = 0; i < result.length; i++) {
+            debugger;
             const shipmentRow = new ShipmentRowViewModel();
             shipmentRow.shipment = result[i];
             // if url contains edit then open it by default
@@ -102,6 +101,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     if (this.currentUser && this.currentUser.customerId) {
       this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentStatus, this.translateService.currentLanguage).subscribe(result => {
         this.pagesCollection = [];
+        debugger;
         let numberOfPages = Math.ceil(result / this.pageSize);
         numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
         const self = this;
@@ -120,8 +120,8 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
    * Get addresses
    */
   private getShipmentFilters() {
-    this.notificationService.showLoading();
     if (this.currentUser && this.currentUser.customerId) {
+      debugger;
       this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
         this.filters = result;
       }, error => {
@@ -167,7 +167,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   /**
    * Show edit address
    * */
-  onClickEditAddress(shipmentRow: ShipmentRowViewModel) {
+  onClickEditShipment(shipmentRow: ShipmentRowViewModel) {
     this.notificationService.showLoading();
 
     shipmentRow.viewActions = false;
@@ -178,7 +178,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   /** Show edit address */
-  onClickDeleteAddress(shipmentId: number) {
+  onClickDeleteShipment(shipmentId: number) {
     const self = this;
     swal({
       title: 'Are you sure?',
@@ -262,6 +262,18 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     //  Activate the tooltips
     $('[rel="tooltip"]').tooltip();
   }
+
+    /**
+   * Move to next/previous page
+   * @param page
+   */
+  paginate(page: number) {
+    this.currentPage = page;
+    this.getShipments();
+
+    this.helperService.scrollOnTop();
+  }
+
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedShipment) {

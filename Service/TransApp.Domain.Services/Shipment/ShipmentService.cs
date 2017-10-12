@@ -15,6 +15,7 @@ using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Shipment;
 using TransApp.Framework.Filter;
 using TransApp.Persistence.UnitOfWork;
+using TransApp.Core.Helper;
 
 namespace TransApp.Domain.Services.Shipment
 {
@@ -697,10 +698,11 @@ namespace TransApp.Domain.Services.Shipment
             };
             if (shipmentsUnassigned != null)
             {
-                unassigned.Amount = shipmentsUnassigned.Amount;
-                if (shipmentsUnassigned.LastDateTime != null && shipmentsUnassigned.LastDateTime != DBNull.Value)
+                var fields = shipmentsUnassigned as IDictionary<string, object>;
+                if (fields != null) unassigned.Amount = Convert.ToInt32(fields["Amount"]);
+                if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    unassigned.LastDateTime = shipmentsUnassigned.LastDateTime;
+                    unassigned.LastDateTime = (DateTime) fields["LastDateTime"];
                 }
             }
             result.Add(unassigned);
@@ -711,11 +713,13 @@ namespace TransApp.Domain.Services.Shipment
             };
             if (shipmentsCompleted != null)
             {
-                completed.Amount = shipmentsCompleted.Amount;
-                if (shipmentsCompleted.LastDateTime != null && shipmentsCompleted.LastDateTime != DBNull.Value)
+                var fields = shipmentsCompleted as IDictionary<string, object>;
+                if (fields != null) completed.Amount = Convert.ToInt32(fields["Amount"]);
+                if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    completed.LastDateTime = shipmentsCompleted.LastDateTime;
+                    completed.LastDateTime = (DateTime)fields["LastDateTime"];
                 }
+
             }
             result.Add(completed);
 
@@ -725,25 +729,32 @@ namespace TransApp.Domain.Services.Shipment
             };
             if (shipmentsAssigned != null)
             {
-                assigned.Amount = shipmentsAssigned.Amount;
-                if (shipmentsAssigned.LastDateTime != null && shipmentsAssigned.LastDateTime != DBNull.Value)
+                var fields = shipmentsAssigned as IDictionary<string, object>;
+                if (fields != null) assigned.Amount = Convert.ToInt32(fields["Amount"]);
+                if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    assigned.LastDateTime = shipmentsAssigned.LastDateTime;
+                    assigned.LastDateTime = (DateTime)fields["LastDateTime"];
                 }
-                assigned.Declined = shipmentsAssigned.Declined;
-                assigned.Pending = shipmentsAssigned.Pending;
+
+                if (fields != null)
+                {
+                    assigned.Declined = Convert.ToInt32(fields["Declined"]) ;
+                    assigned.Pending = Convert.ToInt32(fields["Pending"])  ;
+                }
             }
             result.Add(assigned);
+
             ShipmentTransporterFilterModel openMarket = new ShipmentTransporterFilterModel
             {
                 StatusType = ShipmentTransporterStatus.OpenMarket
             };
             if (shipmentsOpenMarket != null)
             {
-                openMarket.Amount = shipmentsOpenMarket.Amount;
-                if (shipmentsOpenMarket.LastDateTime != null && shipmentsOpenMarket.LastDateTime != DBNull.Value)
+                var fields = shipmentsOpenMarket as IDictionary<string, object>;
+                if (fields != null) unassigned.Amount = Convert.ToInt32(fields["Amount"]);
+                if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    openMarket.LastDateTime = shipmentsOpenMarket.LastDateTime;
+                    openMarket.LastDateTime = (DateTime)fields["LastDateTime"];
                 }
             }
             result.Add(openMarket);

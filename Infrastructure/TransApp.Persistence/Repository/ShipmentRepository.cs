@@ -797,7 +797,7 @@ where 1=1");
             }
 
             sb.Append(@" ) AS RowConstrainedResult
-WHERE  RowNum between " + filter.StartItem + @" and " + filter.StartItem + filter.Amount + @" ORDER BY RowNum ");
+WHERE  RowNum between " + filter.StartItem + @" and " + (filter.StartItem + filter.Amount - 1) + @" ORDER BY RowNum ");
             return sb.ToString();
         }
     }
