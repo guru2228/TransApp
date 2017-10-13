@@ -47,7 +47,7 @@ namespace TransApp.Domain.Shipment
 
         public decimal? TotalWeight { get; set; }
 
-        public int? ShipmentStatusId { get; set; }
+        public string ShipmentStatus { get; set; }
 
         public int? TransporterId { get; set; }
 
@@ -60,6 +60,7 @@ namespace TransApp.Domain.Shipment
         public string UserModified { get; set; }
 
         public string UserCreated { get; set; }
+        public string TransporterName { get; set; }
 
         public DateTime? DateModified { get; set; }
 

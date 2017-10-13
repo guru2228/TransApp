@@ -29,9 +29,9 @@ namespace TransApp.Persistence.Repository
         Task<dynamic> GetShipmentsOpenMarketAmount(int customerId);
 
         Task<bool> UpdateShipmentStatus(int userId, int shipmentId, IDbTransaction transaction = null,
-            int? shipmentStatusId = null);
+            string shipmentStatus = null);
         Task<bool> UpdateShipmentTransporter(int userId, int shipmentId, IDbTransaction transaction = null,
-           int? shipmentStatusId = null, int? transporterId = null);
+           string shipmentStatus = null, int? transporterId = null);
 
         Task<int> GetAllCount(FilterShipment filter);
     }

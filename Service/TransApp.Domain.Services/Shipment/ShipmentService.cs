@@ -44,7 +44,7 @@ namespace TransApp.Domain.Services.Shipment
                     CustomerId = currentShipment.Shipment.CustomerId,
                     PickUpDate = currentShipment.Shipment.PickUpDate,
                     PoNumber = currentShipment.Shipment.PoNumber,
-                    ShipmentStatusId = currentShipment.Shipment.ShipmentStatusId,
+                    ShipmentStatus = currentShipment.Shipment.ShipmentStatus,
                     TotalPrice = currentShipment.Shipment.TotalPrice,
                     TotalQuatity = currentShipment.Shipment.TotalQuatity,
                     TotalVolume = currentShipment.Shipment.TotalVolume,
@@ -211,7 +211,7 @@ namespace TransApp.Domain.Services.Shipment
                             CustomerId = currentShipment.CustomerId,
                             PickUpDate = currentShipment.PickUpDate,
                             PoNumber = currentShipment.PoNumber,
-                            ShipmentStatusId = currentShipment.StatusId,
+                            ShipmentStatus = currentShipment.ShipmentStatus,
                             TotalPrice = currentShipment.TotalPrice,
                             TotalQuatity = currentShipment.TotalQuatity,
                             TotalVolume = currentShipment.TotalVolume,
@@ -231,7 +231,8 @@ namespace TransApp.Domain.Services.Shipment
                             UserIdModified = currentShipment.UserIdModified,
                             DateModified = currentShipment.DateModified,
                             UserCreated = currentShipment.UserCreated,
-                            UserModified = currentShipment.UserModified
+                            UserModified = currentShipment.UserModified,
+                            TransporterName = currentShipment.TransporterName
                         };
 
                         result.Add(shipmentModel);
@@ -256,7 +257,8 @@ namespace TransApp.Domain.Services.Shipment
                 CustomerId = currentShipment.CustomerId,
                 PickUpDate = currentShipment.PickUpDate,
                 PoNumber = currentShipment.PoNumber,
-                ShipmentStatusId = currentShipment.ShipmentStatusId,
+                ShipmentStatus =
+                    !string.IsNullOrEmpty(currentShipment.ShipmentStatus) ? currentShipment.ShipmentStatus : "UAS",
                 TotalPrice = currentShipment.TotalPrice,
                 TotalQuatity = currentShipment.TotalQuatity,
                 TotalVolume = currentShipment.TotalVolume,
@@ -717,7 +719,7 @@ namespace TransApp.Domain.Services.Shipment
                 if (fields != null) completed.Amount = Convert.ToInt32(fields["Amount"]);
                 if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    completed.LastDateTime = (DateTime)fields["LastDateTime"];
+                    completed.LastDateTime = (DateTime) fields["LastDateTime"];
                 }
 
             }
@@ -733,13 +735,13 @@ namespace TransApp.Domain.Services.Shipment
                 if (fields != null) assigned.Amount = Convert.ToInt32(fields["Amount"]);
                 if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    assigned.LastDateTime = (DateTime)fields["LastDateTime"];
+                    assigned.LastDateTime = (DateTime) fields["LastDateTime"];
                 }
 
                 if (fields != null)
                 {
-                    assigned.Declined = Convert.ToInt32(fields["Declined"]) ;
-                    assigned.Pending = Convert.ToInt32(fields["Pending"])  ;
+                    assigned.Declined = Convert.ToInt32(fields["Declined"]);
+                    assigned.Pending = Convert.ToInt32(fields["Pending"]);
                 }
             }
             result.Add(assigned);
@@ -754,7 +756,7 @@ namespace TransApp.Domain.Services.Shipment
                 if (fields != null) unassigned.Amount = Convert.ToInt32(fields["Amount"]);
                 if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
-                    openMarket.LastDateTime = (DateTime)fields["LastDateTime"];
+                    openMarket.LastDateTime = (DateTime) fields["LastDateTime"];
                 }
             }
             result.Add(openMarket);
@@ -795,12 +797,10 @@ namespace TransApp.Domain.Services.Shipment
 
         public async Task<bool> AssignToOpenMarket(int userId, int shipmentId)
         {
-            var shipmentStatusId =
-                _unitOfWork.ShipmentStatusRepository.GetAll().FirstOrDefault(a => a.Code == "OPEN").Id;
             return
                 await
                     _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId,
-                        shipmentStatusId: shipmentStatusId);
+                        shipmentStatus: "OPEN");
         }
 
         public async Task<bool> MoveToUnassigned(int userId, int shipmentId)
@@ -808,7 +808,7 @@ namespace TransApp.Domain.Services.Shipment
             try
             {
                 var transaction = _unitOfWork.BeginTransaction();
-                await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction);
+                await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction,  "UAS");
                 _unitOfWork.ShipmentTransporterRepository
                     .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
                 _unitOfWork.Commit(transaction);
@@ -824,12 +824,10 @@ namespace TransApp.Domain.Services.Shipment
         {
             try
             {
-                var shipmentStatusId =
-                    _unitOfWork.ShipmentStatusRepository.GetAll().FirstOrDefault(a => a.Code == "CON").Id;
                 var transaction = _unitOfWork.BeginTransaction();
                 await
                     _unitOfWork.ShipmentRepository.UpdateShipmentTransporter(userId, shipmentId, transaction,
-                        shipmentStatusId, transpoterId);
+                        "CON", transpoterId);
                 _unitOfWork.ShipmentTransporterRepository
                     .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
                 _unitOfWork.Commit(transaction);

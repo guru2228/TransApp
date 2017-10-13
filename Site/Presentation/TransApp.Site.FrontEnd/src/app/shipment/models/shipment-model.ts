@@ -38,7 +38,7 @@ export class ShipmentModel {
   public totalVolume: number;
   public totalQuatity: number;
   public totalWeight: number;
-  public shipmentStatusId: number;
+  public shipmentStatus: string;
   public transporterId: number;
   public shipmentDetails: Array<ShipmentDetailRowModel>;
   public shipmentTransporters: Array<ShipmentTransporterModel>;

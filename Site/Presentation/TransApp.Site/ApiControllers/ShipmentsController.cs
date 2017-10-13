@@ -116,7 +116,7 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getAll/{customerId}/{shipmentStatus}/{startItem}/{numberOfRetrievedItems}/{language}")]
-        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int shipmentStatus, int startItem, int numberOfRetrievedItems,
+        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, string shipmentStatus, int startItem, int numberOfRetrievedItems,
             int language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -131,9 +131,9 @@ namespace TransApp.Site.ApiControllers
                 StartItem = startItem,
                 Amount = numberOfRetrievedItems
             };
-            if (shipmentStatus > 0)
-                searchFilter.ShipmentStatusId = shipmentStatus;
-
+            if (!string.IsNullOrEmpty(shipmentStatus))
+                searchFilter.ShipmentStatus = shipmentStatus;
+            //aici ar trebui sa trimiti searchFilter.ShipmentTransporterStatus si nu ShipmentStatus
             var shipments = await _shipmentService.GetAll(searchFilter);
             return shipments;
         }
@@ -148,7 +148,7 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getCount/{customerId}/{shipmentStatus}/{language}")]
-        public async Task<int> GetCount(int customerId, int shipmentStatus, 
+        public async Task<int> GetCount(int customerId, string shipmentStatus, 
             int language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -163,9 +163,9 @@ namespace TransApp.Site.ApiControllers
                 StartItem = 0,
                 Amount = 10000
             };
-            if (shipmentStatus > 0)
-                searchFilter.ShipmentStatusId = shipmentStatus;
-
+            if (string.IsNullOrEmpty(shipmentStatus))
+                searchFilter.ShipmentStatus = shipmentStatus;
+            //aici ar trebui sa trimiti searchFilter.ShipmentTransporterStatus si nu ShipmentStatus
             var shipmentsCount = await _shipmentService.GetAllCount(searchFilter);
             return shipmentsCount;
         }

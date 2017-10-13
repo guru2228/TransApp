@@ -59,7 +59,7 @@ namespace TransApp.DataModel.Dto.Custom
 
         public decimal? TotalWeight { get; set; }
 
-        public int? StatusId { get; set; }
+        public string ShipmentStatus { get; set; }
 
         public int? TransporterId { get; set; }
 
@@ -72,5 +72,6 @@ namespace TransApp.DataModel.Dto.Custom
         public DateTime? DateModified { get; set; }
         public string UserCreated { get; set; }
         public string UserModified { get; set; }
+        public string TransporterName { get; set; }
     }
 }

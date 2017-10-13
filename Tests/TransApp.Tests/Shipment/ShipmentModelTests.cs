@@ -57,7 +57,7 @@ namespace TransApp.Tests.Shipment
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
             currentShipment.SenderRemark = "Iași to see availability";
-            currentShipment.ShipmentStatusId = 1;
+            currentShipment.ShipmentStatus = "UAS";
             currentShipment.TotalPrice = 5554;
             currentShipment.TotalQuatity = 6666;
             currentShipment.TotalVolume = 333;
@@ -112,7 +112,7 @@ namespace TransApp.Tests.Shipment
             currentShipment.SenderContactPerson = "gicu turcu";
             currentShipment.SenderPhone = "434343434";
             currentShipment.SenderRemark = "Iași to see availability";
-            currentShipment.ShipmentStatusId = 1;
+            currentShipment.ShipmentStatus = "UAS";
             currentShipment.TotalPrice = 5554;
             currentShipment.TotalQuatity = 6666;
             currentShipment.TotalVolume = 333;
@@ -250,7 +250,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(22,1);
+                    await _shipmentService.Get(24,1);
             }
             catch (Exception ex)
             {
@@ -265,7 +265,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 List<ShipmentModel> currentAddressModel =
-                    await _shipmentService.GetAll(new FilterShipment {CustomerId = 1, StartItem = 0, Amount = 5});
+                    await _shipmentService.GetAll(new FilterShipment {CustomerId = 1, StartItem = 0, Amount = 50});
             }
             catch (Exception ex)
             {
@@ -356,7 +356,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(21);
+                    await _shipmentService.Get(24);
 
                 foreach (var av in currentShipmentModel.ShipmentDetails)
                 {
@@ -410,7 +410,7 @@ namespace TransApp.Tests.Shipment
         [TestMethod]
         public async Task Test_AssignToOpenMarket_Is_Ok()
         {
-            if (await _shipmentService.AssignToOpenMarket(1000, 22))
+            if (await _shipmentService.AssignToOpenMarket(1000, 24))
             {
                 Assert.IsTrue(true);
                 return;
@@ -421,7 +421,7 @@ namespace TransApp.Tests.Shipment
         [TestMethod]
         public async Task Test_MoveToUnassigned_Is_Ok()
         {
-            if (await _shipmentService.MoveToUnassigned(1000, 22))
+            if (await _shipmentService.MoveToUnassigned(1000, 24))
             {
                 Assert.IsTrue(true);
                 return;
@@ -432,7 +432,7 @@ namespace TransApp.Tests.Shipment
         [TestMethod]
         public async Task Test_ConfirmTransporter_Is_Ok()
         {
-            if (await _shipmentService.ConfirmTransporter(1000, 22,1))
+            if (await _shipmentService.ConfirmTransporter(1000, 24,1))
             {
                 Assert.IsTrue(true);
                 return;

@@ -45,7 +45,7 @@ namespace TransApp.DataModel.Dto
 
         public decimal? TotalWeight { get; set; }
 
-        public int? ShipmentStatusId { get; set; }
+        public string ShipmentStatus { get; set; }
 
         public int? TransporterId { get; set; }
 

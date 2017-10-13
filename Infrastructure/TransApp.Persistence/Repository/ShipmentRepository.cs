@@ -21,7 +21,7 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public async Task<ShipmentDto> GetShipmentById(int id, int? customerId=null)
+        public async Task<ShipmentDto> GetShipmentById(int id, int? customerId = null)
         {
             var lookup = new Dictionary<int, ShipmentDto>();
             var lookupShipment = new Dictionary<int, List<int>>();
@@ -42,7 +42,7 @@ namespace TransApp.Persistence.Repository
                             <Shipment, ShipmentDetail, ShipmentReceiverFacility, ShipmentReceiverRequirement,
                                 ShipmentReceiverTruck,
                                 ShipmentSenderFacility, ShipmentSenderRequirement, ShipmentDto
-                            >(GetQuery(id,customerId),
+                            >(GetQuery(id, customerId),
                                 (shipment, shipmentDetail, shipmentReceiverFacility, shipmentReceiverRequirement,
                                         shipmentReceiverTruck,
                                         shipmentSenderFacility, shipmentSenderRequirement) =>
@@ -138,7 +138,7 @@ namespace TransApp.Persistence.Repository
             ShipmentDto result = lookup.Values.FirstOrDefault();
             if (result != null)
             {
-                ShipmentDto resultExtra = await GetShipmentExtraById(id,customerId);
+                ShipmentDto resultExtra = await GetShipmentExtraById(id, customerId);
                 if (resultExtra != null)
                 {
                     if (resultExtra.ShipmentSenderTrucks != null)
@@ -170,71 +170,78 @@ namespace TransApp.Persistence.Repository
                     await
                         cn
                             .QueryAsync
-                            <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentReceiverAvailability, ShipmentSenderAvailability, ShipmentDto
-                            >(GetQueryExtra(id,customerId),
-                                (shipment, shipmentSenderTruck, shipmentTransporter, shipmentReceiverAvailability, shipmentSenderAvailability) =>
-                                {
-                                    ShipmentDto entity;
-
-                                    if (!lookup.TryGetValue(shipment.Id, out entity))
+                            <Shipment, ShipmentSenderTruck, ShipmentTransporter, ShipmentReceiverAvailability,
+                                ShipmentSenderAvailability, ShipmentDto
+                            >(GetQueryExtra(id, customerId),
+                                (shipment, shipmentSenderTruck, shipmentTransporter, shipmentReceiverAvailability,
+                                        shipmentSenderAvailability) =>
                                     {
-                                        lookup.Add(shipment.Id, entity = new ShipmentDto());
-                                        entity.Shipment = shipment;
-                                    }
+                                        ShipmentDto entity;
 
-                                    if (!lookupShipment.ExistsList(entity.Shipment.Id, shipment.Id))
-                                    {
-                                        if (entity.Shipment == null)
-                                            entity.Shipment = new Shipment();
-                                        entity.Shipment = shipment;
-                                    }
-
-                                    if (shipmentSenderTruck != null)
-                                    {
-                                        if (!lookupSenderTruck.ExistsList(entity.Shipment.Id, shipment.Id))
+                                        if (!lookup.TryGetValue(shipment.Id, out entity))
                                         {
-                                            if (entity.ShipmentSenderTrucks == null)
-                                                entity.ShipmentSenderTrucks = new List<ShipmentSenderTruck>();
-                                            entity.ShipmentSenderTrucks.Add(shipmentSenderTruck);
-                                            ;
+                                            lookup.Add(shipment.Id, entity = new ShipmentDto());
+                                            entity.Shipment = shipment;
                                         }
-                                    }
 
-                                    if (shipmentTransporter != null)
-                                    {
-                                        if (
-                                            !lookupTransporter.ExistsList(entity.Shipment.Id, shipmentTransporter.Id))
+                                        if (!lookupShipment.ExistsList(entity.Shipment.Id, shipment.Id))
                                         {
-                                            if (entity.ShipmentTransporters == null)
-                                                entity.ShipmentTransporters = new List<ShipmentTransporter>();
-                                            entity.ShipmentTransporters.Add(shipmentTransporter);
+                                            if (entity.Shipment == null)
+                                                entity.Shipment = new Shipment();
+                                            entity.Shipment = shipment;
                                         }
-                                    }
 
-                                    if (shipmentReceiverAvailability != null)
-                                    {
-                                        if (
-                                            !lookupReceiverAvailability.ExistsList(entity.Shipment.Id, shipmentReceiverAvailability.Id))
+                                        if (shipmentSenderTruck != null)
                                         {
-                                            if (entity.ShipmentReceiverAvailability == null)
-                                                entity.ShipmentReceiverAvailability = new List<ShipmentReceiverAvailability>();
-                                            entity.ShipmentReceiverAvailability.Add(shipmentReceiverAvailability);
+                                            if (!lookupSenderTruck.ExistsList(entity.Shipment.Id, shipment.Id))
+                                            {
+                                                if (entity.ShipmentSenderTrucks == null)
+                                                    entity.ShipmentSenderTrucks = new List<ShipmentSenderTruck>();
+                                                entity.ShipmentSenderTrucks.Add(shipmentSenderTruck);
+                                                ;
+                                            }
                                         }
-                                    }
 
-                                    if (shipmentSenderAvailability != null)
-                                    {
-                                        if (
-                                            !lookupSenderAvailability.ExistsList(entity.Shipment.Id, shipmentSenderAvailability.Id))
+                                        if (shipmentTransporter != null)
                                         {
-                                            if (entity.ShipmentSenderAvailability == null)
-                                                entity.ShipmentSenderAvailability = new List<ShipmentSenderAvailability>();
-                                            entity.ShipmentSenderAvailability.Add(shipmentSenderAvailability);
+                                            if (
+                                                !lookupTransporter.ExistsList(entity.Shipment.Id, shipmentTransporter.Id))
+                                            {
+                                                if (entity.ShipmentTransporters == null)
+                                                    entity.ShipmentTransporters = new List<ShipmentTransporter>();
+                                                entity.ShipmentTransporters.Add(shipmentTransporter);
+                                            }
                                         }
-                                    }
 
-                                    return entity;
-                                }, "SplitSenderTruck,SplitTransporter,SplitReceiverAvailability,SplitSenderAvailability");
+                                        if (shipmentReceiverAvailability != null)
+                                        {
+                                            if (
+                                                !lookupReceiverAvailability.ExistsList(entity.Shipment.Id,
+                                                    shipmentReceiverAvailability.Id))
+                                            {
+                                                if (entity.ShipmentReceiverAvailability == null)
+                                                    entity.ShipmentReceiverAvailability =
+                                                        new List<ShipmentReceiverAvailability>();
+                                                entity.ShipmentReceiverAvailability.Add(shipmentReceiverAvailability);
+                                            }
+                                        }
+
+                                        if (shipmentSenderAvailability != null)
+                                        {
+                                            if (
+                                                !lookupSenderAvailability.ExistsList(entity.Shipment.Id,
+                                                    shipmentSenderAvailability.Id))
+                                            {
+                                                if (entity.ShipmentSenderAvailability == null)
+                                                    entity.ShipmentSenderAvailability =
+                                                        new List<ShipmentSenderAvailability>();
+                                                entity.ShipmentSenderAvailability.Add(shipmentSenderAvailability);
+                                            }
+                                        }
+
+                                        return entity;
+                                    },
+                                "SplitSenderTruck,SplitTransporter,SplitReceiverAvailability,SplitSenderAvailability");
             }
             return lookup.Values.FirstOrDefault();
         }
@@ -246,6 +253,10 @@ namespace TransApp.Persistence.Repository
             {
                 DynamicParameters d = new DynamicParameters();
                 {
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+                    {
+                        d.Add("@StatusCode", "UAS");
+                    }
                     if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
                     {
                         d.Add("@StatusCode", "ASS");
@@ -257,6 +268,10 @@ namespace TransApp.Persistence.Repository
                     if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
                     {
                         d.Add("@StatusCode", "COM");
+                    }
+                    if (!string.IsNullOrEmpty(filter.ShipmentStatus))
+                    {
+                        d.Add("@ShipmentStatus", filter.ShipmentStatus);
                     }
                 }
                 cn.Open();
@@ -312,7 +327,7 @@ namespace TransApp.Persistence.Repository
       ,[Shipment].[TotalVolume]
       ,[Shipment].[TotalQuatity]
       ,[Shipment].[TotalWeight]
-      ,[Shipment].[ShipmentStatusId]
+      ,[Shipment].[ShipmentStatus]
       ,[Shipment].[TransporterId]
       ,[Shipment].[UserIdCreated]
       ,[Shipment].[DateCreated]
@@ -403,10 +418,11 @@ where [Shipment].Id =  " + id);
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
-                DynamicParameters d=new DynamicParameters();
-                d.Add("@CustomerId",customerId);
+                DynamicParameters d = new DynamicParameters();
+                d.Add("@CustomerId", customerId);
+                d.Add("@Code", "UAS");
                 cn.Open();
-                return (await cn.QueryAsync<dynamic>(GetQueryUnassigned(),d)).FirstOrDefault();
+                return (await cn.QueryAsync<dynamic>(GetQueryCommon(), d)).FirstOrDefault();
             }
         }
 
@@ -421,6 +437,7 @@ where [Shipment].Id =  " + id);
                 return (await cn.QueryAsync<dynamic>(GetQueryCommon(), d)).FirstOrDefault();
             }
         }
+
         public async Task<dynamic> GetShipmentsAssignedAmount(int customerId)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
@@ -446,17 +463,17 @@ where [Shipment].Id =  " + id);
         }
 
         public async Task<bool> UpdateShipmentStatus(int userId, int shipmentId, IDbTransaction transaction = null,
-            int? shipmentStatusId = null)
+            string shipmentStatus = null)
         {
             DataModel.Dto.Shipment currentShipment = new DataModel.Dto.Shipment
             {
                 Id = shipmentId,
-                ShipmentStatusId = shipmentStatusId,
+                ShipmentStatus = shipmentStatus,
                 UserIdModified = userId,
                 DateModified = DateTime.Now
             };
             List<string> columnsToUpdateList = new List<string>();
-            columnsToUpdateList.Add("ShipmentStatusId");
+            columnsToUpdateList.Add("ShipmentStatus");
             columnsToUpdateList.Add("UserIdModified");
             columnsToUpdateList.Add("DateModified");
             try
@@ -471,18 +488,18 @@ where [Shipment].Id =  " + id);
         }
 
         public async Task<bool> UpdateShipmentTransporter(int userId, int shipmentId, IDbTransaction transaction = null,
-           int? shipmentStatusId = null, int? transporterId = null)
+           string shipmentStatus = null, int? transporterId = null)
         {
             DataModel.Dto.Shipment currentShipment = new DataModel.Dto.Shipment
             {
                 Id = shipmentId,
-                ShipmentStatusId = shipmentStatusId,
+                ShipmentStatus = shipmentStatus,
                 TransporterId = transporterId,
                 UserIdModified = userId,
                 DateModified = DateTime.Now
             };
             List<string> columnsToUpdateList = new List<string>();
-            columnsToUpdateList.Add("ShipmentStatusId");
+            columnsToUpdateList.Add("ShipmentStatus");
             columnsToUpdateList.Add("TransporterId");
             columnsToUpdateList.Add("UserIdModified");
             columnsToUpdateList.Add("DateModified");
@@ -502,7 +519,30 @@ where [Shipment].Id =  " + id);
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 cn.Open();
-                return (await cn.QueryAsync<int>(GetShipmentQueryFilteredCount(filter))).Count();
+                DynamicParameters d = new DynamicParameters();
+                {
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+                    {
+                        d.Add("@StatusCode", "UAS");
+                    }
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+                    {
+                        d.Add("@StatusCode", "ASS");
+                    }
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+                    {
+                        d.Add("@StatusCode", "OPEN");
+                    }
+                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+                    {
+                        d.Add("@StatusCode", "COM");
+                    }
+                    if (!string.IsNullOrEmpty(filter.ShipmentStatus))
+                    {
+                        d.Add("@ShipmentStatus", filter.ShipmentStatus);
+                    }
+                }
+                return (await cn.QueryAsync<int>(GetShipmentQueryFilteredCount(filter), d)).Count();
             }
         }
 
@@ -520,27 +560,23 @@ where [Shipment].Id =  " + id);
             sb.Append(@"SELECT  
       [Shipment].[Id]
 from Shipment 
-left outer join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
 where 1=1");
             if (filter.CustomerId.HasValue)
             {
                 sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
             }
-            if (filter.ShipmentStatusId.HasValue)
+            if (!string.IsNullOrEmpty(filter.ShipmentStatus))
             {
-                sb.Append(" and Shipment.ShipmentStatusId=" + filter.ShipmentStatusId.Value);
+                sb.Append(" and Shipment.ShipmentStatus=@ShipmentStatus");
             }
             if (filter.TransporterId.HasValue)
             {
                 sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
-            {
-                sb.Append(" and Shipment.ShipmentStatusId is null");
-            }
+
             if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
             {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                sb.Append(" and Shipment.ShipmentStatus=@StatusCode");
                 if (filter.Declined)
                 {
                     sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
@@ -552,28 +588,15 @@ where 1=1");
                     where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
                 }
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket ||
+                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed ||
+                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
             {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
-            }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
-            {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                sb.Append(" and Shipment.ShipmentStatus=@StatusCode");
             }
 
             return sb.ToString();
         }
-
-        private string GetQueryUnassigned()
-        {
-            var sb = new StringBuilder();
-            sb.Append(@"
-            select  count(Shipment.Id) As Amount,
-            (select max(Shipment.DateModified) from Shipment where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null) as LastDateTime
-            from Shipment where Shipment.CustomerId=@CustomerId and Shipment.ShipmentStatusId is null");
-            return sb.ToString();
-        }
-        
 
         private string GetQueryAssigned()
         {
@@ -581,24 +604,20 @@ where 1=1");
             sb.Append(@"
  select  count(distinct Shipment.Id) As Amount,
  (select max(Shipment.DateModified) from Shipment 
- inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=@Code
- where Shipment.CustomerId=@CustomerId) as LastDateTime,
+ where Shipment.ShipmentStatus=@Code
+  and Shipment.CustomerId=@CustomerId ) as LastDateTime,
  (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
   inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=1
-  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
-  and ShipmentStatus.code=@Code
-  where Shipment.CustomerId=@CustomerId 
+  where Shipment.ShipmentStatus=@Code
+  and Shipment.CustomerId=@CustomerId 
   ) as Declined,
   (select count(Distinct ShipmentTransporter.Id) from ShipmentTransporter
    inner join Shipment on  Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0
-  inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
-  and ShipmentStatus.code=@Code
-  where Shipment.CustomerId=@CustomerId ) as Pending
+  where Shipment.ShipmentStatus=@Code
+  and Shipment.CustomerId=@CustomerId  ) as Pending
  from Shipment 
- inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=@Code
- where Shipment.CustomerId=@CustomerId ");
+  where Shipment.ShipmentStatus=@Code
+  and Shipment.CustomerId=@CustomerId  ");
             return sb.ToString();
         }
 
@@ -608,13 +627,11 @@ where 1=1");
             sb.Append(@"
            select  count(distinct Shipment.Id) As Amount,
  (select max(Shipment.DateModified) from Shipment 
- inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=@Code
- where Shipment.CustomerId=@CustomerId) as LastDateTime
+ where Shipment.ShipmentStatus=@Code
+ and Shipment.CustomerId=@CustomerId) as LastDateTime
  from Shipment 
- inner join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
- and ShipmentStatus.code=@Code
- where Shipment.CustomerId=@CustomerId ");
+ where Shipment.ShipmentStatus=@Code
+ and Shipment.CustomerId=@CustomerId ");
             return sb.ToString();
         }
 
@@ -640,7 +657,7 @@ where 1=1");
       ,[Shipment].[TotalVolume]
       ,[Shipment].[TotalQuatity]
       ,[Shipment].[TotalWeight]
-      ,[Shipment].[ShipmentStatusId]
+      ,[Shipment].[ShipmentStatus]
       ,[Shipment].[TransporterId]
       ,[Shipment].[UserIdCreated]
       ,[Shipment].[DateCreated]
@@ -744,7 +761,7 @@ where [Shipment].Id =  " + id);
       ,[Shipment].[TotalVolume]
       ,[Shipment].[TotalQuatity]
       ,[Shipment].[TotalWeight]
-      ,[Shipment].[ShipmentStatusId]
+      ,[Shipment].[ShipmentStatus]
       ,[Shipment].[TransporterId]
       ,[Shipment].[UserIdCreated]
       ,[Shipment].[DateCreated]
@@ -752,30 +769,28 @@ where [Shipment].Id =  " + id);
       ,[Shipment].[DateModified]
       ,isnull(UserCreatedTable.FirstName,'') + ' '+isnull(UserCreatedTable.LastName,'') as UserCreated
 	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
+      ,Transporter.Name as TransporterName
 from Shipment 
 left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Shipment.UserIdCreated
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Shipment.UserIdModified
-left outer join ShipmentStatus on ShipmentStatus.id=Shipment.ShipmentStatusId
+left outer join [Transporter] on Transporter.Id=Shipment.TransporterId
 where 1=1");
             if (filter.CustomerId.HasValue)
             {
                 sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
             }
-            if (filter.ShipmentStatusId.HasValue)
+            if (!string.IsNullOrEmpty(filter.ShipmentStatus))
             {
-                sb.Append(" and Shipment.ShipmentStatusId=" + filter.ShipmentStatusId.Value);
+                sb.Append(" and Shipment.ShipmentStatus=@ShipmentStatus");
             }
             if (filter.TransporterId.HasValue)
             {
                 sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
-            {
-                sb.Append(" and Shipment.ShipmentStatusId is null");
-            }
+
             if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
             {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                sb.Append(" and  Shipment.ShipmentStatus=@StatusCode");
                 if (filter.Declined)
                 {
                     sb.Append(@" and exists (select ShipmentTransporter.Id from ShipmentTransporter 
@@ -787,13 +802,11 @@ where 1=1");
                     where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
                 }
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket ||
+                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed ||
+                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
             {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
-            }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
-            {
-                sb.Append(" and ShipmentStatus.code=@StatusCode");
+                sb.Append(" and  Shipment.ShipmentStatus=@StatusCode");
             }
 
             sb.Append(@" ) AS RowConstrainedResult
