@@ -5,8 +5,7 @@
     /// </summary>
     public enum ShipmentTransporterStatus
     {
-        None=0,
-        Unassigned=1,
+        Unassigned=0,
         OpenMarket=2,
         Assigned=3,
         Completed=4,

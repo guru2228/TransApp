@@ -281,7 +281,7 @@ namespace TransApp.Tests.Shipment
             {
                 FilterShipment f = new FilterShipment {CustomerId = 1, StartItem = 0,
                     Amount = 5,
-                    ShipmentTransporterStatus = ShipmentTransporterStatus.None
+                    ShipmentTransporterStatus = ShipmentTransporterStatus.Unassigned
                 };
                 List<ShipmentModel> model =
                     await _shipmentService.GetAll(f);

@@ -1,70 +1,24 @@
 <div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-lg-3 col-md-6 col-sm-6  filterpanels active">
+
+            <div *ngFor="let shipmentFilter of shipmentFilters; let rowindex = index" (click)="onFilterClick(shipmentFilter)" [ngClass]="'col-lg-3 col-md-6 col-sm-6  filterpanels ' + (shipmentFilter.statusType == selectedShipmentFilter.statusType ? 'active':'')">
                 <div class="card card-stats">
-                    <div class="card-header" data-background-color="orange">
-                        <i class="material-icons">weekend</i>
+                    <div class="card-header" [attr.data-background-color]="getFilterColor(shipmentFilter.statusType)">
+                        <i class="material-icons">{{getFilterIcon(shipmentFilter.statusType)}}</i>
                     </div>
                     <div class="card-content">
-                        <p class="category">Unassigned</p>
-                        <h3 class="card-title">184</h3>
+                        <p class="category">{{shipmentFilter.description}}</p>
+                        <h3 class="card-title">{{shipmentFilter.amount}}</h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">
-                            <i class="material-icons">date_range</i> Last 24 Hours
+                            <i class="material-icons">date_range</i> {{shipmentFilter.lastDateTime}}
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 filterpanels ">
-                <div class="card card-stats">
-                    <div class="card-header" data-background-color="red">
-                        <i class="material-icons">equalizer</i>
-                    </div>
-                    <div class="card-content">
-                        <p class="category">Open market</p>
-                        <h3 class="card-title">184</h3>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">date_range</i> Last 24 Hours
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6  filterpanels">
-                <div class="card card-stats ">
-                    <div class="card-header" data-background-color="green">
-                        <i class="material-icons">assignment_turned_in</i>
-                    </div>
-                    <div class="card-content">
-                        <p class="category">Assigned</p>
-                        <h3 class="card-title">184</h3>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">date_range</i> Last 24 Hours
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 col-sm-6 filterpanels">
-                <div class="card card-stats">
-                    <div class="card-header" data-background-color="blue">
-                        <i class="fa fa-twitter"></i>
-                    </div>
-                    <div class="card-content">
-                        <p class="category">Confirmed</p>
-                        <h3 class="card-title">184</h3>
-                    </div>
-                    <div class="card-footer">
-                        <div class="stats">
-                            <i class="material-icons">update</i> Just Updated
-                        </div>
-                    </div>
-                </div>
-            </div>
+
         </div>
 
         <div class="row">

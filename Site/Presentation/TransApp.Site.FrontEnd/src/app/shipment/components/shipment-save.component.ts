@@ -363,7 +363,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
   onMasterPackTypeChange(currentShipmentRow: ShipmentDetailRowModel): void {
-debugger;
+    debugger;
     if (currentShipmentRow.master.packTypeId == 1) {
       const shipmentExtra = new ShipmentDetailModel();
       shipmentExtra.id = -1;
@@ -374,22 +374,48 @@ debugger;
     }
   }
 
-onSubmit(value: any): void {
+  onSubmit(value: any): void {
     console.log(value);
   }
 
-save(model: ShipmentModel, isValid: boolean) {
-  console.log(model, isValid);
-  console.log(this.componentModel);
-  if (isValid) {
-    this.shipmentService.save(this.componentModel).subscribe(resut => {
-      alert("saved");
-    },
-      error => {
-        console.log(error);
-      });
-  }else{
-    /// do something
+  save(model: ShipmentModel, isValid: boolean) {
+    console.log(model, isValid);
+    console.log(this.componentModel);
+    if (isValid) {
+      this.shipmentService.save(this.componentModel).subscribe(resut => {
+        alert("saved");
+      },
+        error => {
+          console.log(error);
+        });
+    } else {
+      /// do something
+    }
   }
-}
+
+  computeTotals() {
+    let totalQuantity = 0;
+    let totalVolume = 0;
+    let totalWeight = 0;
+
+    if (this.componentModel && this.componentModel.shipmentDetails && this.componentModel.shipmentDetails.length > 0) {
+      for (let i = 0; i < this.componentModel.shipmentDetails.length; i++) {
+        const shipmentDetail = this.componentModel.shipmentDetails[i];
+        if (shipmentDetail.master.quantity)
+          totalQuantity += shipmentDetail.master.quantity;
+        if (shipmentDetail.master.weight)
+          totalWeight += shipmentDetail.master.weight;
+        if (shipmentDetail.master.length && shipmentDetail.master.width && shipmentDetail.master.height)
+          totalVolume += (shipmentDetail.master.length * shipmentDetail.master.width * shipmentDetail.master.height);
+      }
+    }
+
+    this.componentModel.totalQuatity = totalQuantity;
+    this.componentModel.totalWeight =totalWeight;
+    this.componentModel.totalVolume = totalVolume;
+  }
+
+  onMasterQuantityChange(){
+this.computeTotals();
+  }
 }

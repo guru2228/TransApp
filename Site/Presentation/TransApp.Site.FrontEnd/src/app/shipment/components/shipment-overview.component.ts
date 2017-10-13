@@ -14,6 +14,7 @@ import { Subscription } from 'rxjs/Subscription';
 import { HelperService } from 'app/shared/common/services/helperService';
 import { ShipmentTransporterFilterModel } from 'app/shipment/models/shipment-transporter-filter-model';
 import { ShipmentRowViewModel } from 'app/shipment/models/shipment-row-viewmodel';
+import { Observable } from 'rxjs/Observable';
 
 const moment = require('moment/moment');
 declare var $: any;
@@ -26,7 +27,7 @@ declare var swal: any;
 export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
   componentModel: ShipmentRowViewModel[] = [];
-  filters: ShipmentTransporterFilterModel[];
+  shipmentFilters: ShipmentTransporterFilterModel[];
   currentUser: ApplicationUser;
   // search term
   currentAddressId = -1;
@@ -34,7 +35,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   pagesCollection: Array<number>;
   pageSize = 4;
 
-  selectedShipmentStatus: ShipmentTransporterStatus = ShipmentTransporterStatus.none;
+  selectedShipmentFilter: ShipmentTransporterFilterModel ;
 
   private subscriptionReceiveUpdatedShipment: Subscription;
 
@@ -55,11 +56,21 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.notificationService.showLoading();
 
-    this.getShipmentFilters();
+    this.getShipmentFilters().subscribe(filtersLoaded=>{
 
-    this.getNumberOfShipments('', false);
+      this.selectedShipmentFilter = this.shipmentFilters[0];
 
-    this.getShipments();
+      this.getNumberOfShipments('', false);
+
+      this.getShipments();
+    }, error=>{
+      this.notificationService.show('Filter not loaded', 'danger', 'center', 'top');
+      this.errorHandler.handleError(error);
+    });
+  }
+
+  onFilterClick(shipmentFilter: ShipmentTransporterFilterModel): void {
+    this.selectedShipmentFilter = shipmentFilter;
   }
 
   /**
@@ -67,7 +78,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
    */
   private getShipments() {
     if (this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentStatus, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
+      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentFilter.statusType, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
         this.componentModel = [];
         if (result && result.length > 0) {
           if (this.route.firstChild) {
@@ -99,7 +110,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
       });
     }
     if (this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentStatus, this.translateService.currentLanguage).subscribe(result => {
+      this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentFilter.statusType, this.translateService.currentLanguage).subscribe(result => {
         this.pagesCollection = [];
         debugger;
         let numberOfPages = Math.ceil(result / this.pageSize);
@@ -117,17 +128,21 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   /**
-   * Get addresses
+   * Get shipment filter
    */
-  private getShipmentFilters() {
+  private getShipmentFilters() :Observable<boolean>{
+    return Observable.create(observer=>{
     if (this.currentUser && this.currentUser.customerId) {
       debugger;
       this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
-        this.filters = result;
+        this.shipmentFilters = result;
+        observer.next(true);
       }, error => {
         this.errorHandler.handleError(error);
+        observer.next(false);
       });
     }
+  });
   }
 
   private register_updateSavedModel_handler() {
@@ -230,6 +245,20 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
       });
   }
 
+
+
+    /**
+   * Move to next/previous page
+   * @param page
+   */
+  paginate(page: number) {
+    this.currentPage = page;
+    this.getShipments();
+
+    this.helperService.scrollOnTop();
+  }
+
+
   ngAfterViewInit() {
     var breakCards = true;
     if (breakCards == true) {
@@ -263,43 +292,40 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     $('[rel="tooltip"]').tooltip();
   }
 
-    /**
-   * Move to next/previous page
-   * @param page
-   */
-  paginate(page: number) {
-    this.currentPage = page;
-    this.getShipments();
+   getFilterColor(status: ShipmentTransporterStatus): string {
+    switch (status) {
+      case ShipmentTransporterStatus.unassigned:
+        return 'red';
+      case ShipmentTransporterStatus.openMarket:
+        return 'blue';
+      case ShipmentTransporterStatus.assigned:
+        return 'orange';
+      case ShipmentTransporterStatus.completed:
+        return 'green';
+      default:
+        return '';
+    }
+}
 
-    this.helperService.scrollOnTop();
+ getFilterIcon(status: ShipmentTransporterStatus): string {
+  switch (status) {
+    case ShipmentTransporterStatus.unassigned:
+      return 'weekend';
+    case ShipmentTransporterStatus.openMarket:
+      return 'equalizer';
+    case ShipmentTransporterStatus.assigned:
+      return 'assignment_turned_in';
+    case ShipmentTransporterStatus.completed:
+      return 'red';
+    default:
+      return '';
   }
-
+}
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedShipment) {
       this.subscriptionReceiveUpdatedShipment.unsubscribe();
     }
   }
-  /** Show row available actions on click
-  onClickShowActions(shipmentRow: ShipmentRow, index: number) {
-    for (let i = 0; i < this.shipmentModel.length; i++) {
-      if (i !== index)
-        this.shipmentModel[i].viewActions = false;
-    }
-    shipmentRow.viewActions = !shipmentRow.viewActions;
-    if (shipmentRow.viewActions) {
-      shipmentRow.viewEdit = false;
-      this.router.navigate(['/shipment-overview']);
-    }
-    setTimeout(function () {
 
-    }, 500);
-  }
-*/
-
-  /** Show edit shipment
-  onClickEditShipment(shipmentRow: ShipmentRow) {
-    shipmentRow.viewEdit = !shipmentRow.viewEdit;
-    this.router.navigate(['./shipment-edit/1'], { relativeTo: this.route });
-  } */
 }

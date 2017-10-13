@@ -1,7 +1,6 @@
 export enum ShipmentTransporterStatus {
-  none = 0,
-  unassigned = 1,
-  openMarket = 2,
-  assigned = 3,
-  completed = 4
+  unassigned = 0,
+  openMarket = 1,
+  assigned = 2,
+  completed = 3
 }
