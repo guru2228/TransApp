@@ -89,6 +89,7 @@ export class ParametersDataService {
       let modelItem = null;
       if (paramModel) {
         modelItem = paramModel;
+        modelItem.id = entityId < 0 ? -1: modelItem.id,
         modelItem.description = parametersList[i].description
         modelItem.iconName = parametersList[i].iconName
       } else {
@@ -96,7 +97,7 @@ export class ParametersDataService {
         modelItem.id = -1;
         modelItem.addressId = entityId;
         modelItem.facilityId = parametersList[i].id;
-        modelItem.active = true;
+        modelItem.active = entityId < 0 ? true : false;
         modelItem.description = parametersList[i].description;
         modelItem.iconName = parametersList[i].iconName;
         updatedEntitiesList.push(modelItem);
@@ -123,6 +124,7 @@ export class ParametersDataService {
       let modelItem = null;
       if (paramModel) {
         modelItem = paramModel;
+        modelItem.id = entityId < 0 ? -1: modelItem.id,
         modelItem.description = parametersList[i].description;
         modelItem.iconName = parametersList[i].iconName;
       } else {
@@ -156,6 +158,7 @@ export class ParametersDataService {
       let modelItem = null;
       if (paramModel) {
         modelItem = paramModel;
+        modelItem.id = entityId < 0 ? -1: modelItem.id,
         modelItem.description = parametersList[i].description;
         modelItem.iconName = parametersList[i].iconName;
       } else {
@@ -163,7 +166,7 @@ export class ParametersDataService {
         modelItem.id = -1;
         modelItem.addressId = entityId;
         modelItem.truckId = parametersList[i].id;
-        modelItem.active = true;
+        modelItem.active = entityId < 0 ? true : false;
         modelItem.description = parametersList[i].description;
         modelItem.iconName = parametersList[i].iconName;
         updatedEntitiesList.push(modelItem);

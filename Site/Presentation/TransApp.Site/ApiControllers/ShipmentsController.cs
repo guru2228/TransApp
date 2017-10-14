@@ -43,7 +43,9 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("get/{id}/{customerId}/{language}")]
         public async Task<ShipmentModel> Get(int id, int customerId, string language)
         {
-          return await _shipmentService.Get(id, customerId);
+
+          var shipment = await _shipmentService.Get(id, customerId);
+            return shipment;
         }
 
 
@@ -59,6 +61,32 @@ namespace TransApp.Site.ApiControllers
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
             var shipmentId = await _shipmentService.SaveShipment(currentUser.Id, model);
             return shipmentId;
+        }
+
+        /// <summary>
+        /// Assign to open market
+        /// </summary>
+        /// <param name="shipmentId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("assignToOpenMarket/{shipmentId}")]
+        public async Task<bool> AssignToOpenMarket(int shipmentId)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            return await _shipmentService.AssignToOpenMarket(currentUser.Id, shipmentId);
+        }
+
+        /// <summary>
+        /// Move to unassigned
+        /// </summary>
+        /// <param name="shipmentId"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("moveToUnassigned/{shipmentId}")]
+        public async Task<bool> MoveToUnassigned(int shipmentId)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            return await _shipmentService.MoveToUnassigned(currentUser.Id, shipmentId);
         }
 
         /// <summary>

@@ -23,10 +23,10 @@
 
         <div class="row">
             <div class="col-md-12">
-                <button class="btn btn-warning">
+                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2" class="btn btn-warning">
                         <i class="material-icons">warning</i> Pending
                     </button>
-                <button class="btn btn-danger">
+                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2" class="btn btn-danger">
                         <i class="material-icons">close</i> Declined
                     </button>
 
@@ -70,19 +70,25 @@
                                                             </span>
                                                             Edit shipment
                                                         </button>
-                                                <button class="btn btn-danger">
+                                                <button class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
                                                             Delete shipment
                                                             <span class="btn-label btn-label-right">
                                                                 <i class="material-icons">delete_forever</i>
                                                             </span>
                                                         </button>
-                                                <button class="btn btn-success">
+                                                <button class="btn btn-success" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">assignment_returned</i>
                                                             </span>
                                                             Assign to open market
                                                         </button>
-                                                <button class="btn btn-info">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1" (click)="moveToUnassigned(shipmentRow.shipment.id)" class="btn btn-info">
+                                                          <span class="btn-label">
+                                                              <i class="material-icons">assignment_turned_in</i>
+                                                          </span>
+                                                          Move to unassigned
+                                                      </button>
+                                                <button *ngIf="false" class="btn btn-info">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">assignment_turned_in</i>
                                                             </span>
@@ -90,7 +96,7 @@
                                                         </button>
                                             </td>
                                         </tr>
-                                        <tr id="editShipmentRow" *ngIf="shipmentRow.viewActions && shipmentRow.viewEdit">
+                                        <tr id="editShipmentRow" *ngIf="shipmentRow.viewEdit">
                                             <td colspan="7">
                                                 <router-outlet></router-outlet>
                                             </td>
@@ -117,7 +123,7 @@
 
                     </div>
                     <h4 *ngIf="componentModel && componentModel.length <= 0">
-                        &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
+                        &nbsp;&nbsp;&nbsp;&nbsp;There are no shipments for selected filter.
                     </h4>
                 </div>
             </div>

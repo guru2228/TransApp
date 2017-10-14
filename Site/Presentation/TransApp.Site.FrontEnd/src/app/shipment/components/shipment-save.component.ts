@@ -82,8 +82,8 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
 
-        // get component state
-        this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
+    // get component state
+    this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
 
     // create search FormControl
     this.senderSearchAddressControl = new FormControl();
@@ -107,6 +107,10 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
   ngAfterViewInit() {
+    const self = this;
+    setTimeout(function () {
+      self.setCursorToFirstElement();
+    }, 500);
   }
 
   /**
@@ -115,7 +119,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       */
   private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
     return Observable.create(observer => {
-      debugger;
       if (componentState === ComponentStateType.add) {
         this.componentModel = new ShipmentModel();
         this.componentModel.id = -1;
@@ -139,11 +142,38 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         let shipmentId = 0;
         this.route.params.forEach((params: Params) => {
           shipmentId = params['id'];
-          debugger;
-          this.shipmentService.get(shipmentId,this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
+          this.shipmentService.get(shipmentId, this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
             result.pickUpDate = new Date(result.pickUpDate);
             result.deliveryDate = new Date(result.deliveryDate);
             this.componentModel = result as ShipmentModel;
+
+            //// load sender address
+            this.addressService.get(this.componentModel.senderAddressId, this.translateService.currentLanguage).subscribe(senderAddress => {
+              if (result) {
+                this.senderSelectedAddress = senderAddress as AddressModel;
+                this.senderSearchAddressControl = new FormControl(this.senderSelectedAddress.name);
+                this.initSenderSearchAddresses();
+                this.componentModel.senderAddressInfo = this.senderSelectedAddress.location.street + ', ' + this.senderSelectedAddress.location.streetNumber
+                  + ', ' + this.senderSelectedAddress.location.zipCode + ', ' + this.senderSelectedAddress.location.city;
+              }
+            }, error => {
+              this.errorHandler.handleError('Error on retrieving sender address for this shipment. Please contact and administrator!');
+            });
+
+            //// load receiver address
+            this.addressService.get(this.componentModel.receiverAddressId, this.translateService.currentLanguage).subscribe(receiverAddress => {
+              if (result) {
+                this.receiverSelectedAddress = receiverAddress as AddressModel;
+                this.receiverSearchAddressControl = new FormControl(this.receiverSelectedAddress.name);
+                this.initReceiverSearchAddresses();
+                this.componentModel.receiverAddressInfo = this.receiverSelectedAddress.location.street + ', ' + this.receiverSelectedAddress.location.streetNumber
+                  + ', ' + this.receiverSelectedAddress.location.zipCode + ', ' + this.receiverSelectedAddress.location.city;
+              }
+            }, error => {
+              this.errorHandler.handleError('Error on retrieving receiver address for this shipment. Please contact and administrator!');
+            });
+
+console.log(        this.componentModel);
             const self = this;
 
             observer.next(true);
@@ -172,7 +202,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
           this.requirementsData = data[1] as any;
           this.truksData = data[2] as any;
           this.packTypes = data[3];
-
+          debugger;
           this.componentModel.senderFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.componentModel.senderFacilities);
           this.componentModel.senderRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.componentModel.senderRequirements);
           this.componentModel.senderTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.componentModel.senderTrucks);
@@ -180,7 +210,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
           this.componentModel.receiverFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.componentModel.receiverFacilities);
           this.componentModel.receiverRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.componentModel.receiverRequirements);
           this.componentModel.receiverTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.componentModel.receiverTrucks);
-
           observer.next(true);
           //   resolve(true);
         }, error => {
@@ -200,7 +229,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     this.addressService.get(address.id, this.translateService.currentLanguage).subscribe(result => {
       if (result) {
         this.senderSelectedAddress = result as AddressModel;
-        console.log(result);
 
         this.componentModel.senderAddressId = address.id;
         this.componentModel.senderAddressInfo = this.senderSelectedAddress.location.street + ', ' + this.senderSelectedAddress.location.streetNumber
@@ -264,8 +292,8 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         this.componentModel.receiverRequirements = this.receiverSelectedAddress.requirements;
         this.componentModel.receiverTrucks = this.receiverSelectedAddress.trucks;
 
-        this.componentModel.receiverFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData, this.receiverSelectedAddress.facilities);
-        this.componentModel.receiverRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData, this.receiverSelectedAddress.requirements);
+        this.componentModel.receiverFacilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, this.facilitiesData,  this.receiverSelectedAddress.facilities);
+        this.componentModel.receiverRequirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, this.requirementsData,  this.receiverSelectedAddress.requirements);
         this.componentModel.receiverTrucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, this.truksData, this.receiverSelectedAddress.trucks);
 
         this.componentModel.receiverAvailabilities = [];
@@ -283,7 +311,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
    * @param event
    */
   onDeliveryDateSelected(event: any) {
-    debugger;
     if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
       this.componentModel.receiverAvailabilities = [];
       if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
@@ -296,11 +323,14 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     let pickupDateDay = selectedData.getDay();
     pickupDateDay = pickupDateDay === 0 ? 7 : pickupDateDay;
 
+    let availability = null;
     if (availabilities.length === 1 && availabilities[0].day === 0) {
-      return availabilities[0];
+      availability = availabilities[0];
     } else {
-      return availabilities.find(item => item.day === pickupDateDay);
+      availability = availabilities.find(item => item.day === pickupDateDay);
     }
+    availability.id = -1;
+    return availability;
   }
 
 
@@ -347,7 +377,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
 
 
   onAddPackageClick(): boolean {
-    debugger;
     if (!this.componentModel.shipmentDetails) {
       this.componentModel.shipmentDetails = [];
     }
@@ -365,7 +394,6 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
   onMasterPackTypeChange(currentShipmentRow: ShipmentDetailRowModel): void {
-    debugger;
     if (currentShipmentRow.master.packTypeId == 1) {
       const shipmentExtra = new ShipmentDetailModel();
       shipmentExtra.id = -1;
@@ -384,17 +412,28 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     console.log(model, isValid);
     console.log(this.componentModel);
     if (isValid) {
-      this.shipmentService.save(this.componentModel).subscribe(resut => {
-        alert("saved");
+      this.shipmentService.save(this.componentModel).subscribe(shipmentId => {
+        if (this.componentState === ComponentStateType.add) {
+          this.router.navigate(['/shipment-overview/shipment-edit/' + shipmentId]);
+          this.notificationService.show('Address created.', 'success', 'center', 'top');
+        } else {
+          //// send data to addreess coponent to be updated
+          // this.addressService.sendAddressModel(this.componentModel);
+          this.notificationService.show('Address saved. ', 'success', 'center', 'top');
+        }
       },
         error => {
           console.log(error);
         });
     } else {
-      /// do something
+      this.helperService.scrollOnTop();
+      this.setCursorToFirstElement();
     }
   }
 
+  /**
+   * Compute totals
+   */
   computeTotals() {
     let totalQuantity = 0;
     let totalVolume = 0;
@@ -405,19 +444,24 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
         const shipmentDetail = this.componentModel.shipmentDetails[i];
         if (shipmentDetail.master.quantity)
           totalQuantity += shipmentDetail.master.quantity;
-        if (shipmentDetail.master.weight)
-          totalWeight += shipmentDetail.master.weight;
-        if (shipmentDetail.master.length && shipmentDetail.master.width && shipmentDetail.master.height)
-          totalVolume += (shipmentDetail.master.length * shipmentDetail.master.width * shipmentDetail.master.height);
+        if (shipmentDetail.master.quantity && shipmentDetail.master.weight)
+          totalWeight += shipmentDetail.master.quantity * shipmentDetail.master.weight;
+        if (shipmentDetail.master.quantity && shipmentDetail.master.length && shipmentDetail.master.width && shipmentDetail.master.height)
+          totalVolume += shipmentDetail.master.quantity * ((shipmentDetail.master.length / 100) * (shipmentDetail.master.width / 100) * (shipmentDetail.master.height / 100));
       }
     }
 
     this.componentModel.totalQuatity = totalQuantity;
-    this.componentModel.totalWeight =totalWeight;
+    this.componentModel.totalWeight = totalWeight;
     this.componentModel.totalVolume = totalVolume;
   }
 
-  onMasterQuantityChange(){
-this.computeTotals();
+  private setCursorToFirstElement() {
+    if (this.componentState === ComponentStateType.add) {
+      const element = document.getElementById('reference');
+      if (element) {
+        element.focus();
+      }
+    }
   }
 }

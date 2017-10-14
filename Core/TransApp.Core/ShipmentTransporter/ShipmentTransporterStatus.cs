@@ -6,8 +6,8 @@
     public enum ShipmentTransporterStatus
     {
         Unassigned=0,
-        OpenMarket=2,
-        Assigned=3,
-        Completed=4,
+        OpenMarket=1,
+        Assigned=2,
+        Completed=3,
     }
 }

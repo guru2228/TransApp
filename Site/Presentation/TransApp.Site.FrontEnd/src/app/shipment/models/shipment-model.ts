@@ -15,6 +15,8 @@ export class ShipmentModel {
   public customerId: number;
   // sender region
   public senderAddressId: number;
+  public senderAddressInfo: string;
+  public senderAddressName: string;
   public senderContactPerson: string;
   public senderPhone: string;
   public senderRemark: string;
@@ -22,9 +24,10 @@ export class ShipmentModel {
   public senderFacilities: Array<FacilityEntityModel>;
   public senderRequirements: Array<RequirementEntityModel>;
   public senderTrucks: Array<TruckEntityModel>;
-  public senderAddressInfo: string;
   // receiver region
   public receiverAddressId: number;
+  public receiverAddressName: string;
+  public receiverAddressInfo: string;
   public receiverContactPerson: string;
   public receiverPhone: string;
   public receiverRemark: string;
@@ -32,7 +35,6 @@ export class ShipmentModel {
   public receiverFacilities: Array<FacilityEntityModel>;
   public receiverRequirements: Array<RequirementEntityModel>;
   public receiverTrucks: Array<TruckEntityModel>;
-  public receiverAddressInfo: string;
 
   public totalPrice: number;
   public totalVolume: number;

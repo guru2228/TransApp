@@ -67,9 +67,6 @@ namespace TransApp.Domain.Shipment
 
        public List<ShipmentDetailRowModel> ShipmentDetails { get; set; }
 
-        /// <summary>
-        /// TODO Replace it with property ShipmentDetails, remove this one.
-        /// </summary>
         public List<FacilityEntityModel> ReceiverFacilities { get; set; }
         public List<RequirementEntityModel> ReceiverRequirements { get; set; }
         public List<TruckEntityModel> ReceiverTrucks { get; set; }

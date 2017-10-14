@@ -1,5 +1,5 @@
-<div class="main-content">
-    <div class="container-fluid" *ngIf="componentModel">
+<div class="main-content" *ngIf="componentModel" [style.margin-top]="componentState > 0 ? '0px':'inherit;'">
+    <div class="container-fluid">
         <form #formShipment="ngForm" novalidate class="form-horizontal" novalidate (ngSubmit)="save(formShipment.value, formShipment.valid)">
             <div class="row">
                 <div class="col-md-6 col-md-offset-3">
@@ -15,7 +15,7 @@
                                     Transapp shipment reference
                                     <span class="star">*</span>
                                 </label>
-                                <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" name="reference">
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" name="reference" required>
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ' + ((!componentModel.poNumber ) && formShipment.submitted ? ' has-error' : '')) ">
@@ -23,7 +23,7 @@
                                     PO Number
                                     <span class="star">*</span>
                                 </label>
-                                <input type="text" class="form-control" [(ngModel)]="componentModel.poNumber" id="poNumber" name="poNumber">
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.poNumber" id="poNumber" name="poNumber" required>
                             </div>
 
                         </div>
@@ -42,7 +42,7 @@
                             <div [ngClass]="'form-group label-floating ' + ((!senderSearchAddressControl || !senderSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
                                 <md-form-field class="autocomplete-address">
                                     <input type="text" name="senderSearchAddress" [formControl]="senderSearchAddressControl" placeholder="Type here to search for a sender" md-min-length="0" mdInput [mdAutocomplete]="senderAutocomplete" aria-label="Select sender">
-                                    <md-autocomplete #senderAutocomplete="mdAutocomplete" id="plm11">
+                                    <md-autocomplete #senderAutocomplete="mdAutocomplete">
                                         <md-option *ngFor="let address of senderFoundAddresses" [value]="address.name" (onSelectionChange)="onSenderAddressSelected($event, address)">
                                             {{ address.name }}
                                         </md-option>
@@ -188,10 +188,10 @@
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.receiverAddressInfo  && componentModel.receiverAddressInfo.length > 0) ? '' : 'is-empty') + (!componentModel.receiverAddressInfo  && formShipment.submitted ? ' has-error' : '') ">
                                 <label for="" class="control-label">
-                                    Pickup adress
+                                    Delivery adress
                                     <span class="star">*</span>
                                 </label>
-                                <textarea class="form-control" name="receiverAddressInfo" [value]="componentModel.receiverAddressInfo" rows="2" disabled></textarea>
+                                <textarea class="form-control" name="receiverAddressInfo" [ngModel]="componentModel.receiverAddressInfo" rows="2" disabled></textarea>
                             </div>
 
                             <!-- Opening hours -->
@@ -322,7 +322,7 @@
                                                 </td>
                                                 <td>
                                                     <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.weight || detailRow.master.weight <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Weight(cm)<span class="star">*</span></label>
+                                                        <label class="control-label">Weight(kg)<span class="star">*</span></label>
                                                         <input class="form-control" type="number" (input)="computeTotals()" [(ngModel)]="detailRow.master.weight" name="shipmentDetail_weigth_{{detailRowIndex}}" number="true" required>
                                                     </div>
                                                 </td>
@@ -380,7 +380,7 @@
                                 <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
                             </span>
                             <div class="form-group label-floating">
-                                <h4>Total quantity: {{componentModel.totalQuatity}} items</h4>
+                                <h4>Total quantity: {{componentModel.totalQuatity? componentModel.totalQuatity.toFixed(3): ''}} items</h4>
                             </div>
                         </div>
                     </div>
@@ -392,7 +392,7 @@
                                 <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
                             </span>
                             <div class="form-group label-floating">
-                                <h4>Total volume: {{componentModel.totalVolume}} m2</h4>
+                                <h4>Total volume: {{componentModel.totalVolume? componentModel.totalVolume.toFixed(3): ''}} m2</h4>
                             </div>
                         </div>
                     </div>
@@ -404,7 +404,7 @@
                                 <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
                             </span>
                             <div class="form-group label-floating">
-                                <h4>Total weight: {{componentModel.totalWeight}} kg</h4>
+                                <h4>Total weight: {{componentModel.totalWeight ? componentModel.totalWeight.toFixed(3): ''}} kg</h4>
                             </div>
                         </div>
                     </div>
