@@ -61,7 +61,8 @@ namespace TransApp.Domain.Shipment
 
         public string UserCreated { get; set; }
         public string TransporterName { get; set; }
-
+        public string AddressFrom { get; set; }
+        public string AddressTo { get; set; }
         public DateTime? DateModified { get; set; }
 
        public List<ShipmentDetailRowModel> ShipmentDetails { get; set; }

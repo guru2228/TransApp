@@ -232,7 +232,9 @@ namespace TransApp.Domain.Services.Shipment
                             DateModified = currentShipment.DateModified,
                             UserCreated = currentShipment.UserCreated,
                             UserModified = currentShipment.UserModified,
-                            TransporterName = currentShipment.TransporterName
+                            TransporterName = currentShipment.TransporterName,
+                            AddressFrom = currentShipment.AddressFrom,
+                            AddressTo = currentShipment.AddressTo,
                         };
 
                         result.Add(shipmentModel);

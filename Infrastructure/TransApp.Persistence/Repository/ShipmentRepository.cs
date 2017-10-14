@@ -770,10 +770,14 @@ where [Shipment].Id =  " + id);
       ,isnull(UserCreatedTable.FirstName,'') + ' '+isnull(UserCreatedTable.LastName,'') as UserCreated
 	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
       ,Transporter.Name as TransporterName
+      ,FromAddress.Name as AddressFrom
+      ,ToAddress.Name as AddressTo
 from Shipment 
 left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Shipment.UserIdCreated
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Shipment.UserIdModified
 left outer join [Transporter] on Transporter.Id=Shipment.TransporterId
+left outer join [Address] as FromAddress on FromAddress.Id=Shipment.SenderAddressId
+left outer join [Address] as ToAddress on ToAddress.Id=Shipment.ReceiverAddressId
 where 1=1");
             if (filter.CustomerId.HasValue)
             {
