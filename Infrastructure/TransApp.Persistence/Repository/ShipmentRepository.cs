@@ -253,19 +253,19 @@ namespace TransApp.Persistence.Repository
             {
                 DynamicParameters d = new DynamicParameters();
                 {
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Unassigned)
                     {
                         d.Add("@StatusCode", "UAS");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Assigned)
                     {
                         d.Add("@StatusCode", "ASS");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket)
                     {
                         d.Add("@StatusCode", "OPEN");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Completed)
                     {
                         d.Add("@StatusCode", "COM");
                     }
@@ -521,19 +521,19 @@ where [Shipment].Id =  " + id);
                 cn.Open();
                 DynamicParameters d = new DynamicParameters();
                 {
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Unassigned)
                     {
                         d.Add("@StatusCode", "UAS");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Assigned)
                     {
                         d.Add("@StatusCode", "ASS");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket)
                     {
                         d.Add("@StatusCode", "OPEN");
                     }
-                    if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed)
+                    if (filter.TransporterStatus == ShipmentTransporterStatus.Completed)
                     {
                         d.Add("@StatusCode", "COM");
                     }
@@ -574,7 +574,7 @@ where 1=1");
                 sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
             }
 
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+            if (filter.TransporterStatus == ShipmentTransporterStatus.Assigned)
             {
                 sb.Append(" and Shipment.ShipmentStatus=@StatusCode");
                 if (filter.Declined)
@@ -588,9 +588,9 @@ where 1=1");
                     where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
                 }
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket ||
-                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed ||
-                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+            if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket ||
+                filter.TransporterStatus == ShipmentTransporterStatus.Completed ||
+                filter.TransporterStatus == ShipmentTransporterStatus.Unassigned)
             {
                 sb.Append(" and Shipment.ShipmentStatus=@StatusCode");
             }
@@ -792,7 +792,7 @@ where 1=1");
                 sb.Append(" and Shipment.TransporterId=" + filter.TransporterId.Value);
             }
 
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Assigned)
+            if (filter.TransporterStatus == ShipmentTransporterStatus.Assigned)
             {
                 sb.Append(" and  Shipment.ShipmentStatus=@StatusCode");
                 if (filter.Declined)
@@ -806,9 +806,9 @@ where 1=1");
                     where Shipment.Id=ShipmentTransporter.ShipmentId and ShipmentTransporter.Declined=0)");
                 }
             }
-            if (filter.ShipmentTransporterStatus == ShipmentTransporterStatus.OpenMarket ||
-                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Completed ||
-                filter.ShipmentTransporterStatus == ShipmentTransporterStatus.Unassigned)
+            if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket ||
+                filter.TransporterStatus == ShipmentTransporterStatus.Completed ||
+                filter.TransporterStatus == ShipmentTransporterStatus.Unassigned)
             {
                 sb.Append(" and  Shipment.ShipmentStatus=@StatusCode");
             }

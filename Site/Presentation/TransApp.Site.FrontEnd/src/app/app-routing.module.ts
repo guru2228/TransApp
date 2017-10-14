@@ -18,78 +18,82 @@ import { AuthGuard } from "app/authentication/guard/auth-guard.service";
 
 
 const routes: Routes = [
-    {
+  {
+    path: '',
+    redirectTo: 'login',
+    pathMatch: 'full',
+  },
+
+  {
+    path: '',
+    component: AuthLayoutComponent,
+    children: [
+      {
         path: '',
-        redirectTo: 'login',
-        pathMatch: 'full',
-    },
+        children: [{
+          path: 'login',
+          component: LoginComponent
+        }]
+      }
+    ]
+  },
 
-    {
+  {
+    path: '',
+    component: AppLayoutComponent,
+    canActivate: [AuthGuard],
+    children: [
+      {
+        path: 'shipment-add',
+        component: ShipmentSaveComponent
+      },
+      {
+        path: 'shipment-edit/:id',
+        component: ShipmentSaveComponent
+      },
+      {
         path: '',
-        component: AuthLayoutComponent,
-        children: [
-            {
-                path: '',
-                children: [{
-                    path: 'login',
-                    component: LoginComponent
-                }]
-            }
-        ]
-    },
-
-    {
+        children: [{
+          path: 'shipment-overview',
+          component: ShipmentOverviewComponent,
+          children: [{
+            path: 'shipment-edit/:id',
+            component: ShipmentSaveComponent
+          }]
+        }]
+      },
+      {
+        path: 'address-add',
+        component: AddressSaveComponent
+      },
+      {
+        path: 'address-edit/:id',
+        component: AddressSaveComponent
+      },
+      {
         path: '',
-        component: AppLayoutComponent,
-        canActivate: [AuthGuard],
-        children: [
-            {
-                path: '',
-                children: [{
-                    path: 'shipment-overview',
-                    component: ShipmentOverviewComponent,
-                    children: [{
-                        path: 'shipment-edit/:id',
-                        component: ShipmentSaveComponent
-                    }]
-                }]
-            },
+        children: [{
+          path: 'address-overview',
+          component: AddressOverviewComponent,
+          children: [{
+            path: 'address-edit/:id',
+            component: AddressSaveComponent
+          }]
+        }]
+      },
 
-            {
-                path: 'shipment-add',
-                component: ShipmentSaveComponent
-            },
-            {
-                path: 'address-edit/:id',
-                component: AddressSaveComponent
-            },
-            {
-                path: '',
-                children: [{
-                    path: 'address-overview',
-                    component: AddressOverviewComponent,
-                    children: [{
-                        path: 'address-edit/:id',
-                        component: AddressSaveComponent
-                    }]
-                }]
-            },
 
-            {
-                path: 'address-add',
-                component: AddressSaveComponent
-            },
-        ]
-    },
-    {
-        path: 'error',
-        component: ErrorComponent
-    },
-    { path: '**', component: PageNotFoundComponent }
+    ]
+  },
+  {
+    path: 'error',
+    component: ErrorComponent
+  },
+  { path: '**', component: PageNotFoundComponent }
 ];
 
 @NgModule({
-    imports: [RouterModule.forRoot(routes)],
-    exports: [RouterModule]
+  imports: [RouterModule.forRoot(routes)],
+  exports: [RouterModule]
 })
 export class AppRoutingModule { }

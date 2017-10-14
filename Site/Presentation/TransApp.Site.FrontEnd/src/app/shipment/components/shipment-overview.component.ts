@@ -316,7 +316,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     case ShipmentTransporterStatus.assigned:
       return 'assignment_turned_in';
     case ShipmentTransporterStatus.completed:
-      return 'red';
+      return 'assignment_turned_in';
     default:
       return '';
   }

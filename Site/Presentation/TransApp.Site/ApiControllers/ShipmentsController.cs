@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TransApp.Core.Exceptions;
+using TransApp.Core.ShipmentTransporter;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Shipment;
 using TransApp.Domain.Shipment;
@@ -109,14 +110,14 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         /// <param name=")"></param>
         /// <param name="customerId"></param>
-        /// <param name="shipmentStatus"></param>
+        /// <param name="filterType"></param>
         /// <param name="startItem"></param>
         /// <param name="numberOfRetrievedItems"></param>
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getAll/{customerId}/{shipmentStatus}/{startItem}/{numberOfRetrievedItems}/{language}")]
-        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, string shipmentStatus, int startItem, int numberOfRetrievedItems,
+        [HttpGet("getAll/{customerId}/{filterType}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int filterType, int startItem, int numberOfRetrievedItems,
             int language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -129,11 +130,9 @@ namespace TransApp.Site.ApiControllers
             {
                 CustomerId = currentUser.CustomerId.Value,
                 StartItem = startItem,
-                Amount = numberOfRetrievedItems
+                Amount = numberOfRetrievedItems,
+                TransporterStatus = (ShipmentTransporterStatus)filterType
             };
-            if (!string.IsNullOrEmpty(shipmentStatus))
-                searchFilter.ShipmentStatus = shipmentStatus;
-            //aici ar trebui sa trimiti searchFilter.ShipmentTransporterStatus si nu ShipmentStatus
             var shipments = await _shipmentService.GetAll(searchFilter);
             return shipments;
         }
@@ -143,12 +142,12 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         /// <param name=")"></param>
         /// <param name="customerId"></param>
-        /// <param name="shipmentStatus"></param>
+        /// <param name="filterType"></param>
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getCount/{customerId}/{shipmentStatus}/{language}")]
-        public async Task<int> GetCount(int customerId, string shipmentStatus, 
+        public async Task<int> GetCount(int customerId, int filterType, 
             int language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -161,11 +160,9 @@ namespace TransApp.Site.ApiControllers
             {
                 CustomerId = currentUser.CustomerId.Value,
                 StartItem = 0,
-                Amount = 10000
+                Amount = 10000,
+                TransporterStatus = (ShipmentTransporterStatus)filterType
             };
-            if (string.IsNullOrEmpty(shipmentStatus))
-                searchFilter.ShipmentStatus = shipmentStatus;
-            //aici ar trebui sa trimiti searchFilter.ShipmentTransporterStatus si nu ShipmentStatus
             var shipmentsCount = await _shipmentService.GetAllCount(searchFilter);
             return shipmentsCount;
         }

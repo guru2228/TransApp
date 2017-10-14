@@ -4,7 +4,7 @@ import { DateAdapter, NativeDateAdapter } from '@angular/material';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/operator/startWith';
 import 'rxjs/add/operator/map';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, ActivatedRoute, Params } from '@angular/router';
 import { AuthenticationService } from 'app/authentication/services/authentication.service';
 import { HelperService } from 'app/shared/common/services/helperService';
 import { AddressService } from 'app/address/services/address.service';
@@ -79,9 +79,11 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     // set datepickerlocale
   }
 
-
   ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
+
+        // get component state
+        this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
 
     // create search FormControl
     this.senderSearchAddressControl = new FormControl();
@@ -113,6 +115,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       */
   private loadComponentModel(componentState: ComponentStateType): Observable<boolean> {
     return Observable.create(observer => {
+      debugger;
       if (componentState === ComponentStateType.add) {
         this.componentModel = new ShipmentModel();
         this.componentModel.id = -1;
@@ -133,23 +136,22 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
 
         observer.next(true);
       } else {
-        /*let addressId = 0;
+        let shipmentId = 0;
         this.route.params.forEach((params: Params) => {
-          addressId = params['id'];
-          this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
-            this.componentModel = result as AddressModel;
+          shipmentId = params['id'];
+          debugger;
+          this.shipmentService.get(shipmentId,this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
+            result.pickUpDate = new Date(result.pickUpDate);
+            result.deliveryDate = new Date(result.deliveryDate);
+            this.componentModel = result as ShipmentModel;
             const self = this;
-            // settimeout used to let angular template engine to render map element (everything is displayed only when component model )
-            setTimeout(function () {
-              self.createMap(self.componentModel.location.latitude, self.componentModel.location.longitude);
-            }, 500);
 
             observer.next(true);
           }, error => {
             this.errorHandler.handleError(error);
             observer.next(false);
           })
-        });*/
+        });
       }
     });
   }
