@@ -250,7 +250,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(24,1);
+                    await _shipmentService.Get(35,1);
             }
             catch (Exception ex)
             {

@@ -193,7 +193,7 @@ namespace TransApp.Persistence.Repository
 
                                         if (shipmentSenderTruck != null)
                                         {
-                                            if (!lookupSenderTruck.ExistsList(entity.Shipment.Id, shipment.Id))
+                                            if (!lookupSenderTruck.ExistsList(entity.Shipment.Id, shipmentSenderTruck.Id))
                                             {
                                                 if (entity.ShipmentSenderTrucks == null)
                                                     entity.ShipmentSenderTrucks = new List<ShipmentSenderTruck>();
