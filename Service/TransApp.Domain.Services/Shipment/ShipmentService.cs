@@ -753,7 +753,7 @@ namespace TransApp.Domain.Services.Shipment
             if (shipmentsOpenMarket != null)
             {
                 var fields = shipmentsOpenMarket as IDictionary<string, object>;
-                if (fields != null) unassigned.Amount = Convert.ToInt32(fields["Amount"]);
+                if (fields != null) openMarket.Amount = Convert.ToInt32(fields["Amount"]);
                 if (fields?["LastDateTime"] != null && fields["LastDateTime"] != DBNull.Value)
                 {
                     openMarket.LastDateTime = (DateTime) fields["LastDateTime"];
