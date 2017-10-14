@@ -79,12 +79,18 @@ Where 1=1 ");
         {
             try
             {
+                CreateShipmentTransporterHistory(predicate, transaction);
                  Delete(predicate, transaction);
             }
             catch (Exception ex)
             {
                 
             }
+        }
+
+        private void CreateShipmentTransporterHistory(string predicate, IDbTransaction transaction)
+        {
+            throw new NotImplementedException();
         }
 
         public async Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null)

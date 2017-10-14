@@ -18,9 +18,5 @@ namespace TransApp.Persistence.Repository
         void DeleteShipmentTransporter(string predicate, IDbTransaction transaction = null);
 
         Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null);
-
-        //Task SaveTransporter(int currentUserId, Transporter transporter, IDbTransaction transaction = null);
-
-        //Task DeleteTransporter(Transporter transporter, IDbTransaction transaction);
     }
 }
