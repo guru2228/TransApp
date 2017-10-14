@@ -30,7 +30,6 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-
                                     <ng-container *ngFor="let addressRow of componentModel; let rowindex = index">
                                         <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="(addressRow.viewActions ||addressRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
                                             <td>{{addressRow.address.name}}</td>

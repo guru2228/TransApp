@@ -90,7 +90,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     const self = this;
     setTimeout(function () {
-      self.moveToAddressSearch();
+      self.setCursorToAddressSearch();
     }, 500);
   }
 
@@ -111,7 +111,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
       });
     } else {
       this.helperService.scrollOnTop();
-      this.moveToAddressSearch();
+      this.setCursorToAddressSearch();
     }
   }
 
@@ -485,7 +485,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private moveToAddressSearch() {
+  private setCursorToAddressSearch() {
     if (this.componentState === ComponentStateType.add) {
       const element = document.getElementById('searchControl');
       if (element) {

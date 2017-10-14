@@ -30,7 +30,7 @@ export class ShipmentService {
    * @param employeeEncryptedData
    * @param language
    */
-  get(id: number,  customerId:number, language: string): Observable<ShipmentModel> {
+  get(id: number, customerId: number, language: string): Observable<ShipmentModel> {
     return this.http.get(this.serviceUrl +
       'get' +
       '/' + id +
@@ -54,7 +54,7 @@ export class ShipmentService {
       '/' + shipmentStatus +
       '/' + startItem +
       '/' + numberOfRetrievedItems +
-      '/' + language )
+      '/' + language)
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
   }
@@ -66,12 +66,12 @@ export class ShipmentService {
 * @param numberOfRetrievedItems
 * @param language
 */
-  getCount(customerId: number, shipmentStatus: number,  language: string): Observable<number> {
+  getCount(customerId: number, shipmentStatus: number, language: string): Observable<number> {
     return this.http.get(this.serviceUrl +
       'getCount' +
       '/' + customerId +
       '/' + shipmentStatus +
-      '/' + language )
+      '/' + language)
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
   }
@@ -94,30 +94,62 @@ export class ShipmentService {
   }
 
   /**
+ * assignToOpenMarket shipment
+ * @param medicalEncryptedData
+ * @param componentName
+ * @param language
+ */
+  assignToOpenMarket(shipmentId: number) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const data = JSON.stringify({});
+
+    return this.http.post(this.serviceUrl + 'assignToOpenMarket/' + shipmentId,
+      data,
+      { headers })
+      .map(response => (response).json())
+      .catch(this.errorHandler.throwError);
+  }
+
+  /**
+ * moveToUnassigned shipment
+ * @param medicalEncryptedData
+ * @param componentName
+ * @param language
+ */
+  moveToUnassigned(shipmentId: number) {
+    const headers = new Headers({ 'Content-Type': 'application/json' });
+    const data = JSON.stringify({});
+
+    return this.http.post(this.serviceUrl + 'moveToUnassigned/' + shipmentId,
+      data,
+      { headers })
+      .map(response => (response).json())
+      .catch(this.errorHandler.throwError);
+  }
+
+  /**
   * Delete address
   * @param medicalEncryptedData
   * @param componentName
   * @param language
   */
-  delete(shipmentId: number) {
-    const headers = new Headers({ 'Content-Type': 'application/json' });
-
-    return this.http.delete(this.serviceUrl + 'delete/' + shipmentId)
+  delete(shipmentId: number, customerId: number) {
+    return this.http.delete(this.serviceUrl + 'delete/' + shipmentId + '/' + customerId)
       .map(response => (response).json());
   }
 
-    /**
-   * Get all shipments
-   * @param customerId
-   * @param startItem
-   * @param numberOfRetrievedItems
-   * @param language
-   */
+  /**
+ * Get all shipments
+ * @param customerId
+ * @param startItem
+ * @param numberOfRetrievedItems
+ * @param language
+ */
   getShipmentFilters(customerId: number, language: string): Observable<ShipmentTransporterFilterModel[]> {
     return this.http.get(this.serviceUrl +
       'getShipmentFilters' +
       '/' + customerId +
-      '/' + language )
+      '/' + language)
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
   }

@@ -6,7 +6,7 @@
                 <div class="col-md-6">
                     <div class="card">
                         <div class="card-content">
-                            <form id="searchForm" #searchForm="ngForm" [hidden]="componentState !== 0 ">
+                            <form id="searchForm" #searchForm="ngForm" [hidden]="componentState !== 0">
                                 <div [ngClass]="'form-group label-floating ' + ((!searchControl || !searchControl.valid ) && formAddress.submitted ? ' has-error' : '')">
                                     <label for="" class="control-label">
                                             Search by address

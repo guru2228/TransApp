@@ -26,7 +26,7 @@ declare var swal: any;
 })
 export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
-  componentModel: ShipmentRowViewModel[] = [];
+  componentModel: ShipmentRowViewModel[] ;
   shipmentFilters: ShipmentTransporterFilterModel[];
   currentUser: ApplicationUser;
   // search term
@@ -35,7 +35,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   pagesCollection: Array<number>;
   pageSize = 4;
 
-  selectedShipmentFilter: ShipmentTransporterFilterModel ;
+  selectedShipmentFilter: ShipmentTransporterFilterModel;
 
   private subscriptionReceiveUpdatedShipment: Subscription;
 
@@ -56,14 +56,14 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.notificationService.showLoading();
 
-    this.getShipmentFilters().subscribe(filtersLoaded=>{
+    this.getShipmentFilters().subscribe(filtersLoaded => {
 
       this.selectedShipmentFilter = this.shipmentFilters[0];
 
-      this.getNumberOfShipments('', false);
+      this.getNumberOfShipments(false);
 
       this.getShipments();
-    }, error=>{
+    }, error => {
       this.notificationService.show('Filter not loaded', 'danger', 'center', 'top');
       this.errorHandler.handleError(error);
     });
@@ -71,6 +71,10 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
   onFilterClick(shipmentFilter: ShipmentTransporterFilterModel): void {
     this.selectedShipmentFilter = shipmentFilter;
+
+    this.getNumberOfShipments(false);
+
+          this.getShipments();
   }
 
   /**
@@ -85,7 +89,6 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
             this.currentAddressId = +this.route.firstChild.snapshot.params['id']
           }
           for (let i = 0; i < result.length; i++) {
-            debugger;
             const shipmentRow = new ShipmentRowViewModel();
             shipmentRow.shipment = result[i];
             // if url contains edit then open it by default
@@ -102,17 +105,11 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   /**
    * Get addresses count for current filters
    */
-  private getNumberOfShipments(searchQueryParam: string, ignoreQueryString: boolean) {
+  private getNumberOfShipments(ignoreQueryString: boolean) {
     this.pagesCollection = null;
-    if (searchQueryParam.length <= 0 && !ignoreQueryString) {
-      this.route.queryParams.subscribe(params => {
-        searchQueryParam = params['searchquery'] ? params['searchquery'].toString() : '';
-      });
-    }
     if (this.currentUser && this.currentUser.customerId) {
       this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentFilter.statusType, this.translateService.currentLanguage).subscribe(result => {
         this.pagesCollection = [];
-        debugger;
         let numberOfPages = Math.ceil(result / this.pageSize);
         numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
         const self = this;
@@ -130,19 +127,18 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   /**
    * Get shipment filter
    */
-  private getShipmentFilters() :Observable<boolean>{
-    return Observable.create(observer=>{
-    if (this.currentUser && this.currentUser.customerId) {
-      debugger;
-      this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
-        this.shipmentFilters = result;
-        observer.next(true);
-      }, error => {
-        this.errorHandler.handleError(error);
-        observer.next(false);
-      });
-    }
-  });
+  private getShipmentFilters(): Observable<boolean> {
+    return Observable.create(observer => {
+      if (this.currentUser && this.currentUser.customerId) {
+        this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
+          this.shipmentFilters = result;
+          observer.next(true);
+        }, error => {
+          this.errorHandler.handleError(error);
+          observer.next(false);
+        });
+      }
+    });
   }
 
   private register_updateSavedModel_handler() {
@@ -180,7 +176,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
   /**
-   * Show edit address
+   * Show edit
    * */
   onClickEditShipment(shipmentRow: ShipmentRowViewModel) {
     this.notificationService.showLoading();
@@ -192,8 +188,41 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     shipmentRow.viewEdit = !shipmentRow.viewEdit;
   }
 
+    /**
+   * assignToOpenMarket
+   * */
+  assignToOpenMarket(shipmentId: number) {
+    debugger;
+    this.notificationService.showLoading();
+
+    this.shipmentService.assignToOpenMarket(shipmentId).subscribe(assigned => {
+      if (assigned) {
+        this.componentModel = this.componentModel.filter(item => item.shipment.id !== shipmentId)
+      }
+    }, error => {
+      this.errorHandler.handleError('Assigning to open market operation failed. Please contact an administrator!');
+    })
+  }
+
+    /**
+   * Show edit address
+   * */
+  moveToUnassigned(shipmentId: number) {
+    debugger;
+    this.notificationService.showLoading();
+
+    this.shipmentService.moveToUnassigned(shipmentId).subscribe(assigned => {
+      if (assigned) {
+        this.componentModel = this.componentModel.filter(item => item.shipment.id !== shipmentId)
+      }
+    }, error => {
+      this.errorHandler.handleError('Assigning to open market operation failed. Please contact an administrator!');
+    })
+  }
+
   /** Show edit address */
   onClickDeleteShipment(shipmentId: number) {
+    debugger;
     const self = this;
     swal({
       title: 'Are you sure?',
@@ -206,7 +235,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     })
       // delete confirmed
       .then(function () {
-        self.shipmentService.delete(shipmentId).subscribe(result => {
+        self.shipmentService.delete(shipmentId, self.currentUser.customerId).subscribe(result => {
           if (result) {
             swal(
               'Deleted!',
@@ -247,10 +276,10 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
 
 
-    /**
-   * Move to next/previous page
-   * @param page
-   */
+  /**
+ * Move to next/previous page
+ * @param page
+ */
   paginate(page: number) {
     this.currentPage = page;
     this.getShipments();
@@ -292,7 +321,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     $('[rel="tooltip"]').tooltip();
   }
 
-   getFilterColor(status: ShipmentTransporterStatus): string {
+  getFilterColor(status: ShipmentTransporterStatus): string {
     switch (status) {
       case ShipmentTransporterStatus.unassigned:
         return 'red';
@@ -305,22 +334,22 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
       default:
         return '';
     }
-}
-
- getFilterIcon(status: ShipmentTransporterStatus): string {
-  switch (status) {
-    case ShipmentTransporterStatus.unassigned:
-      return 'weekend';
-    case ShipmentTransporterStatus.openMarket:
-      return 'equalizer';
-    case ShipmentTransporterStatus.assigned:
-      return 'assignment_turned_in';
-    case ShipmentTransporterStatus.completed:
-      return 'assignment_turned_in';
-    default:
-      return '';
   }
-}
+
+  getFilterIcon(status: ShipmentTransporterStatus): string {
+    switch (status) {
+      case ShipmentTransporterStatus.unassigned:
+        return 'weekend';
+      case ShipmentTransporterStatus.openMarket:
+        return 'equalizer';
+      case ShipmentTransporterStatus.assigned:
+        return 'assignment_turned_in';
+      case ShipmentTransporterStatus.completed:
+        return 'assignment_turned_in';
+      default:
+        return '';
+    }
+  }
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedShipment) {
