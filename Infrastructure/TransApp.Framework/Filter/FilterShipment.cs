@@ -13,7 +13,7 @@ namespace TransApp.Framework.Filter
         public int Amount { get; set; }
         public string ShipmentStatus { get; set; }
         public int? TransporterId { get; set; }
-        public ShipmentTransporterStatus ShipmentTransporterStatus { get; set; }
+        public ShipmentTransporterStatus TransporterStatus { get; set; }
         public bool Declined { get; set; }
         public bool Pending { get; set; }
 

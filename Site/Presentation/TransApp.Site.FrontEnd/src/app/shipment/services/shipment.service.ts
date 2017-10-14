@@ -30,10 +30,11 @@ export class ShipmentService {
    * @param employeeEncryptedData
    * @param language
    */
-  get(id: number, language: string): Observable<ShipmentModel> {
+  get(id: number,  customerId:number, language: string): Observable<ShipmentModel> {
     return this.http.get(this.serviceUrl +
       'get' +
       '/' + id +
+      '/' + customerId +
       '/' + language)
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);

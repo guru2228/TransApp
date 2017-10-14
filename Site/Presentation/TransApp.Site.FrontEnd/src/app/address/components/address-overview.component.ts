@@ -28,7 +28,7 @@ declare var swal: any;
 export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
 
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
-  componentModel: AddressRowViewModel[] = [];
+  componentModel: AddressRowViewModel[] ;
   currentUser: ApplicationUser;
   // search term
   searchTerm = new FormControl();

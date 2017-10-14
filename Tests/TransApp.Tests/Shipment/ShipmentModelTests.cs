@@ -281,24 +281,24 @@ namespace TransApp.Tests.Shipment
             {
                 FilterShipment f = new FilterShipment {CustomerId = 1, StartItem = 0,
                     Amount = 5,
-                    ShipmentTransporterStatus = ShipmentTransporterStatus.Unassigned
+                    TransporterStatus = ShipmentTransporterStatus.Unassigned
                 };
                 List<ShipmentModel> model =
                     await _shipmentService.GetAll(f);
 
-                f.ShipmentTransporterStatus = ShipmentTransporterStatus.Completed;
+                f.TransporterStatus = ShipmentTransporterStatus.Completed;
                 model =
                    await _shipmentService.GetAll(f);
 
-                f.ShipmentTransporterStatus = ShipmentTransporterStatus.OpenMarket;
+                f.TransporterStatus = ShipmentTransporterStatus.OpenMarket;
                 model =
                    await _shipmentService.GetAll(f);
 
-                f.ShipmentTransporterStatus = ShipmentTransporterStatus.Unassigned;
+                f.TransporterStatus = ShipmentTransporterStatus.Unassigned;
                 model =
                    await _shipmentService.GetAll(f);
 
-                f.ShipmentTransporterStatus= ShipmentTransporterStatus.Assigned;
+                f.TransporterStatus= ShipmentTransporterStatus.Assigned;
                 model =
                    await _shipmentService.GetAll(f);
                 f.Declined=true;
