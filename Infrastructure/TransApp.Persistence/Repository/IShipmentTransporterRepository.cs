@@ -15,8 +15,10 @@ namespace TransApp.Persistence.Repository
 
         Task<List<ShipmentTransporterDto>> GetAll(FilterShipmentTransporter filter);
 
-        void DeleteShipmentTransporter(string predicate, IDbTransaction transaction = null);
+        Task DeleteShipmentTransporter(string predicate, IDbTransaction transaction = null);
 
         Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null);
+
+        List<ShipmentTransporter> GetAllBasic(string predicate);
     }
 }

@@ -42,12 +42,16 @@ namespace TransApp.Domain.Services.Shipment
 
         Task DeleteShipmentById(int shipmentId);
 
-        Task<bool> AssignToOpenMarket(int userId,int shipmentId);
+        Task<bool> AssignToOpenMarket(int userId,int shipmentId, IDbTransaction transaction = null);
 
-        Task<bool> MoveToUnassigned(int userId, int shipmentId);
+        Task<bool> MoveToUnassigned(int userId, int shipmentId, IDbTransaction transaction = null);
 
         Task<bool> ConfirmTransporter(int userId, int shipmentId,int transpoterId );
 
         Task<int> GetAllCount(FilterShipment filter);
+
+        Task CreateShipmentTransporterHistory(string predicate, IDbTransaction transaction = null);
+
+        Task<bool> UnassignAndMoveToOpenMarket(int userId, int shipmentId, IDbTransaction transaction = null);
     }
 }

@@ -222,7 +222,8 @@ namespace TransApp.Tests.Shipment
                 Price = 11000110,
                 Selected = true,
                 SelectedDate = DateTime.Now,
-                TransporterId = 1
+                TransporterId = 1,
+                ExpiredDate = DateTime.Now
             };
             shipmentTransporters.Add(aShipmentTransporterModel);
             currentShipment.Transporters = shipmentTransporters;
@@ -338,7 +339,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(21);
+                    await _shipmentService.Get(39);
 
                 await _shipmentService.DeleteShipment(currentShipmentModel);
             }
@@ -421,7 +422,7 @@ namespace TransApp.Tests.Shipment
         [TestMethod]
         public async Task Test_MoveToUnassigned_Is_Ok()
         {
-            if (await _shipmentService.MoveToUnassigned(1000, 24))
+            if (await _shipmentService.MoveToUnassigned(1000, 40))
             {
                 Assert.IsTrue(true);
                 return;
@@ -458,6 +459,17 @@ namespace TransApp.Tests.Shipment
                 Assert.IsFalse(true);
             }
             Assert.IsTrue(true);
+        }
+
+        [TestMethod]
+        public async Task Test_UnassignAndOpenMarket_Is_Ok()
+        {
+            if (await _shipmentService.UnassignAndMoveToOpenMarket(1000, 42))
+            {
+                Assert.IsTrue(true);
+                return;
+            }
+            Assert.IsFalse(true);
         }
     }
 }

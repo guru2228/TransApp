@@ -11,11 +11,13 @@ using TransApp.DataModel.Dto.Custom;
 using TransApp.Framework.Filter;
 using TransApp.Persistence.Repository.Generic;
 
+
 namespace TransApp.Persistence.Repository
 {
     public class ShipmentTransporterRepository : GenericRepository<ShipmentTransporter>, IShipmentTransporterRepository
     {
-        public ShipmentTransporterRepository(string tableName, string connectionString) : base(tableName, connectionString)
+        public ShipmentTransporterRepository(string tableName, string connectionString)
+            : base(tableName, connectionString)
         {
         }
 
@@ -72,28 +74,27 @@ Where 1=1 ");
             {
                 sb.Append(" and ShipmentTransporter.CustomerId=" + filter.CustomerId.Value);
             }
+            if (!string.IsNullOrEmpty(filter.Predicate))
+            {
+                sb.Append(" and " + filter.Predicate);
+            }
             return sb.ToString();
         }
 
-        public void DeleteShipmentTransporter(string predicate, IDbTransaction transaction)
+        public async Task DeleteShipmentTransporter(string predicate, IDbTransaction transaction)
         {
             try
             {
-                CreateShipmentTransporterHistory(predicate, transaction);
-                 Delete(predicate, transaction);
+                Delete(predicate, transaction);
             }
             catch (Exception ex)
             {
-                
+
             }
         }
 
-        private void CreateShipmentTransporterHistory(string predicate, IDbTransaction transaction)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null)
+        public async Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter,
+            IDbTransaction transaction = null)
         {
             if (currentShipmentTransporter != null)
             {
@@ -117,6 +118,11 @@ Where 1=1 ");
                     await UpdateAsync(currentShipmentTransporter, transaction);
                 }
             }
+        }
+
+        public List<ShipmentTransporter>  GetAllBasic(string predicate)
+        {
+            return base.GetAll(predicate).ToList();
         }
     }
 }

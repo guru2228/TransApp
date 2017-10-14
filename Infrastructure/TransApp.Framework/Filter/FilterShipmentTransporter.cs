@@ -14,5 +14,6 @@ namespace TransApp.Framework.Filter
         public bool OpenMarket { get; set; }
         public bool Assigned { get; set; }
         public bool Confirmed { get; set; }
+        public string Predicate { get; set; }
     }
 }

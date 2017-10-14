@@ -43,6 +43,8 @@ namespace TransApp.Domain.Shipment
 
         public DateTime? DateModified { get; set; }
 
+        public DateTime? ExpiredDate { get; set; }
+
     }
 
 }

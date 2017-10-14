@@ -31,6 +31,8 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<AddressRequirement> _addressRequirementRepository;
         private GenericRepository<AddressTruck> _addressTruckRepository;
         private GenericRepository<Customer> _customerRepository;
+        private GenericRepository<ShipmentTransporterHistory> _shipmentTransporterHistoryRepository;
+        private GenericRepository<ShipmentHistory> _shipmentHistoryRepository;
         private GenericRepository<CustomerUser> _customerUserRepository;
         private IFacilityRepository _facilityRepository;
         private IRequirementRepository _requirementRepository;
@@ -471,6 +473,30 @@ namespace TransApp.Persistence.UnitOfWork
                     this._shipmentTransporterRepository = new ShipmentTransporterRepository("ShipmentTransporter", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _shipmentTransporterRepository;
+            }
+        }
+
+        public GenericRepository<ShipmentTransporterHistory> ShipmentTransporterHistoryRepository
+        {
+            get
+            {
+                if (this._shipmentTransporterHistoryRepository == null)
+                {
+                    this._shipmentTransporterHistoryRepository = new GenericRepository<ShipmentTransporterHistory>("ShipmentTransporterHistory", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentTransporterHistoryRepository;
+            }
+        }
+
+        public GenericRepository<ShipmentHistory> ShipmentHistoryRepository
+        {
+            get
+            {
+                if (this._shipmentHistoryRepository == null)
+                {
+                    this._shipmentHistoryRepository = new GenericRepository<ShipmentHistory>("ShipmentHistory", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _shipmentHistoryRepository;
             }
         }
     }
