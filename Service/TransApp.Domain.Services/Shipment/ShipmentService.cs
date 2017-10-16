@@ -235,6 +235,7 @@ namespace TransApp.Domain.Services.Shipment
                             TransporterName = currentShipment.TransporterName,
                             AddressFrom = currentShipment.AddressFrom,
                             AddressTo = currentShipment.AddressTo,
+                            OfferCount = currentShipment.OfferCount
                         };
 
                         result.Add(shipmentModel);
@@ -799,20 +800,27 @@ namespace TransApp.Domain.Services.Shipment
                 Mapper.Map<ShipmentDetailModel, ShipmentDetail>(shipmentDetailModel);
             if (aShipmentDetailChild != null)
             {
-                aShipmentDetailChild.DateModified = DateTime.Now;
-                aShipmentDetailChild.UserIdModified = userId;
-                aShipmentDetailChild.ParentDetailId = parentId;
-                if (aShipmentDetailChild.Id <= 0)
+                if (shipmentDetailModel.ToRemove)
                 {
-                    aShipmentDetailChild.DateCreated = DateTime.Now;
-                    aShipmentDetailChild.UserIdCreated = userId;
-                    aShipmentDetailChild.ShipmentId = shipmentDetailModel.ShipmentId;
-                    shipmentDetailModel.Id =
-                        await _unitOfWork.ShipmentDetailRepository.AddAsync(aShipmentDetailChild, transaction);
+                    await _unitOfWork.ShipmentDetailRepository.DeleteAsync(aShipmentDetailChild, transaction);
                 }
                 else
                 {
-                    await _unitOfWork.ShipmentDetailRepository.UpdateAsync(aShipmentDetailChild, transaction);
+                    aShipmentDetailChild.DateModified = DateTime.Now;
+                    aShipmentDetailChild.UserIdModified = userId;
+                    aShipmentDetailChild.ParentDetailId = parentId;
+                    if (aShipmentDetailChild.Id <= 0)
+                    {
+                        aShipmentDetailChild.DateCreated = DateTime.Now;
+                        aShipmentDetailChild.UserIdCreated = userId;
+                        aShipmentDetailChild.ShipmentId = shipmentDetailModel.ShipmentId;
+                        shipmentDetailModel.Id =
+                            await _unitOfWork.ShipmentDetailRepository.AddAsync(aShipmentDetailChild, transaction);
+                    }
+                    else
+                    {
+                        await _unitOfWork.ShipmentDetailRepository.UpdateAsync(aShipmentDetailChild, transaction);
+                    }
                 }
             }
         }

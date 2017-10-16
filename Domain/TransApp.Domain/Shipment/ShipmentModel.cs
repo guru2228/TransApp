@@ -79,5 +79,6 @@ namespace TransApp.Domain.Shipment
         public List<AvailabilityEntityModel> ReceiverAvailabilities { get; set; }
 
         public List<AvailabilityEntityModel> SenderAvailabilities { get; set; }
+        public int OfferCount { get; set; }
     }
 }

@@ -75,5 +75,6 @@ namespace TransApp.DataModel.Dto.Custom
         public string TransporterName { get; set; }
         public string AddressFrom { get; set; }
         public string AddressTo { get; set; }
+        public int OfferCount { get; set; }
     }
 }

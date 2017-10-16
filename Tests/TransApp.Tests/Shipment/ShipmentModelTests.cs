@@ -357,7 +357,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(24);
+                    await _shipmentService.Get(44);
 
                 foreach (var av in currentShipmentModel.ShipmentDetails)
                 {
@@ -366,7 +366,7 @@ namespace TransApp.Tests.Shipment
                     {
                         foreach (var extra in av.Extras)
                         {
-                            extra.Height = 77777;
+                            extra.ToRemove = true;
                         }
                     }
                 }

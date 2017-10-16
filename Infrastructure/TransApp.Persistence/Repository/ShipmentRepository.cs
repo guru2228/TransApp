@@ -771,14 +771,21 @@ where [Shipment].Id =  " + id);
 	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
       ,Transporter.Name as TransporterName
       ,FromAddress.Name as AddressFrom
-      ,ToAddress.Name as AddressTo
-from Shipment 
+      ,ToAddress.Name as AddressTo");
+            if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket)
+            {
+                sb.Append(@" ,(select count(ShipmentTransporter.Id) As OfferCount from ShipmentTransporter where 
+                        ShipmentTransporter.ShipmentId=Shipment.Id) as OfferCount");
+            }
+
+            sb.Append(@" from Shipment 
 left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Shipment.UserIdCreated
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Shipment.UserIdModified
 left outer join [Transporter] on Transporter.Id=Shipment.TransporterId
 left outer join [Address] as FromAddress on FromAddress.Id=Shipment.SenderAddressId
-left outer join [Address] as ToAddress on ToAddress.Id=Shipment.ReceiverAddressId
-where 1=1");
+left outer join [Address] as ToAddress on ToAddress.Id=Shipment.ReceiverAddressId");
+           
+ sb.Append(@" where 1=1");
             if (filter.CustomerId.HasValue)
             {
                 sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
