@@ -26,7 +26,7 @@ declare var swal: any;
 })
 export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
-  componentModel: ShipmentRowViewModel[] ;
+  componentModel: ShipmentRowViewModel[];
   shipmentFilters: ShipmentTransporterFilterModel[];
   currentUser: ApplicationUser;
   // search term
@@ -43,7 +43,7 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     private shipmentService: ShipmentService,
     private notificationService: NotificationService,
     private authenticationService: AuthenticationService,
-    private translateService: TranslateService,
+    public translateService: TranslateService,
     private helperService: HelperService,
     private errorHandler: GlobalErrorHandler,
     private route: ActivatedRoute) {
@@ -74,15 +74,27 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
     this.getNumberOfShipments(false);
 
-          this.getShipments();
+    this.getShipments();
   }
+
+  onAssignedSubfilterClick(inPending: boolean, shipmentFilter: ShipmentTransporterFilterModel): void {
+    shipmentFilter.inPending = inPending;
+
+    this.selectedShipmentFilter = shipmentFilter;
+
+    this.getNumberOfShipments(false);
+
+    this.getShipments();
+  }
+
 
   /**
    * Get addresses
    */
   private getShipments() {
     if (this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentFilter.statusType, (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
+      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentFilter.statusType, this.selectedShipmentFilter.inPending,
+        (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
         this.componentModel = [];
         if (result && result.length > 0) {
           if (this.route.firstChild) {
@@ -188,9 +200,9 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     shipmentRow.viewEdit = !shipmentRow.viewEdit;
   }
 
-    /**
-   * assignToOpenMarket
-   * */
+  /**
+ * assignToOpenMarket
+ * */
   assignToOpenMarket(shipmentId: number) {
     debugger;
     this.notificationService.showLoading();
@@ -204,12 +216,12 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     })
   }
 
-    /**
-   * Show edit address
-   * */
+  /**
+ * Show edit address
+ * */
   moveToUnassigned(shipmentId: number) {
     debugger;
-    this.notificationService.showLoading();
+    this.notificationService.showLoading(2);
 
     this.shipmentService.moveToUnassigned(shipmentId).subscribe(assigned => {
       if (assigned) {
@@ -339,17 +351,18 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   getFilterIcon(status: ShipmentTransporterStatus): string {
     switch (status) {
       case ShipmentTransporterStatus.unassigned:
-        return 'weekend';
+        return 'assignment';
       case ShipmentTransporterStatus.openMarket:
-        return 'equalizer';
+        return 'shopping_cart';
       case ShipmentTransporterStatus.assigned:
-        return 'assignment_turned_in';
+        return 'done';
       case ShipmentTransporterStatus.completed:
-        return 'assignment_turned_in';
+        return 'done_all';
       default:
         return '';
     }
   }
+
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedShipment) {

@@ -756,7 +756,8 @@ namespace TransApp.Domain.Services.Shipment
 
             ShipmentTransporterFilterModel assigned = new ShipmentTransporterFilterModel
             {
-                StatusType = ShipmentTransporterStatus.Assigned
+                StatusType = ShipmentTransporterStatus.Assigned,
+                InPending = true
             };
             if (shipmentsAssigned != null)
             {

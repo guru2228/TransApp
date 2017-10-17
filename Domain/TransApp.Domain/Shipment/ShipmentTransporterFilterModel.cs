@@ -20,6 +20,10 @@ namespace TransApp.Domain.Shipment
         public ShipmentTransporterStatus StatusType { get; set; }
 
         /// <summary>
+        /// True if pending filter is applied when StatusType=Assigned, False for declined
+        /// </summary>
+        public bool InPending { get; set; }
+        /// <summary>
         /// amount of records for this customer with selected state
         /// </summary>
         public int Amount { get; set; }

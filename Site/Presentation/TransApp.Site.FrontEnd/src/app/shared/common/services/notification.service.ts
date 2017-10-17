@@ -33,19 +33,29 @@ export class NotificationService {
   }
 
   /**
-  * Show notification
-  * @param message  notification message
-  * @param notificationType type: allowed types ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary']
-  * @param horizontalPosition vertical position, allowed: 'left', 'center','right'
-  * @param verticalPosition horizontal position, allowed: 'bottom', 'top'
-  */
-  showLoading(message = 'Loading') {
-    const notify = $.notify(message, {
-      type: 'info',
-      allow_dismiss: false,
-      showProgressbar: true,
-      delay: 500,
-      timer: 1000,
-    });
+   * show loading
+   * @param message
+   * @param timer  number of seconds to load
+   */
+  showLoading(timer = 1, message = 'Loading') {
+    if (timer <= 1) {
+      const notify = $.notify(message, {
+        type: 'info',
+        allow_dismiss: false,
+        showProgressbar: true,
+        delay: 100,
+        timer: timer * 1000
+      });
+    } else {
+      const notify = $.notify(message, {
+        type: 'info',
+        allow_dismiss: false,
+        showProgressbar: true,
+      });
+    }
+
+
+    setTimeout(function () {
+    }, timer * 1000);
   }
 }

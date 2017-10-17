@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
@@ -127,7 +128,7 @@ namespace TransApp.Site.ApiControllers
                     "Provided customer is not assigned to your account");
             }
 
-            var filters = await _shipmentService.GetShipmentFilter(currentUser.CustomerId.Value);
+            var filters = (await _shipmentService.GetShipmentFilter(currentUser.CustomerId.Value)).OrderBy(item=>item.StatusType);
             return filters;
         }
 
@@ -139,13 +140,14 @@ namespace TransApp.Site.ApiControllers
         /// <param name=")"></param>
         /// <param name="customerId"></param>
         /// <param name="filterType"></param>
+        /// <param name="inPending"></param>
         /// <param name="startItem"></param>
         /// <param name="numberOfRetrievedItems"></param>
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getAll/{customerId}/{filterType}/{startItem}/{numberOfRetrievedItems}/{language}")]
-        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int filterType, int startItem, int numberOfRetrievedItems,
+        [HttpGet("getAll/{customerId}/{filterType}/{inPending}/{startItem}/{numberOfRetrievedItems}/{language}")]
+        public async Task<IEnumerable<ShipmentModel>> GetAll(int customerId, int filterType, bool inPending, int startItem, int numberOfRetrievedItems,
             int language)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
@@ -159,7 +161,9 @@ namespace TransApp.Site.ApiControllers
                 CustomerId = currentUser.CustomerId.Value,
                 StartItem = startItem,
                 Amount = numberOfRetrievedItems,
-                TransporterStatus = (ShipmentTransporterStatus)filterType
+                TransporterStatus = (ShipmentTransporterStatus)filterType,
+                Pending = inPending,
+                Declined =  !inPending
             };
             var shipments = await _shipmentService.GetAll(searchFilter);
             return shipments;

@@ -9,13 +9,25 @@
                     </div>
                     <div class="card-content">
                         <p class="category">{{shipmentFilter.description}}</p>
-                        <h3 class="card-title">{{shipmentFilter.amount}}</h3>
+                        <h3 class="card-title">{{shipmentFilter.statusType == 2 ? (shipmentFilter.inPending ? shipmentFilter.pending: shipmentFilter.declined) : shipmentFilter.amount}}</h3>
                     </div>
                     <div class="card-footer">
                         <div class="stats">
-                            <i class="material-icons">date_range</i> {{shipmentFilter.lastDateTime}}
+                            <i class="material-icons">date_range</i> Last updated {{translateService.generateFromNowOnString(shipmentFilter.lastDateTime)}}
                         </div>
                     </div>
+                </div>
+
+                <div style="padding-left:25px" *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2 && shipmentFilter.statusType === 2">
+                    <button class="btn btn-primary" (click)="onAssignedSubfilterClick(true, shipmentFilter)">
+                        <span *ngIf="selectedShipmentFilter.inPending" class="btn-label">
+                            <i class="material-icons">check</i>
+                        </span>
+                        Pending</button>
+                    <button class="btn btn-info" (click)="onAssignedSubfilterClick(false, shipmentFilter)">
+                      <span *ngIf="!selectedShipmentFilter.inPending" class="btn-label">
+                        <i class="material-icons">check</i>
+                    </span>Declined</button>
                 </div>
             </div>
 
@@ -23,12 +35,7 @@
 
         <div class="row">
             <div class="col-md-12">
-                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2" class="btn btn-warning">
-                        <i class="material-icons">warning</i> Pending
-                    </button>
-                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2" class="btn btn-danger">
-                        <i class="material-icons">close</i> Declined
-                    </button>
+
 
                 <div class="card">
                     <!-- <div class="card-header card-header-icon" data-background-color="rose">
@@ -53,10 +60,10 @@
 
                                     <ng-container *ngFor="let shipmentRow of componentModel; let rowindex = index">
                                         <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
-                                            <td>{{shipmentRow.shipment.pickUpDate}}</td>
-                                            <td>{{shipmentRow.shipment.deliveryDate}}</td>
-                                            <td>{{shipmentRow.shipment.senderContactPerson}}</td>
-                                            <td>{{shipmentRow.shipment.receiverContactPerson}}</td>
+                                            <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.pickUpDate)}}</td>
+                                            <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
+                                            <td>{{shipmentRow.shipment.addressFrom}}</td>
+                                            <td>{{shipmentRow.shipment.addressTo}}</td>
                                             <td>{{shipmentRow.shipment.totalQuatity}}</td>
                                             <td>{{shipmentRow.shipment.transporterId}}</td>
                                             <td>{{shipmentRow.shipment.totalPrice}}</td>

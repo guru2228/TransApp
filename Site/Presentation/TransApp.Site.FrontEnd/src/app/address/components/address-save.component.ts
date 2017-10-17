@@ -297,6 +297,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           -	Sunday closed
 */
   private updateOpeningHours(place: any) {
+    debugger;
     this.componentModel.availabilities = [];
     // if is permanently closed then, send common availability = true and closed on day 0  = true
     if (place.permanently_closed) {
@@ -322,6 +323,8 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         && place.opening_hours.periods[0].open.minutes === 0 && !place.opening_hours.periods[0].close) {
         this.componentModel.commonAvailability = true;
         const availability = new AvailabilityEntityModel();
+
+
         availability.id = -1;
         availability.day = 0;
         availability.amStart = '00:00';
@@ -352,10 +355,10 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
             if (periodEnd) {
               availability.pmStart = ('0' + periodEnd.open.hours).slice(-2) + ':' + ('0' + periodEnd.open.minutes).slice(-2);
-              availability.pmStop = ('0' + (periodStart.close.hours === 0 ? 24 : periodStart.close.hours)).slice(-2) + ':' + ('0' + periodEnd.close.minutes).slice(-2);
+              availability.pmStop = ('0' + (periodEnd.close.hours === 0 ? 24 : periodEnd.close.hours)).slice(-2) + ':' + ('0' + periodEnd.close.minutes).slice(-2);
             } else {
-              availability.pmStart = availability.amStop;
-              availability.pmStop = availability.amStop;
+              availability.pmStart = null;
+              availability.pmStop = null;
             }
 
           } else {

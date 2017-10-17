@@ -47,11 +47,12 @@ export class ShipmentService {
    * @param numberOfRetrievedItems
    * @param language
    */
-  getAll(customerId: number, shipmentStatus: number, startItem: number, numberOfRetrievedItems: number, language: string): Observable<ShipmentModel[]> {
+  getAll(customerId: number, shipmentStatus: number,  getPending: boolean, startItem: number, numberOfRetrievedItems: number, language: string): Observable<ShipmentModel[]> {
     return this.http.get(this.serviceUrl +
       'getAll' +
       '/' + customerId +
       '/' + shipmentStatus +
+      '/' + getPending +
       '/' + startItem +
       '/' + numberOfRetrievedItems +
       '/' + language)

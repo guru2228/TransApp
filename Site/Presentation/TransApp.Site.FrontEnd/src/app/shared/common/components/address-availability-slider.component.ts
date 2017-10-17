@@ -61,6 +61,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
   private getTimestamps() {
     // get closest date by current day
     let date = new Date();
+    debugger;
     if (this.availability.day > 0) {
       date = moment().isoWeekday(this.availability.day).toDate();
     }
@@ -86,7 +87,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
         }
         this.amStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-       // this.availability.amStart = this.toFormat(this.amStart_initial_timestamp)
+       // this.availability.amStart = null;
       }
 
       if (this.availability.amStop && this.availability.amStop.length > 0) {
@@ -96,7 +97,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
         }
         this.amStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-       // this.availability.amStop = this.toFormat(this.amStop_initial_timestamp)
+       // this.availability.amStop= null;
       }
 
       if (this.availability.pmStart && this.availability.pmStart.length > 0) {
@@ -106,7 +107,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
         }
         this.pmStart_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-       // this.availability.pmStart = this.toFormat(this.pmStart_initial_timestamp)
+        this.pmStart_initial_timestamp =null
       }
 
       if (this.availability.pmStop && this.availability.pmStop.length > 0) {
@@ -116,7 +117,7 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
         }
         this.pmStop_initial_timestamp = new Date(date.getFullYear(), date.getMonth(), date.getDate(), +hoursArray[0], +hoursArray[1], 0, 0).getTime();
       } else {
-       // this.availability.pmStop = this.toFormat(this.pmStop_initial_timestamp)
+        this.pmStop_initial_timestamp = null;
       }
     }
   }
@@ -133,20 +134,39 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
     const sliderAvailability = document.getElementById(this.sliderid + '_' + self.availability.day) as any;
     const itWasInitializedAlready = sliderAvailability && sliderAvailability.querySelectorAll('.noUi-origin').length > 0;
 
-    const sliderConfig = {
-      // Create two timestamps to define a range.
-      range: {
-        min: self.range_min_timestamp,
-        max: self.range_max_timestamp
-      },
-      format: { to: self.toFormat, from: Number },
-      connect: [false, true, true, true, true],
-      // Steps of one week
-      step: 15 * 60 * 1000,
-      // Two more timestamps indicate the handle starting positions.
-      start: [self.amStart_initial_timestamp, self.amStop_initial_timestamp, self.pmStart_initial_timestamp, self.pmStop_initial_timestamp],
-      tooltips: [true, true, true, true]
-    };
+    let sliderConfig = {};
+    if(this.pmStart_initial_timestamp != null && this.pmStop_initial_timestamp != null){
+      sliderConfig = {
+        // Create two timestamps to define a range.
+        range: {
+          min: self.range_min_timestamp,
+          max: self.range_max_timestamp
+        },
+        format: { to: self.toFormat, from: Number },
+        connect: [false, true, true, true, false],
+        // Steps of one week
+        step: 15 * 60 * 1000,
+        // Two more timestamps indicate the handle starting positions.
+        start: [self.amStart_initial_timestamp, self.amStop_initial_timestamp, self.pmStart_initial_timestamp, self.pmStop_initial_timestamp],
+        tooltips: [true, true, true, true]
+      };
+    } else {
+      sliderConfig = {
+        // Create two timestamps to define a range.
+        range: {
+          min: self.range_min_timestamp,
+          max: self.range_max_timestamp
+        },
+        format: { to: self.toFormat, from: Number },
+        connect: [false, true, false],
+        // Steps of one week
+        step: 15 * 60 * 1000,
+        // Two more timestamps indicate the handle starting positions.
+        start: [self.amStart_initial_timestamp, self.amStop_initial_timestamp],
+        tooltips: [true, true]
+      };
+    }
+
 
     if (!itWasInitializedAlready) {
       noUiSlider.create(sliderAvailability, sliderConfig );

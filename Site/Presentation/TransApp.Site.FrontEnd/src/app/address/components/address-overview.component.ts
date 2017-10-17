@@ -88,7 +88,6 @@ export class AddressOverviewComponent implements OnInit, OnDestroy, AfterViewIni
    * Get addresses
    */
   private getAddresses() {
-    this.notificationService.showLoading();
     let searchquery = '';
     this.route.queryParams.subscribe(params => {
       searchquery = params['searchquery'] ? params['searchquery'].toString() : '';

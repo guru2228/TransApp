@@ -16,6 +16,7 @@ export class ShipmentModel {
   // sender region
   public senderAddressId: number;
   public senderAddressInfo: string;
+  public addressFrom: string;
   public senderAddressName: string;
   public senderContactPerson: string;
   public senderPhone: string;
@@ -28,6 +29,7 @@ export class ShipmentModel {
   public receiverAddressId: number;
   public receiverAddressName: string;
   public receiverAddressInfo: string;
+  public addressTo: string;
   public receiverContactPerson: string;
   public receiverPhone: string;
   public receiverRemark: string;

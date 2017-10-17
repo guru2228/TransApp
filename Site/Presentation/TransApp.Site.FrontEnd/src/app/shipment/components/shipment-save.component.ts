@@ -113,6 +113,34 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     }, 500);
   }
 
+/**
+ * On save click
+ * @param model
+ * @param isValid
+ */
+save(model: ShipmentModel, isValid: boolean) {
+  console.log(model, isValid);
+  console.log(this.componentModel);
+  if (isValid && this.isModelValid()) {
+    this.shipmentService.save(this.componentModel).subscribe(shipmentId => {
+      if (this.componentState === ComponentStateType.add) {
+        this.router.navigate(['/shipment-overview/shipment-edit/' + shipmentId]);
+        this.notificationService.show('Address created.', 'success', 'center', 'top');
+      } else {
+        //// send data to addreess coponent to be updated
+        // this.addressService.sendAddressModel(this.componentModel);
+        this.notificationService.show('Address saved. ', 'success', 'center', 'top');
+      }
+    },
+      error => {
+        console.log(error);
+      });
+  } else {
+    this.helperService.scrollOnTop();
+    this.setCursorToFirstElement();
+  }
+}
+
   /**
       * Load component model, or create a new one if component state is = Add
       * @param componentState
@@ -261,9 +289,9 @@ console.log(        this.componentModel);
    * @param event
    */
   onPickupDateSelected(event: any) {
-    if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+    if (this.componentModel.pickUpDate && this.senderSelectedAddress && this.senderSelectedAddress.availabilities) {
       this.componentModel.senderAvailabilities = [];
-      if (this.componentModel.pickUpDate && this.senderSelectedAddress.availabilities) {
+      if (this.componentModel.pickUpDate ) {
         this.componentModel.senderAvailabilities.push(this.getAvailability(this.componentModel.pickUpDate, this.senderSelectedAddress.availabilities));
       }
     }
@@ -311,7 +339,7 @@ console.log(        this.componentModel);
    * @param event
    */
   onDeliveryDateSelected(event: any) {
-    if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
+    if (this.componentModel.deliveryDate && this.receiverSelectedAddress && this.receiverSelectedAddress.availabilities) {
       this.componentModel.receiverAvailabilities = [];
       if (this.componentModel.deliveryDate && this.receiverSelectedAddress.availabilities) {
         this.componentModel.receiverAvailabilities.push(this.getAvailability(this.componentModel.deliveryDate, this.receiverSelectedAddress.availabilities));
@@ -375,7 +403,9 @@ console.log(        this.componentModel);
     }
   }
 
-
+/**
+ * Add package row when add package is clicked
+ */
   onAddPackageClick(): boolean {
     if (!this.componentModel.shipmentDetails) {
       this.componentModel.shipmentDetails = [];
@@ -387,47 +417,22 @@ console.log(        this.componentModel);
     shipmentMaster.id = -1;
     shipmentpackage.master = shipmentMaster;
 
-
-
     this.componentModel.shipmentDetails.push(shipmentpackage);
     return false;
   }
 
+  /**
+   * Add extra row when master pack is selected
+   * @param currentShipmentRow
+   */
   onMasterPackTypeChange(currentShipmentRow: ShipmentDetailRowModel): void {
-    if (currentShipmentRow.master.packTypeId == 1) {
+    if (currentShipmentRow.master.packTypeId === 1) {
       const shipmentExtra = new ShipmentDetailModel();
       shipmentExtra.id = -1;
       currentShipmentRow.extras = [];
       currentShipmentRow.extras.push(shipmentExtra);
     } else {
       currentShipmentRow.extras = [];
-    }
-  }
-
-  onSubmit(value: any): void {
-    console.log(value);
-  }
-
-  save(model: ShipmentModel, isValid: boolean) {
-    console.log(model, isValid);
-    console.log(this.componentModel);
-    if (isValid) {
-      this.shipmentService.save(this.componentModel).subscribe(shipmentId => {
-        if (this.componentState === ComponentStateType.add) {
-          this.router.navigate(['/shipment-overview/shipment-edit/' + shipmentId]);
-          this.notificationService.show('Address created.', 'success', 'center', 'top');
-        } else {
-          //// send data to addreess coponent to be updated
-          // this.addressService.sendAddressModel(this.componentModel);
-          this.notificationService.show('Address saved. ', 'success', 'center', 'top');
-        }
-      },
-        error => {
-          console.log(error);
-        });
-    } else {
-      this.helperService.scrollOnTop();
-      this.setCursorToFirstElement();
     }
   }
 
@@ -456,6 +461,19 @@ console.log(        this.componentModel);
     this.componentModel.totalVolume = totalVolume;
   }
 
+  private isModelValid(): boolean {
+    if ((!this.componentModel.senderAvailabilities || (this.componentModel.senderAvailabilities && this.componentModel.senderAvailabilities.length === 1 && this.componentModel.senderAvailabilities[0].isClosed)))
+    return false;
+
+    if ((!this.componentModel.receiverAvailabilities || (this.componentModel.receiverAvailabilities && this.componentModel.receiverAvailabilities.length === 1 && this.componentModel.receiverAvailabilities[0].isClosed)))
+    return false;
+
+    if (!this.componentModel.shipmentDetails || this.componentModel.shipmentDetails.length <= 0)
+      return false;
+
+    return true;
+  }
+
   private setCursorToFirstElement() {
     if (this.componentState === ComponentStateType.add) {
       const element = document.getElementById('reference');
@@ -463,5 +481,9 @@ console.log(        this.componentModel);
         element.focus();
       }
     }
+  }
+
+  formatNumber(number: number):string{
+return number.toFixed(3).replace(/\.?0+$/, '');
   }
 }

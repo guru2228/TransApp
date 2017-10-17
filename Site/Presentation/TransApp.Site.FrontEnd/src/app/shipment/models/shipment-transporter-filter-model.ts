@@ -3,6 +3,7 @@ import { ShipmentTransporterStatus } from "app/shipment/models/shipment-transpor
 export class ShipmentTransporterFilterModel {
   public description: string;
   public statusType: ShipmentTransporterStatus;
+  public inPending = true;
   public amount: number;
   public lastDateTime: Date;
   public declined: number;
