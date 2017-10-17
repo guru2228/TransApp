@@ -30,5 +30,7 @@ namespace TransApp.Persistence.Repository.Generic
         /// </summary>
         /// <returns></returns>
         Task<IEnumerable<TEntity>> GetAllAsyncLocalized();
+
+        string GetCorrectLanguage(string language);
     }
 }

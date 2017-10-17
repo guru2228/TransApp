@@ -28,10 +28,7 @@ namespace TransApp.Persistence.Repository
 
         private string GetQuery(string language)
         {
-            if (string.IsNullOrEmpty(language))
-            {
-                language = "EN";
-            }
+            language = GetCorrectLanguage(language);
             var sb = new StringBuilder();
             sb.Append(@" select Truck.Id
       ,Truck.[Code]

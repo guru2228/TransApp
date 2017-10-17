@@ -124,5 +124,10 @@ Where 1=1 ");
         {
             return base.GetAll(predicate).ToList();
         }
+
+        public async Task AssignTransporter()
+        {
+            
+        }
     }
 }

@@ -10,6 +10,7 @@ using TransApp.Domain.Addresses;
 using TransApp.Domain.Common.Entity;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
+using TransApp.Domain.Services.Common;
 using TransApp.Domain.Services.Shipment;
 using TransApp.Domain.Shipment;
 using TransApp.Framework.Filter;
@@ -22,6 +23,7 @@ namespace TransApp.Tests.Shipment
     public class ShipmentModelTests
     {
         private readonly IShipmentService _shipmentService;
+        private readonly ICommonService _commonService;
 
         public ShipmentModelTests()
         {
@@ -33,7 +35,7 @@ namespace TransApp.Tests.Shipment
 
             IUnitOfWork unitOfWork = new UnitOfWork(dataBaseConfig);
             _shipmentService = new ShipmentService(unitOfWork, null);
-
+            _commonService = new CommonService(unitOfWork, null);
         }
 
         [TestMethod]
@@ -411,7 +413,7 @@ namespace TransApp.Tests.Shipment
         [TestMethod]
         public async Task Test_AssignToOpenMarket_Is_Ok()
         {
-            if (await _shipmentService.AssignToOpenMarket(1000, 24))
+            if (await _shipmentService.AssignToOpenMarket(1000, 44))
             {
                 Assert.IsTrue(true);
                 return;
@@ -470,6 +472,19 @@ namespace TransApp.Tests.Shipment
                 return;
             }
             Assert.IsFalse(true);
+        }
+
+        [TestMethod]
+        public async Task Test_GetParameters_Is_Ok()
+        {
+            try
+            {
+                var a = await _commonService.GetFacilities("XX");
+                {
+                    Assert.IsTrue(true);
+                    return;
+                }
+            }catch { Assert.IsFalse(true);}
         }
     }
 }

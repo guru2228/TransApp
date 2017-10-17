@@ -43,6 +43,20 @@ namespace TransApp.Persistence.Repository.Generic
             return item;
         }
 
+        public string GetCorrectLanguage(string language)
+        {
+            if (string.IsNullOrEmpty(language))
+            {
+                return "EN";
+            }
+            language = language.ToUpper();
+            if (language != "EN" && language != "NL" && language != "FR" && language != "RO" && language != "DE")
+            {
+                return "EN";
+            }
+            return language;
+        }
+
 
 
         public IEnumerable<TEntity> GetAllLocalized()

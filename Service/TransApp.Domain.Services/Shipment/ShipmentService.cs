@@ -841,6 +841,7 @@ namespace TransApp.Domain.Services.Shipment
                 await
                     _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction,
                         shipmentStatus: "OPEN");
+                _unitOfWork.Commit(transaction);
                 return true;
             }
             catch
