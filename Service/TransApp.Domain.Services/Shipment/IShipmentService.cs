@@ -53,5 +53,9 @@ namespace TransApp.Domain.Services.Shipment
         Task CreateShipmentTransporterHistory(string predicate, IDbTransaction transaction = null);
 
         Task<bool> UnassignAndMoveToOpenMarket(int userId, int shipmentId, IDbTransaction transaction = null);
+
+        Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter);
+
+        Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, DateTime orderDate);
     }
 }

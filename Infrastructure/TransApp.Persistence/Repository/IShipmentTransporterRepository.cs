@@ -20,5 +20,6 @@ namespace TransApp.Persistence.Repository
         Task Save(int currentUserId, ShipmentTransporter currentShipmentTransporter, IDbTransaction transaction = null);
 
         List<ShipmentTransporter> GetAllBasic(string predicate);
+        Task AssignTransporter(int userId, int shipmentId, DateTime orderDate);
     }
 }

@@ -52,7 +52,7 @@ namespace TransApp.Domain.Services
             CreateMap<ShipmentDetail, ShipmentDetailModel>();
             CreateMap<ShipmentTransporterModel, ShipmentTransporter>();
             CreateMap<ShipmentTransporter, ShipmentTransporterModel>();
-
+            
             CreateMap<FacilityEntityModel, ShipmentReceiverFacility>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId));
             CreateMap<ShipmentReceiverFacility, FacilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
 
@@ -77,7 +77,9 @@ namespace TransApp.Domain.Services
             CreateMap<AvailabilityEntityModel, ShipmentSenderAvailability>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId));
             CreateMap<ShipmentSenderAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
             CreateMap<ShipmentTransporter, ShipmentTransporterHistory>();
+
             CreateMap<DataModel.Dto.Shipment, ShipmentHistory>();
+            CreateMap<ShipmentTransporterDto, ShipmentTransporterModel>();
         }
     }
 }

@@ -486,5 +486,24 @@ namespace TransApp.Tests.Shipment
                 }
             }catch { Assert.IsFalse(true);}
         }
+
+        [TestMethod]
+        public async Task Test_GetShipmentTransporters_Is_Ok()
+        {
+            try
+            {
+                var a =
+                    await _shipmentService.GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = 45});
+                ;
+                {
+                    Assert.IsTrue(true);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+        }
     }
 }

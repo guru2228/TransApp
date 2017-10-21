@@ -55,6 +55,8 @@ namespace TransApp.DataModel.Dto
 
         public string StateInfo { get; set; }
         public string OpeningHours { get; set; }
+
+        public int? ZipCodeNumeric { get; set; }
     }
 }
 

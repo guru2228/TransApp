@@ -44,7 +44,10 @@ namespace TransApp.Domain.Shipment
         public DateTime? DateModified { get; set; }
 
         public DateTime? ExpiredDate { get; set; }
-
+        public int? AmountReview { get; set; }
+        public int? Rating { get; set; }
+        public string ContactPerson { get; set; }
+        public string Phone { get; set; }
     }
 
 }

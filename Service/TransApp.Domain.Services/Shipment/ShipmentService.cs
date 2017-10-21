@@ -926,6 +926,19 @@ namespace TransApp.Domain.Services.Shipment
             }
         }
 
+        public async Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter)
+        {
+            var shipmentTransporters =
+                await _unitOfWork.ShipmentTransporterRepository.GetAll(filter);
+            return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
+        }
+
+        public async Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, DateTime orderDate)
+        {
+            await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, orderDate);
+            return await GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = shipmentId});
+        }
+
         public async Task CreateShipmentHistory(DataModel.Dto.Shipment shipment, IDbTransaction transaction = null)
         {
             ShipmentHistory result =

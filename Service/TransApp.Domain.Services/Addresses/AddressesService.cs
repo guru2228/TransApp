@@ -216,7 +216,8 @@ namespace TransApp.Domain.Services.Addresses
                 Street1 = currentAdrress.Location.Street,
                 Street2 = currentAdrress.Location.Street,
                 StateInfo = currentAdrress.State,
-                OpeningHours = currentAdrress.OpeningHours
+                OpeningHours = currentAdrress.OpeningHours,
+                ZipCodeNumeric = GetNumericZipCode(currentAdrress.Location.ZipCode)
             };
 
             var transaction = _unitOfWork.BeginTransaction();
@@ -344,6 +345,11 @@ namespace TransApp.Domain.Services.Addresses
             _unitOfWork.Commit(transaction);
 
             return currentAdrress.Id;
+        }
+
+        private int? GetNumericZipCode(string locationZipCode)
+        {
+            return Convert.ToInt32(locationZipCode.Where(c => Char.IsDigit(c)).ToArray());
         }
 
         public async Task DeleteAddress(AddressModel currentAdrress)

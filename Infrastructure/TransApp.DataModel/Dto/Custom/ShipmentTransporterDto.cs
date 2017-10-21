@@ -45,10 +45,11 @@ namespace TransApp.DataModel.Dto.Custom
         public string UserCreated { get; set; }
         public string UserModified { get; set; }
 
-        public List<int> ShipmentIdList { get; set; }
+        public DateTime? ExpiredDate { get; set; }
 
-        public int AmountAssigned { get; set; }
-        public int AmountDeclined { get; set; }
-        public int AmoutPending { get; set; }
+        public int? AmountReview { get; set; }
+        public int? Rating { get; set; }
+        public string ContactPerson { get; set; }
+        public string Phone { get; set; }
     }
 }
