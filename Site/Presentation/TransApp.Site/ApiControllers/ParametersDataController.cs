@@ -2,9 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TransApp.Core.CacheService;
 using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
+using TransApp.Core.Helper;
 
 namespace TransApp.Site.ApiControllers
 {
@@ -22,10 +24,16 @@ namespace TransApp.Site.ApiControllers
         /// </summary>
         private readonly IAuthenticationService _accountService;
 
-        public ParametersDataController( IAuthenticationService accountService, ICommonService commonService)
+        /// <summary>
+        /// ICacheService
+        /// </summary>
+        private readonly ICacheService _cacheService;
+
+        public ParametersDataController( IAuthenticationService accountService, ICommonService commonService, ICacheService cacheService)
         {
             _accountService = accountService;
             _commonService = commonService;
+            _cacheService = cacheService;
         }
 
         /// <summary>
@@ -37,6 +45,8 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("getAddressRequirementsParameters/{language}")]
         public async Task<object> GetAddressRequirementsParameters(string language)
         {
+            language.ConvertLocaleStringToServerLanguage();
+
             var facilities = await this.GetFacilities(language);
 
             var requirements = await this.GetRequirements(language);
@@ -57,11 +67,34 @@ namespace TransApp.Site.ApiControllers
         /// <param name="language"></param>
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getFacilities/{language}")]
-        public async Task<List<FacilityParameterModel>> GetFacilities(string language)
+        [HttpGet("getPackTypes/{language}")]
+        public async Task<IEnumerable<PackTypeParameterModel>> GetPackTypes(string language)
         {
-            var facilities = await _commonService.GetFacilities(language);
-            return facilities;
+            var items = _cacheService.Get("cache_packTypes") as IEnumerable<PackTypeParameterModel>;
+            if (items != null) return items;
+
+            language.ConvertLocaleStringToServerLanguage();
+            items = await _commonService.GetPackTypes(language);
+            _cacheService.Add("cache_packTypes", items);
+            return items;
+        }
+
+        /// <summary>
+        /// Get facilities list
+        /// </summary>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getFacilities/{language}")]
+        public async Task<IEnumerable<FacilityParameterModel>> GetFacilities(string language)
+        {
+            var items = _cacheService.Get("cache_facilities") as IEnumerable<FacilityParameterModel>;
+            if (items != null) return items;
+
+            language.ConvertLocaleStringToServerLanguage();
+            items = await _commonService.GetFacilities(language);
+            _cacheService.Add("cache_facilities", items);
+            return items;
         }
 
         /// <summary>
@@ -71,9 +104,14 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getRequirements/{language}")]
-        public async Task<List<RequirementParameterModel>> GetRequirements(string language)
+        public async Task<IEnumerable<RequirementParameterModel>> GetRequirements(string language)
         {
-            var items = await _commonService.GetRequirements(language);
+            var items = _cacheService.Get("cache_requirements") as IEnumerable<RequirementParameterModel>;
+            if (items != null) return items;
+
+            language.ConvertLocaleStringToServerLanguage();
+            items = await _commonService.GetRequirements(language);
+            _cacheService.Add("cache_requirements", items);
             return items;
         }
 
@@ -84,23 +122,17 @@ namespace TransApp.Site.ApiControllers
         /// <returns></returns>
         [Authorize(Policy = "TransAppUser")]
         [HttpGet("getTrucks/{language}")]
-        public async Task<List<TruckParameterModel>> GetTrucks(string language)
+        public async Task<IEnumerable<TruckParameterModel>> GetTrucks(string language)
         {
-            var items =await _commonService.GetTrucks(language);
+            var items = _cacheService.Get("cache_truks") as IEnumerable<TruckParameterModel>;
+            if (items != null) return items;
+
+            language.ConvertLocaleStringToServerLanguage();
+            items = await _commonService.GetTrucks(language);
+            _cacheService.Add("cache_truks", items);
             return items;
         }
 
-        /// <summary>
-        /// Get facilities list
-        /// </summary>
-        /// <param name="language"></param>
-        /// <returns></returns>
-        [Authorize(Policy = "TransAppUser")]
-        [HttpGet("getPackTypes/{language}")]
-        public async Task<List<PackTypeParameterModel>> GetPackTypes(string language)
-        {
-            var items = await _commonService.GetPackTypes(language);
-            return items;
-        }
+   
     }
 }

@@ -41,6 +41,10 @@
                     <!-- <div class="card-header card-header-icon" data-background-color="rose">
                         <i class="material-icons">assignment</i>
                     </div> -->
+
+                    <mat-progress-bar [color]="'primary'" [mode]="'indeterminate'">
+                    </mat-progress-bar>
+
                     <div *ngIf="componentModel && componentModel.length > 0" class="card-content table-full-width">
                         <!--<h4 class="card-title">Regular Table with Colors</h4>-->
                         <div class="table-responsive">
@@ -52,8 +56,9 @@
                                         <th>From</th>
                                         <th>Destination</th>
                                         <th>Quantity</th>
-                                        <th>Transport company</th>
+                                        <th>Transporter</th>
                                         <th>Price</th>
+                                        <th *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1">Offer count</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -67,40 +72,52 @@
                                             <td>{{shipmentRow.shipment.totalQuatity}}</td>
                                             <td>{{shipmentRow.shipment.transporterId}}</td>
                                             <td>{{shipmentRow.shipment.totalPrice}}</td>
+                                            <td *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1">{{shipmentRow.shipment.offerCount}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
                                             <td id="actionsRowContent" colspan="7" align="center">
-                                                <button class="btn btn-warning" (click)="onClickEditShipment(shipmentRow)">
+
+
+
+
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.editActionVisible" class="btn btn-warning" (click)="onClickEditShipment(shipmentRow)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">border_color</i>
                                                             </span>
                                                             Edit shipment
                                                         </button>
-                                                <button class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.deleteActionVisible" class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
                                                             Delete shipment
                                                             <span class="btn-label btn-label-right">
                                                                 <i class="material-icons">delete_forever</i>
                                                             </span>
                                                         </button>
-                                                <button class="btn btn-success" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToOpenMarketActionVisible" class="btn btn-success" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">assignment_returned</i>
                                                             </span>
                                                             Assign to open market
                                                         </button>
-                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1" (click)="moveToUnassigned(shipmentRow.shipment.id)" class="btn btn-info">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToUnassingedActionVisible" (click)="moveToUnassigned(shipmentRow.shipment.id)" class="btn btn-info">
                                                           <span class="btn-label">
                                                               <i class="material-icons">assignment_turned_in</i>
                                                           </span>
                                                           Move to unassigned
                                                       </button>
-                                                <button *ngIf="false" class="btn btn-info">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.assignTransporterActionVisible" class="btn btn-info">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">assignment_turned_in</i>
                                                             </span>
                                                             Assign to haulier
                                                         </button>
+
+                                                <button *ngIf="false" class="btn btn-info">
+                                                          <span class="btn-label">
+                                                              <i class="material-icons">assignment_turned_in</i>
+                                                          </span>
+                                                         Unassign and publish to open market
+                                                 </button>
                                             </td>
                                         </tr>
                                         <tr id="editShipmentRow" *ngIf="shipmentRow.viewEdit">
@@ -114,7 +131,6 @@
                                 </tbody>
                             </table>
                         </div>
-
 
                         <ul *ngIf="pagesCollection && pagesCollection.length > 0" class="pagination pagination-info">
                             <li>
@@ -132,6 +148,7 @@
                     <h4 *ngIf="componentModel && componentModel.length <= 0">
                         &nbsp;&nbsp;&nbsp;&nbsp;There are no shipments for selected filter.
                     </h4>
+
                 </div>
             </div>
         </div>

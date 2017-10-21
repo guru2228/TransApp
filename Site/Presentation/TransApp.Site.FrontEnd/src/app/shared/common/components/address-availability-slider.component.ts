@@ -61,7 +61,6 @@ export class AddressAvailabilitySliderComponent implements OnInit, OnChanges {
   private getTimestamps() {
     // get closest date by current day
     let date = new Date();
-    debugger;
     if (this.availability.day > 0) {
       date = moment().isoWeekday(this.availability.day).toDate();
     }

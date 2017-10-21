@@ -12,21 +12,6 @@ namespace TransApp.Core.CacheService
             _cacheService = cacheService;
         }
 
-        /// <summary>
-        /// Add object to cache
-        /// </summary>
-        /// <param name="key"></param>
-        /// <param name="cacheObject"></param>
-        public void Add(string key, object cacheObject, int expiration)
-        {
-            if (_cacheService != null)
-            {
-                object fromCache;
-                if (!_cacheService.TryGetValue(key, out fromCache)) ;
-
-            }
-        }
-
 
         /// <summary>
         /// Add object to cache
@@ -38,18 +23,14 @@ namespace TransApp.Core.CacheService
         {
             if (_cacheService != null)
             {
-                object fromCache;
-                if (!_cacheService.TryGetValue(key, out fromCache))
+                if (expirationMinutes.HasValue)
                 {
-                    if (expirationMinutes.HasValue)
-                    {
-                        _cacheService.Set(key, cacheObject,
-                            new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(expirationMinutes.Value)));
-                    }
-                    else
-                    {
-                        _cacheService.Set(key, cacheObject, DateTimeOffset.MaxValue);
-                    }
+                    _cacheService.Set(key, cacheObject,
+                        new MemoryCacheEntryOptions().SetAbsoluteExpiration(TimeSpan.FromMinutes(expirationMinutes.Value)));
+                }
+                else
+                {
+                    _cacheService.Set(key, cacheObject, DateTimeOffset.MaxValue);
                 }
             }
         }
@@ -62,9 +43,9 @@ namespace TransApp.Core.CacheService
         public object Get(string key)
         {
             object returnedCache = null;
-            
+
             _cacheService.TryGetValue(key, out returnedCache);
-                return returnedCache;
+            return returnedCache;
         }
 
         /// <summary>

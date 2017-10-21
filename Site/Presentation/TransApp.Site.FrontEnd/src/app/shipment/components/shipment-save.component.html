@@ -8,7 +8,7 @@
                             <i class="material-icons">local_shipping</i>
                         </div>
                         <div class="card-content">
-                            <h4 class="card-title">Create new shipment</h4>
+                            <h4 class="card-title">{{componentState > 0 ? 'Edit shipment' : 'Create new shipment'}}</h4>
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.reference  && componentModel.reference.length > 0 ? '' : 'is-empty ' + ((!componentModel.reference ) && formShipment.submitted ? ' has-error' : '')) ">
                                 <label for="" class="control-label ">
@@ -40,29 +40,39 @@
                             <h4 class="card-title">Sender</h4>
 
                             <div [ngClass]="'form-group label-floating ' + ((!senderSearchAddressControl || !senderSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
-                                <md-form-field class="autocomplete-address">
-                                    <input type="text" name="senderSearchAddress" [formControl]="senderSearchAddressControl" placeholder="Type here to search for a sender" md-min-length="0" mdInput [mdAutocomplete]="senderAutocomplete" aria-label="Select sender">
-                                    <md-autocomplete #senderAutocomplete="mdAutocomplete">
-                                        <md-option *ngFor="let address of senderFoundAddresses" [value]="address.name" (onSelectionChange)="onSenderAddressSelected($event, address)">
+                                <label for="receiverSearchAddress">
+                                    Type here to search for a sender
+                                    <span class="star">*</span>
+                                </label>
+
+                                <mat-form-field class="autocomplete-address">
+                                    <input matInput type="text" name="senderSearchAddress" [formControl]="senderSearchAddressControl" md-min-length="0" [matAutocomplete]="senderAutocomplete" aria-label="Select sender">
+                                    <mat-autocomplete #senderAutocomplete="matAutocomplete">
+                                        <mat-option *ngFor="let address of senderFoundAddresses" [value]="address.name" (onSelectionChange)="onSenderAddressSelected($event, address)">
                                             {{ address.name }}
-                                        </md-option>
-                                        <md-option *ngIf='!senderFoundAddresses || senderFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onSenderAddressSelected($event, null)">
+                                        </mat-option>
+                                        <mat-option *ngIf='!senderFoundAddresses || senderFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onSenderAddressSelected($event, null)">
                                             No results found. Click here to create a new address
-                                        </md-option>
-                                    </md-autocomplete>
-                                </md-form-field>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
                             </div>
 
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.pickUpDate ) ? '' : 'is-empty') + (!componentModel.pickUpDate  && formShipment.submitted ? ' has-error' : '') ">
-                                <md-datepicker-toggle mdSuffix [for]="pickupDatePicker">
-                                </md-datepicker-toggle>
-                                <md-input-container>
-                                    <input mdInput [mdDatepicker]="pickupDatePicker" [(ngModel)]="componentModel.pickUpDate" id="pickUpDate" name="pickUpDate" (dateChange)="onPickupDateSelected($event)" placeholder="Pickup date" required>
-                                </md-input-container>
-                                <md-datepicker #pickupDatePicker [touchUi]="touch" [startView]="'month'">
-                                </md-datepicker>
+
+                                <label for="pickupDatePicker">
+                                  Pickup date
+                                    <span class="star">*</span>
+                                </label> <br>
+                                <mat-datepicker-toggle mdSuffix [for]="pickupDatePicker">
+                                </mat-datepicker-toggle>
+                                <mat-input-container>
+                                    <input matInput [matDatepicker]="pickupDatePicker" [(ngModel)]="componentModel.pickUpDate" id="pickUpDate" name="pickUpDate" (dateChange)="onPickupDateSelected($event)" required>
+                                </mat-input-container>
+                                <mat-datepicker #pickupDatePicker [touchUi]="touch" [startView]="'month'">
+                                </mat-datepicker>
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.senderAddressInfo  && componentModel.senderAddressInfo.length > 0) ? '' : 'is-empty') + (!componentModel.senderAddressInfo  && formShipment.submitted ? ' has-error' : '') ">
@@ -164,29 +174,39 @@
                             <h4 class="card-title">Receiver</h4>
 
                             <div [ngClass]="'form-group label-floating ' + ((!receiverSearchAddressControl || !receiverSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
-                                <md-form-field class="autocomplete-address">
-                                    <input type="text" name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" placeholder="Type here to search for a receiver" md-min-length="0" mdInput [mdAutocomplete]="receiverAutocomplete" aria-label="Select receiver">
-                                    <md-autocomplete #receiverAutocomplete="mdAutocomplete">
-                                        <md-option *ngFor="let address of receiverFoundAddresses" [value]="address.name" (onSelectionChange)="onReceiverAddressSelected($event, address)">
+
+                                <label for="receiverSearchAddress">
+                                    Type here to search for a receiver
+                                    <span class="star">*</span>
+                                </label>
+                                <mat-form-field class="autocomplete-address">
+                                    <input type="text" matInput name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" [matAutocomplete]="receiverAutocomplete" aria-label="Select receiver">
+                                    <mat-autocomplete #receiverAutocomplete="matAutocomplete">
+                                        <mat-option *ngFor="let address of receiverFoundAddresses" [value]="address.name" (onSelectionChange)="onReceiverAddressSelected($event, address)">
                                             {{ address.name }}
-                                        </md-option>
-                                        <md-option *ngIf='!receiverFoundAddresses || receiverFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onReceiverAddressSelected($event, null)">
+                                        </mat-option>
+                                        <mat-option *ngIf='!receiverFoundAddresses || receiverFoundAddresses.length <=0' [value]="-1" (onSelectionChange)="onReceiverAddressSelected($event, null)">
                                             No results found. Click here to create a new address
-                                        </md-option>
-                                    </md-autocomplete>
-                                </md-form-field>
+                                        </mat-option>
+                                    </mat-autocomplete>
+                                </mat-form-field>
                             </div>
 
                             <!-- Adress info -->
                             <h3>Address info</h3>
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.deliveryDate ) ? '' : 'is-empty') + (!componentModel.deliveryDate  && formShipment.submitted ? ' has-error' : '')">
-                                <md-datepicker-toggle mdSuffix [for]=" deliveryDatePicker ">
-                                </md-datepicker-toggle>
-                                <md-input-container>
-                                    <input mdInput [mdDatepicker]="deliveryDatePicker " [(ngModel)]="componentModel.deliveryDate " id="deliveryDate " name="deliveryDate " (dateChange)="onDeliveryDateSelected($event) " placeholder="Delivery date " required>
-                                </md-input-container>
-                                <md-datepicker #deliveryDatePicker [touchUi]="touch " [startView]=" 'month' ">
-                                </md-datepicker>
+                                <label for="">
+                                    Delivery date
+                                    <span class="star">*</span>
+                                </label><br>
+
+                                <mat-datepicker-toggle mdSuffix [for]=" deliveryDatePicker ">
+                                </mat-datepicker-toggle>
+                                <mat-input-container>
+                                    <input matInput [matDatepicker]="deliveryDatePicker " [(ngModel)]="componentModel.deliveryDate " id="deliveryDate " name="deliveryDate " (dateChange)="onDeliveryDateSelected($event) " required>
+                                </mat-input-container>
+                                <mat-datepicker #deliveryDatePicker [touchUi]="touch " [startView]=" 'month' ">
+                                </mat-datepicker>
                             </div>
 
                             <div [ngClass]=" 'form-group label-floating ' + ((componentModel.receiverAddressInfo && componentModel.receiverAddressInfo.length> 0) ? '' : 'is-empty') + (!componentModel.receiverAddressInfo && formShipment.submitted ? ' has-error' : '')">
@@ -292,7 +312,7 @@
                                     <tbody>
                                         <ng-container *ngFor="let detailRow of componentModel.shipmentDetails; let detailRowIndex = index">
                                             <!-- Master row -->
-                                            <tr>
+                                            <tr *ngIf="!detailRow.master.toRemove">
                                                 <td>
                                                     <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.quantity || detailRow.master.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
                                                         <label class="control-label">Quantity <span class="star">*</span></label>
@@ -332,46 +352,48 @@
                                                     </div>
                                                 </td>
                                                 <td class="td-actions">
-                                                    <button class="btn btn-simple" data-placement="left" rel="tooltip" title="Remove item" type="button">
+                                                    <button class="btn btn-simple" (click)="onShipmentDetailsMasterRemove(detailRow, detailRowIndex)" data-placement="left" rel="tooltip" title="Remove item" type="button">
                                                   <i class="material-icons">close</i>
                                               </button>
                                                 </td>
                                             </tr>
                                             <!-- Child rows -->
-                                            <tr *ngFor="let rowExtra of detailRow.extras; let rowExtraIndex = index">
-                                                <td colspan="2"></td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.quantity || rowExtra.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Quantity</label>
-                                                        <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.quantity" name="shipmentDetail_quantity_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td style="min-width: 150px;">
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.packTypeId || rowExtra.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Choose pack type</label>
-                                                        <select [(ngModel)]="rowExtra.packTypeId" name="shipmentDetail_packtype_{{detailRowIndex}}_{{rowExtraIndex}}" class="form-control">
+                                            <ng-container *ngFor="let rowExtra of detailRow.extras; let rowExtraIndex = index">
+                                                <tr *ngIf="!detailRow.master.toRemove && !rowExtra.toRemove">
+                                                    <td colspan="2"></td>
+                                                    <td>
+                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.quantity || rowExtra.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
+                                                            <label class="control-label">Quantity</label>
+                                                            <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.quantity" name="shipmentDetail_quantity_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
+                                                        </div>
+                                                    </td>
+                                                    <td style="min-width: 150px;">
+                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.packTypeId || rowExtra.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
+                                                            <label class="control-label">Choose pack type</label>
+                                                            <select [(ngModel)]="rowExtra.packTypeId" name="shipmentDetail_packtype_{{detailRowIndex}}_{{rowExtraIndex}}" class="form-control">
                                                       <option *ngFor="let packtype of packTypes" [ngValue]="packtype.id">{{packtype.description}}</option>
                                                   </select>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.length || rowExtra.length <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Length(cm)</label>
-                                                        <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.length" name="shipmentDetail_length_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td class="td-actions">
-                                                    <button class="btn btn-simple" data-placement="left" rel="tooltip" title="Remove item" type="button">
+                                                        </div>
+                                                    </td>
+                                                    <td>
+                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.length || rowExtra.length <= 0) && formShipment.submitted ? ' has-error' : '')">
+                                                            <label class="control-label">Length(cm)</label>
+                                                            <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.length" name="shipmentDetail_length_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
+                                                        </div>
+                                                    </td>
+                                                    <td class="td-actions">
+                                                        <button class="btn btn-simple" (click)="onShipmentDetailsExtraRemove(detailRow, rowExtra, rowExtraIndex)" data-placement="left" rel="tooltip" title="Remove item" type="button">
                                                   <i class="material-icons">close</i>
                                               </button>
-                                                </td>
-                                            </tr>
+                                                    </td>
+                                                </tr>
+                                            </ng-container>
                                         </ng-container>
                                     </tbody>
                                 </table>
                                 <div>
                                     <small *ngIf="(!componentModel.shipmentDetails || componentModel.shipmentDetails.length <= 0) && formShipment.submitted" class="text-danger">
-                                  Good are required. You have to add good at least one row in goods grid.
+                                  Good are required. You have to add at least one row in goods grid.
                                </small></div>
                                 <div>
                                     <button type="submit" class="btn btn-fill btn-rose" (click)="onAddPackageClick()">+ Add more packages</button>

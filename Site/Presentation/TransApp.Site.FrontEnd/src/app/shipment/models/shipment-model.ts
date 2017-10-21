@@ -38,6 +38,9 @@ export class ShipmentModel {
   public receiverRequirements: Array<RequirementEntityModel>;
   public receiverTrucks: Array<TruckEntityModel>;
 
+  // open market
+  public offerCount: number;
+
   public totalPrice: number;
   public totalVolume: number;
   public totalQuatity: number;

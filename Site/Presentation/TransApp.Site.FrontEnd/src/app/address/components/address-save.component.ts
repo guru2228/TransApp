@@ -97,7 +97,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
   save(model: AddressModel, isValid: boolean) {
     console.log(model, isValid);
     if (isValid && this.isModelValid()) {
-      this.addressService.save(this.componentModel).subscribe(result => {
+      this.addressService.save(this.componentModel, this.translateService.currentLanguage).subscribe(result => {
         if (this.componentState === ComponentStateType.add) {
           this.router.navigate(['/address-overview/address-edit/' + result]);
           this.notificationService.show('Address created.', 'success', 'center', 'top');
@@ -139,7 +139,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         let addressId = 0;
         this.route.params.forEach((params: Params) => {
           addressId = params['id'];
-          this.addressService.get(addressId, this.translateService.currentLanguage).subscribe(result => {
+          this.addressService.get(addressId, this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
             this.componentModel = result as AddressModel;
             console.log(this.componentModel);
             const self = this;
@@ -163,15 +163,11 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
   private loadParamsData(): Observable<boolean> {
     return Observable.create(observer => {
       // return new Promise((resolve, reject) => {
-      Observable.forkJoin([
-        this.parametersDataService.getFacilities(this.translateService.currentLanguage),
-        this.parametersDataService.getRequirements(this.translateService.currentLanguage),
-        this.parametersDataService.getTruks(this.translateService.currentLanguage),
-      ])
+      this.parametersDataService.getAddressRequirementsParameters(this.translateService.currentLanguage)
         .subscribe(data => {
-          this.componentModel.facilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data[0] as any, this.componentModel.facilities);
-          this.componentModel.requirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, data[1] as any, this.componentModel.requirements);
-          this.componentModel.trucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data[2] as any, this.componentModel.trucks);
+          this.componentModel.facilities = this.parametersDataService.generateFacilityEntitiesList(this.componentModel.id, data['facilities'] as any, this.componentModel.facilities);
+          this.componentModel.requirements = this.parametersDataService.generateRequirementsEntitiesList(this.componentModel.id, data['requirements'] as any, this.componentModel.requirements);
+          this.componentModel.trucks = this.parametersDataService.generateTruksEntitiesList(this.componentModel.id, data['trucks'] as any, this.componentModel.trucks);
           observer.next(true);
         }, error => {
           this.errorHandler.handleError(error);
@@ -297,7 +293,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           -	Sunday closed
 */
   private updateOpeningHours(place: any) {
-    debugger;
     this.componentModel.availabilities = [];
     // if is permanently closed then, send common availability = true and closed on day 0  = true
     if (place.permanently_closed) {

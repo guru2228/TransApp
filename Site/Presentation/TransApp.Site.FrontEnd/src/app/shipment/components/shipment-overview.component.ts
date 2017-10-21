@@ -1,30 +1,31 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
 
 import { TableData } from "app/shared/md/md-table/md-table.component";
-import { ShipmentModel } from 'app/shipment/models/shipment-model';
-import { ApplicationUser } from 'app/authentication/viewmodels/application-user';
-import { ShipmentService } from 'app/shipment/services/shipment.service';
-import { NotificationService } from 'app/shared/common/services/notification.service';
-import { AuthenticationService } from 'app/authentication/services/authentication.service';
-import { ShipmentTransporterStatus } from 'app/shipment/models/shipment-transporter-status';
-import { GlobalErrorHandler } from 'app/shared/common/services/globalErrorHandler';
-import { TranslateService } from 'app/shared/common/services/localization/translate.service';
-import { Subscription } from 'rxjs/Subscription';
-import { HelperService } from 'app/shared/common/services/helperService';
-import { ShipmentTransporterFilterModel } from 'app/shipment/models/shipment-transporter-filter-model';
-import { ShipmentRowViewModel } from 'app/shipment/models/shipment-row-viewmodel';
-import { Observable } from 'rxjs/Observable';
+import { ShipmentModel } from "app/shipment/models/shipment-model";
+import { ApplicationUser } from "app/authentication/viewmodels/application-user";
+import { ShipmentService } from "app/shipment/services/shipment.service";
+import { NotificationService } from "app/shared/common/services/notification.service";
+import { AuthenticationService } from "app/authentication/services/authentication.service";
+import { ShipmentTransporterStatus } from "app/shipment/models/shipment-transporter-status";
+import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandler";
+import { TranslateService } from "app/shared/common/services/localization/translate.service";
+import { Subscription } from "rxjs/Subscription";
+import { HelperService } from "app/shared/common/services/helperService";
+import { ShipmentTransporterFilterModel } from "app/shipment/models/shipment-transporter-filter-model";
+import { ShipmentRowViewModel } from "app/shipment/models/shipment-row-viewmodel";
+import { Observable } from "rxjs/Observable";
 
-const moment = require('moment/moment');
+const moment = require("moment/moment");
 declare var $: any;
 declare var swal: any;
 
 @Component({
-  selector: 'app-shipment-overview',
-  templateUrl: './shipment-overview.component.html'
+  selector: "app-shipment-overview",
+  templateUrl: "./shipment-overview.component.html"
 })
-export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewInit {
+export class ShipmentOverviewComponent
+  implements OnInit, OnDestroy, AfterViewInit {
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
   componentModel: ShipmentRowViewModel[];
   shipmentFilters: ShipmentTransporterFilterModel[];
@@ -39,45 +40,59 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
   private subscriptionReceiveUpdatedShipment: Subscription;
 
-  constructor(private router: Router,
+  constructor(
+    private router: Router,
     private shipmentService: ShipmentService,
     private notificationService: NotificationService,
     private authenticationService: AuthenticationService,
     public translateService: TranslateService,
     private helperService: HelperService,
     private errorHandler: GlobalErrorHandler,
-    private route: ActivatedRoute) {
-
-  }
+    private route: ActivatedRoute
+  ) {}
   // constructor(private navbarTitleService: NavbarTitleService) { }
   public ngOnInit() {
-
     this.currentUser = this.authenticationService.getCurrentUser();
 
     this.notificationService.showLoading();
 
-    this.getShipmentFilters().subscribe(filtersLoaded => {
+    this.getShipmentFilters().subscribe(
+      filtersLoaded => {
+        this.selectedShipmentFilter = this.shipmentFilters[0];
+        this.setActionsVisibility();
 
-      this.selectedShipmentFilter = this.shipmentFilters[0];
+        this.getNumberOfShipments(false);
 
-      this.getNumberOfShipments(false);
+        this.getShipments();
+      },
+      error => {
+        this.notificationService.show(
+          "Filter not loaded",
+          "danger",
+          "center",
+          "top"
+        );
+        this.errorHandler.handleError(error);
+      }
+    );
 
-      this.getShipments();
-    }, error => {
-      this.notificationService.show('Filter not loaded', 'danger', 'center', 'top');
-      this.errorHandler.handleError(error);
-    });
+    this.register_updateSavedModel_handler();
   }
 
   onFilterClick(shipmentFilter: ShipmentTransporterFilterModel): void {
     this.selectedShipmentFilter = shipmentFilter;
+
+    this.setActionsVisibility();
 
     this.getNumberOfShipments(false);
 
     this.getShipments();
   }
 
-  onAssignedSubfilterClick(inPending: boolean, shipmentFilter: ShipmentTransporterFilterModel): void {
+  onAssignedSubfilterClick(
+    inPending: boolean,
+    shipmentFilter: ShipmentTransporterFilterModel
+  ): void {
     shipmentFilter.inPending = inPending;
 
     this.selectedShipmentFilter = shipmentFilter;
@@ -88,29 +103,45 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   }
 
 
+
+
   /**
    * Get addresses
    */
   private getShipments() {
     if (this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getAll(this.currentUser.customerId, this.selectedShipmentFilter.statusType, this.selectedShipmentFilter.inPending,
-        (this.pageSize * this.currentPage) + 1, this.pageSize, this.translateService.currentLanguage).subscribe(result => {
-        this.componentModel = [];
-        if (result && result.length > 0) {
-          if (this.route.firstChild) {
-            this.currentAddressId = +this.route.firstChild.snapshot.params['id']
+      this.shipmentService
+        .getAll(
+          this.currentUser.customerId,
+          this.selectedShipmentFilter.statusType,
+          this.selectedShipmentFilter.inPending,
+          this.pageSize * this.currentPage + 1,
+          this.pageSize,
+          this.translateService.currentLanguage
+        )
+        .subscribe(
+          result => {
+            this.componentModel = [];
+            if (result && result.length > 0) {
+              if (this.route.firstChild) {
+                this.currentAddressId = +this.route.firstChild.snapshot.params[
+                  "id"
+                ];
+              }
+              for (let i = 0; i < result.length; i++) {
+                const shipmentRow = new ShipmentRowViewModel();
+                shipmentRow.shipment = result[i];
+                // if url contains edit then open it by default
+                shipmentRow.viewActions =
+                  result[i].id === this.currentAddressId;
+                this.componentModel.push(shipmentRow);
+              }
+            }
+          },
+          error => {
+            this.errorHandler.handleError(error);
           }
-          for (let i = 0; i < result.length; i++) {
-            const shipmentRow = new ShipmentRowViewModel();
-            shipmentRow.shipment = result[i];
-            // if url contains edit then open it by default
-            shipmentRow.viewActions = result[i].id === this.currentAddressId;
-            this.componentModel.push(shipmentRow);
-          }
-        }
-      }, error => {
-        this.errorHandler.handleError(error);
-      });
+        );
     }
   }
 
@@ -120,19 +151,29 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   private getNumberOfShipments(ignoreQueryString: boolean) {
     this.pagesCollection = null;
     if (this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getCount(this.currentUser.customerId, this.selectedShipmentFilter.statusType, this.translateService.currentLanguage).subscribe(result => {
-        this.pagesCollection = [];
-        let numberOfPages = Math.ceil(result / this.pageSize);
-        numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
-        const self = this;
-        setTimeout(function () {
-          for (let i = 0; i < numberOfPages; i++) {
-            self.pagesCollection.push(i);
+      this.shipmentService
+        .getCount(
+          this.currentUser.customerId,
+          this.selectedShipmentFilter.statusType,
+          this.translateService.currentLanguage
+        )
+        .subscribe(
+          result => {
+            debugger;
+            this.pagesCollection = [];
+            let numberOfPages = Math.ceil(result / this.pageSize);
+            numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
+            const self = this;
+            setTimeout(function() {
+              for (let i = 0; i < numberOfPages; i++) {
+                self.pagesCollection.push(i);
+              }
+            }, 100);
+          },
+          error => {
+            this.errorHandler.handleError(error);
           }
-        }, 100);
-      }, error => {
-        this.errorHandler.handleError(error);
-      });
+        );
     }
   }
 
@@ -142,47 +183,59 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   private getShipmentFilters(): Observable<boolean> {
     return Observable.create(observer => {
       if (this.currentUser && this.currentUser.customerId) {
-        this.shipmentService.getShipmentFilters(this.currentUser.customerId, this.translateService.currentLanguage).subscribe(result => {
-          this.shipmentFilters = result;
-          observer.next(true);
-        }, error => {
-          this.errorHandler.handleError(error);
-          observer.next(false);
-        });
+        this.shipmentService
+          .getShipmentFilters(
+            this.currentUser.customerId,
+            this.translateService.currentLanguage
+          )
+          .subscribe(
+            result => {
+              this.shipmentFilters = result;
+              observer.next(true);
+            },
+            error => {
+              this.errorHandler.handleError(error);
+              observer.next(false);
+            }
+          );
       }
     });
   }
 
   private register_updateSavedModel_handler() {
-    this.subscriptionReceiveUpdatedShipment = this.shipmentService.shipmentModelReceivedHandler$.subscribe(shipment => {
-      if (shipment != null) {
-        const modelToUpdate = this.componentModel.filter(item => item.shipment.id === shipment.id)[0];
-        if (modelToUpdate) {
-          modelToUpdate.shipment = shipment;
-          this.helperService.scrollOnTop();
+    this.subscriptionReceiveUpdatedShipment = this.shipmentService.shipmentModelReceivedHandler$.subscribe(
+      shipment => {
+        if (shipment != null) {
+          const modelToUpdate = this.componentModel.filter(
+            item => item.shipment.id === shipment.id
+          )[0];
+          if (modelToUpdate) {
+            //modelToUpdate.shipment = shipment;
+            this.helperService.scrollOnTop();
+          }
+          this.shipmentService.resetSendShipmentModelHandler();
         }
-        this.shipmentService.resetSendShipmentModelHandler();
+      },
+      error => {
+        this.errorHandler.handleError(error);
       }
-    }, error => {
-      this.errorHandler.handleError(error);
-    });
+    );
   }
   /**
    * Show row available actions on click
    * */
   onClickShowActions(shipmentRow: ShipmentRowViewModel, index: number) {
     for (let i = 0; i < this.componentModel.length; i++) {
-      if (i !== index)
-        this.componentModel[i].viewActions = false;
+      if (i !== index) this.componentModel[i].viewActions = false;
       this.componentModel[i].viewEdit = false;
     }
     shipmentRow.viewActions = !shipmentRow.viewActions;
     if (shipmentRow.viewActions) {
       shipmentRow.viewEdit = false;
-      this.router.navigate(['/shipment-overview']);
+      this.router.navigate(["/shipment-overview"]);
     }
 
-    setTimeout(function () {
+    setTimeout(function() {
       // $('#actionsRowContent').slideToggle('slow');
     }, 500);
   }
@@ -195,7 +248,9 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
 
     shipmentRow.viewActions = false;
 
-    this.router.navigate(['./shipment-edit/' + shipmentRow.shipment.id], { relativeTo: this.route });
+    this.router.navigate(["./shipment-edit/" + shipmentRow.shipment.id], {
+      relativeTo: this.route
+    });
 
     shipmentRow.viewEdit = !shipmentRow.viewEdit;
   }
@@ -204,89 +259,228 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
  * assignToOpenMarket
  * */
   assignToOpenMarket(shipmentId: number) {
-    debugger;
-    this.notificationService.showLoading();
-
-    this.shipmentService.assignToOpenMarket(shipmentId).subscribe(assigned => {
-      if (assigned) {
-        this.componentModel = this.componentModel.filter(item => item.shipment.id !== shipmentId)
-      }
-    }, error => {
-      this.errorHandler.handleError('Assigning to open market operation failed. Please contact an administrator!');
+    const self = this;
+    swal({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, move it to open market!"
     })
+      // delete confirmed
+      .then(
+        function() {
+          self.shipmentService
+            .assignToOpenMarket(
+              shipmentId,
+              self.currentUser.customerId,
+              self.translateService.currentLanguage
+            )
+            .subscribe(
+              moved => {
+                if (moved) {
+                  self.componentModel = self.componentModel.filter(
+                    item => item.shipment.id !== shipmentId
+                  );
+
+                  const currentFilter = self.shipmentFilters.find(
+                    item =>
+                      item.statusType === self.selectedShipmentFilter.statusType
+                  );
+                  if (currentFilter) {
+                    currentFilter.amount = currentFilter.amount - 1;
+                  }
+
+                  const openMarketFilter = self.shipmentFilters.find(
+                    item =>
+                      item.statusType === ShipmentTransporterStatus.openMarket
+                  );
+                  if (openMarketFilter) {
+                    openMarketFilter.amount = openMarketFilter.amount + 1;
+                    openMarketFilter.lastDateTime = new Date();
+                  }
+
+                  swal(
+                    "Moved!",
+                    "Your shipment has been moved to open market.",
+                    "success"
+                  );
+                  // update model
+                  self.componentModel = self.componentModel.filter(
+                    item => item.shipment.id !== shipmentId
+                  );
+                } else {
+                  swal(
+                    "Not moved!",
+                    "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
+                    "error"
+                  );
+                }
+              },
+              error => {
+                swal(
+                  "Not moved!",
+                  "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
+                  "error"
+                );
+                self.errorHandler.handleError(error);
+              }
+            );
+        },
+        function(dismiss) {
+          if (dismiss === "cancel") {
+            swal("Cancelled", "Your shipment is safe", "error");
+          }
+        }
+      );
   }
 
   /**
- * Show edit address
+ * moveToUnassigned
  * */
   moveToUnassigned(shipmentId: number) {
-    debugger;
-    this.notificationService.showLoading(2);
-
-    this.shipmentService.moveToUnassigned(shipmentId).subscribe(assigned => {
-      if (assigned) {
-        this.componentModel = this.componentModel.filter(item => item.shipment.id !== shipmentId)
-      }
-    }, error => {
-      this.errorHandler.handleError('Assigning to open market operation failed. Please contact an administrator!');
+    const self = this;
+    swal({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, move it to unassigned!"
     })
+      // move confirmed
+      .then(
+        function() {
+          self.shipmentService
+            .moveToUnassigned(
+              shipmentId,
+              self.currentUser.customerId,
+              self.translateService.currentLanguage
+            )
+            .subscribe(
+              moved => {
+                if (moved) {
+                  debugger;
+                  self.componentModel = self.componentModel.filter(
+                    item => item.shipment.id !== shipmentId
+                  );
+
+                  const currentFilter = self.shipmentFilters.find(
+                    item =>
+                      item.statusType === self.selectedShipmentFilter.statusType
+                  );
+                  if (currentFilter) {
+                    currentFilter.amount = currentFilter.amount - 1;
+                  }
+
+                  const unassignedFilter = self.shipmentFilters.find(
+                    item =>
+                      item.statusType === ShipmentTransporterStatus.unassigned
+                  );
+                  if (unassignedFilter) {
+                    unassignedFilter.amount = unassignedFilter.amount + 1;
+                    unassignedFilter.lastDateTime = new Date();
+                  }
+
+                  swal(
+                    "Moved!",
+                    "Your shipment has been moved to unassigned.",
+                    "success"
+                  );
+                  // update model
+                  self.componentModel = self.componentModel.filter(
+                    item => item.shipment.id !== shipmentId
+                  );
+                } else {
+                  swal(
+                    "Not moved!",
+                    "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
+                    "error"
+                  );
+                }
+              },
+              error => {
+                swal(
+                  "Not moved!",
+                  "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
+                  "error"
+                );
+                self.errorHandler.handleError(error);
+              }
+            );
+        },
+        function(dismiss) {
+          if (dismiss === "cancel") {
+            swal("Cancelled", "Your shipment is safe", "error");
+          }
+        }
+      );
   }
 
   /** Show edit address */
   onClickDeleteShipment(shipmentId: number) {
-    debugger;
     const self = this;
     swal({
-      title: 'Are you sure?',
-      text: 'You won\'t be able to revert this!',
-      type: 'warning',
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      type: "warning",
       showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, delete it!'
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
     })
       // delete confirmed
-      .then(function () {
-        self.shipmentService.delete(shipmentId, self.currentUser.customerId).subscribe(result => {
-          if (result) {
-            swal(
-              'Deleted!',
-              'Your shipment has been deleted.',
-              'success'
+      .then(
+        function() {
+          self.shipmentService
+            .delete(
+              shipmentId,
+              self.currentUser.customerId,
+              this.translateService.currentLanguage
+            )
+            .subscribe(
+              result => {
+                if (result) {
+                  swal(
+                    "Deleted!",
+                    "Your shipment has been deleted.",
+                    "success"
+                  );
+                  // update model
+                  self.componentModel = self.componentModel.filter(
+                    item => item.shipment.id !== shipmentId
+                  );
+                } else {
+                  swal(
+                    "Not Deleted!",
+                    "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
+                    "error"
+                  );
+                }
+              },
+              error => {
+                swal(
+                  "Not Deleted!",
+                  "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
+                  "error"
+                );
+                self.errorHandler.handleError(error);
+              }
             );
-            // update model
-            self.componentModel = self.componentModel.filter(item => item.shipment.id !== shipmentId);
-          } else {
-            swal(
-              'Not Deleted!',
-              'An error occured. Your shipment has not been deleted.  Please contact an administrator.',
-              'error'
-            );
+        },
+        // delete canceled
+        function(dismiss) {
+          // dismiss can be 'cancel', 'overlay',
+          // 'close', and 'timer'
+          if (dismiss === "cancel") {
+            swal("Cancelled", "Your shipment is safe", "error");
           }
-        }, error => {
-          swal(
-            'Not Deleted!',
-            'An error occured. Your shipment has not been deleted.  Please contact an administrator.',
-            'error'
-          );
-          self.errorHandler.handleError(error);
-        });
-      },
-      // delete canceled
-      function (dismiss) {
-        // dismiss can be 'cancel', 'overlay',
-        // 'close', and 'timer'
-        if (dismiss === 'cancel') {
-          swal(
-            'Cancelled',
-            'Your shipment is safe :)',
-            'error'
-          )
         }
-      });
+      );
   }
-
-
 
   /**
  * Move to next/previous page
@@ -299,32 +493,36 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
     this.helperService.scrollOnTop();
   }
 
-
   ngAfterViewInit() {
-    var breakCards = true;
-    if (breakCards == true) {
+    const breakCards = true;
+    if (breakCards === true) {
       // We break the cards headers if there is too much stress on them :-)
-      $('[data-header-animation="true"]').each(function () {
-        var $fix_button = $(this);
-        var $card = $(this).parent('.card');
-        $card.find('.fix-broken-card').click(function () {
+      $('[data-header-animation="true"]').each(function() {
+        const $fix_button = $(this);
+        const $card = $(this).parent(".card");
+        $card.find(".fix-broken-card").click(function() {
           console.log(this);
-          var $header = $(this).parent().parent().siblings('.card-header, .card-image');
-          $header.removeClass('hinge').addClass('fadeInDown');
+          const $header = $(this)
+            .parent()
+            .parent()
+            .siblings(".card-header, .card-image");
+          $header.removeClass("hinge").addClass("fadeInDown");
 
-          $card.attr('data-count', 0);
+          $card.attr("data-count", 0);
 
-          setTimeout(function () {
-            $header.removeClass('fadeInDown animate');
+          setTimeout(function() {
+            $header.removeClass("fadeInDown animate");
           }, 480);
         });
 
-        $card.mouseenter(function () {
-          var $this = $(this);
-          var hover_count = parseInt($this.attr('data-count'), 10) + 1 || 0;
+        $card.mouseenter(function() {
+          const $this = $(this);
+          const hover_count = parseInt($this.attr("data-count"), 10) + 1 || 0;
           $this.attr("data-count", hover_count);
           if (hover_count >= 20) {
-            $(this).children('.card-header, .card-image').addClass('hinge animated');
+            $(this)
+              .children(".card-header, .card-image")
+              .addClass("hinge animated");
           }
         });
       });
@@ -336,38 +534,87 @@ export class ShipmentOverviewComponent implements OnInit, OnDestroy, AfterViewIn
   getFilterColor(status: ShipmentTransporterStatus): string {
     switch (status) {
       case ShipmentTransporterStatus.unassigned:
-        return 'red';
+        return "red";
       case ShipmentTransporterStatus.openMarket:
-        return 'blue';
+        return "blue";
       case ShipmentTransporterStatus.assigned:
-        return 'orange';
+        return "orange";
       case ShipmentTransporterStatus.completed:
-        return 'green';
+        return "green";
       default:
-        return '';
+        return "";
     }
   }
 
   getFilterIcon(status: ShipmentTransporterStatus): string {
     switch (status) {
       case ShipmentTransporterStatus.unassigned:
-        return 'assignment';
+        return "assignment";
       case ShipmentTransporterStatus.openMarket:
-        return 'shopping_cart';
+        return "shopping_cart";
       case ShipmentTransporterStatus.assigned:
-        return 'done';
+        return "done";
       case ShipmentTransporterStatus.completed:
-        return 'done_all';
+        return "done_all";
       default:
-        return '';
+        return "";
     }
   }
 
+  setActionsVisibility() {
+    const status = this.selectedShipmentFilter.statusType;
+    switch (status) {
+      case ShipmentTransporterStatus.unassigned: {
+        this.selectedShipmentFilter.deleteActionVisible = true;
+        this.selectedShipmentFilter.editActionVisible = true;
+        this.selectedShipmentFilter.moveToOpenMarketActionVisible = true;
+        this.selectedShipmentFilter.moveToUnassingedActionVisible = false;
+        this.selectedShipmentFilter.assignTransporterActionVisible = true;
+        break;
+      }
+      case ShipmentTransporterStatus.openMarket: {
+        this.selectedShipmentFilter.deleteActionVisible = true;
+        this.selectedShipmentFilter.editActionVisible = true;
+        this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;
+        this.selectedShipmentFilter.moveToUnassingedActionVisible = true;
+        this.selectedShipmentFilter.assignTransporterActionVisible = true;
+        break;
+      }
+      case ShipmentTransporterStatus.assigned: {
+        this.selectedShipmentFilter.deleteActionVisible = true;
+        this.selectedShipmentFilter.editActionVisible = true;
+        this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;
+        if (this.selectedShipmentFilter.inPending) {
+          this.selectedShipmentFilter.moveToUnassingedActionVisible = true;
+          this.selectedShipmentFilter.assignTransporterActionVisible = true;
+        } else {
+          this.selectedShipmentFilter.moveToUnassingedActionVisible = false;
+          this.selectedShipmentFilter.assignTransporterActionVisible = false;
+        }
+        break;
+      }
+      case ShipmentTransporterStatus.completed: {
+        this.selectedShipmentFilter.deleteActionVisible = true;
+        this.selectedShipmentFilter.editActionVisible = true;
+        this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;
+        this.selectedShipmentFilter.moveToUnassingedActionVisible = false;
+        this.selectedShipmentFilter.assignTransporterActionVisible = false;
+        break;
+      }
+      default: {
+        this.selectedShipmentFilter.deleteActionVisible = true;
+        this.selectedShipmentFilter.editActionVisible = true;
+        this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;
+        this.selectedShipmentFilter.moveToUnassingedActionVisible = false;
+        this.selectedShipmentFilter.assignTransporterActionVisible = false;
+        break;
+      }
+    }
+  }
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedShipment) {
       this.subscriptionReceiveUpdatedShipment.unsubscribe();
     }
   }
-
 }

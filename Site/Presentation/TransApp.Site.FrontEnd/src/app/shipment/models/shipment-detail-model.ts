@@ -7,6 +7,7 @@ export class ShipmentDetailModel {
   public width: number;
   public height: number;
   public weight: number;
+  public toRemove: boolean;
   public parentDetailId: number;
   public userIdCreated: number;
   public dateCreated: Date;

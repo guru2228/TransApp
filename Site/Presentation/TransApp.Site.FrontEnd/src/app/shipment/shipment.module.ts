@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { HttpModule } from "@angular/http";
 import { RouterModule, Routes } from '@angular/router';
 
-import {  MaterialModule, MdDatepickerModule, MdAutocompleteModule, MdNativeDateModule, MdInputModule, MdSelectModule } from '@angular/material';
+import { MatDatepickerModule, MatAutocompleteModule, MatNativeDateModule,MatInputModule, MatSelectModule,MatProgressBarModule } from '@angular/material';
 
 import { AgmCoreModule } from '@agm/core';
 import { MdModule } from "app/shared/md/md.module";
@@ -22,7 +22,7 @@ import { ShipmentService } from 'app/shipment/services/shipment.service';
         MdModule,
         RouterModule,
         CommonAppModule,
-        MaterialModule, MdDatepickerModule, MdAutocompleteModule, MdNativeDateModule, MdInputModule, MdSelectModule,
+         MatDatepickerModule, MatAutocompleteModule, MatNativeDateModule,MatInputModule, MatSelectModule,MatProgressBarModule,
 
         AgmCoreModule.forRoot({
             apiKey: 'AIzaSyChUim14iXhf6riJ73R3qxNxnMls2SGZDA'

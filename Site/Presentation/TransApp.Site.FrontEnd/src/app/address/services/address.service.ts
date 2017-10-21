@@ -31,10 +31,11 @@ export class AddressService {
    * @param employeeEncryptedData
    * @param language
    */
-  get(id: number, language: string): Observable<AddressModel> {
+  get(id: number, customerId: number, language: string): Observable<AddressModel> {
     return this.http.get(this.serviceUrl +
       'get' +
       '/' + id +
+      '/' + customerId +
       '/' + language)
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
@@ -82,11 +83,11 @@ export class AddressService {
    * @param componentName
    * @param language
    */
-  save(model: AddressModel) {
+  save(model: AddressModel, language: string) {
     const headers = new Headers({ 'Content-Type': 'application/json' });
     const data = JSON.stringify(model);
 
-    return this.http.post(this.serviceUrl + 'save',
+    return this.http.post(this.serviceUrl + 'save' + '/' + language,
       data,
       { headers })
       .map(response => (response).json())
@@ -99,10 +100,10 @@ export class AddressService {
   * @param componentName
   * @param language
   */
-  delete(addressId: number) {
+  delete(addressId: number, customerId: number, language: string) {
     const headers = new Headers({ 'Content-Type': 'application/json' });
 
-    return this.http.delete(this.serviceUrl + 'delete/' + addressId)
+    return this.http.delete(this.serviceUrl + 'delete/' + addressId + '/' + customerId + '/' + language)
       .map(response => (response).json());
   }
 }
