@@ -287,8 +287,8 @@ export class AddressOverviewComponent
           self.addressService
             .delete(
               addressId,
-              this.current.customerId,
-              this.translateService.currentLanguage
+              self.currentUser.customerId,
+              self.translateService.currentLanguage
             )
             .subscribe(
               result => {

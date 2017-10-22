@@ -245,6 +245,7 @@ export class ShipmentOverviewComponent
    * */
   onClickEditShipment(shipmentRow: ShipmentRowViewModel) {
     this.notificationService.showLoading();
+    this.helperService.scrollOnTop();
 
     shipmentRow.viewActions = false;
 
@@ -439,7 +440,7 @@ export class ShipmentOverviewComponent
             .delete(
               shipmentId,
               self.currentUser.customerId,
-              this.translateService.currentLanguage
+              self.translateService.currentLanguage
             )
             .subscribe(
               result => {

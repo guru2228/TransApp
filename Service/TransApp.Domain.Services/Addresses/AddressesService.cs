@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Common;
 using System.Globalization;
 using System.Linq;
 using System.Net;
@@ -363,7 +364,7 @@ namespace TransApp.Domain.Services.Addresses
                     Id = currentAdrress.Id
                 };
 
-                var transaction = _unitOfWork.BeginTransaction();
+                DbTransaction transaction = null;//_unitOfWork.BeginTransaction();
                 if (currentAdrress.Availabilities != null)
                 {
                     foreach (AvailabilityEntityModel aAvailabilityModel in currentAdrress.Availabilities)
@@ -411,7 +412,7 @@ namespace TransApp.Domain.Services.Addresses
                     }
                 }
                 await _unitOfWork.AddressesRepository.DeleteAddress(dest, transaction);
-                _unitOfWork.Commit(transaction);
+              //  _unitOfWork.Commit(transaction);
             }
         }
     }
