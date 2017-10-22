@@ -322,7 +322,7 @@
                                                 <td style="min-width: 150px;">
                                                     <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.packTypeId || detailRow.master.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
                                                         <label class="control-label">Choose pack type<span class="star">*</span></label>
-                                                        <select [(ngModel)]="detailRow.master.packTypeId" (change)="onMasterPackTypeChange(detailRow)" name="shipmentDetail_packtype_{{detailRowIndex}}" class="form-control">
+                                                        <select [(ngModel)]="detailRow.master.packTypeId" (change)="onMasterPackTypeChange(detailRow)" name="shipmentDetail_packtype_{{detailRowIndex}}" class="form-control" required>
                                                         <option *ngFor="let packtype of packTypes" [ngValue]="packtype.id">{{packtype.description}}</option>
                                                     </select>
                                                     </div>

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data.Common;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -290,7 +291,8 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentDetails != null)
             {
-                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in currentShipment.ShipmentDetails)
+                var shipmentsToSave = currentShipment.ShipmentDetails.Where(item => !item.Master.ToRemove);
+                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in shipmentsToSave)
                 {
                     aShipmentDetailRowModel.Master.ShipmentId = dest.Id;
                     await SaveShipmentDetails(aShipmentDetailRowModel.Master, userId, transaction);
@@ -304,6 +306,24 @@ namespace TransApp.Domain.Services.Shipment
                         }
                     }
                 }
+
+                var shipmentsToRemove= currentShipment.ShipmentDetails.Where(item => item.Master.ToRemove);
+                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in shipmentsToRemove)
+                {
+                    aShipmentDetailRowModel.Master.ShipmentId = dest.Id;
+                    if (aShipmentDetailRowModel.Extras != null && aShipmentDetailRowModel.Extras.Any())
+                    {
+                        foreach (ShipmentDetailModel aShipmentDetailModel in aShipmentDetailRowModel.Extras)
+                        {
+                            aShipmentDetailModel.ShipmentId = dest.Id;
+                            await SaveShipmentDetails(aShipmentDetailModel, userId, transaction,
+                                aShipmentDetailRowModel.Master.Id);
+                        }
+                    }
+
+                    await SaveShipmentDetails(aShipmentDetailRowModel.Master, userId, transaction);
+                }
+
             }
 
             if (currentShipment.ReceiverAvailabilities != null)
@@ -643,7 +663,7 @@ namespace TransApp.Domain.Services.Shipment
                     DateModified = currentShipment.DateModified,
                 };
 
-                var transaction = _unitOfWork.BeginTransaction();
+                DbTransaction transaction = null;// _unitOfWork.BeginTransaction();
 
                 if (currentShipment.ShipmentDetails != null)
                 {
@@ -699,7 +719,7 @@ namespace TransApp.Domain.Services.Shipment
                 await CreateShipmentHistory(dest, transaction);
                 await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);
                 
-                _unitOfWork.Commit(transaction);
+              //  _unitOfWork.Commit(transaction);
             }
         }
 
@@ -795,7 +815,7 @@ namespace TransApp.Domain.Services.Shipment
             {
                 if (shipmentDetailModel.ToRemove)
                 {
-                    await _unitOfWork.ShipmentDetailRepository.DeleteAsync(aShipmentDetailChild, transaction);
+                    await _unitOfWork.ShipmentDetailRepository.DeleteAsync(aShipmentDetailChild, null);
                 }
                 else
                 {

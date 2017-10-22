@@ -64,7 +64,7 @@
                                 <tbody>
 
                                     <ng-container *ngFor="let shipmentRow of componentModel; let rowindex = index">
-                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="rowindex%2==0?'success':''">
+                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="(shipmentRow.viewActions ||shipmentRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
                                             <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.pickUpDate)}}</td>
                                             <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
                                             <td>{{shipmentRow.shipment.addressFrom}}</td>
@@ -77,9 +77,6 @@
 
                                         <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
                                             <td id="actionsRowContent" colspan="7" align="center">
-
-
-
 
                                                 <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.editActionVisible" class="btn btn-warning" (click)="onClickEditShipment(shipmentRow)">
                                                             <span class="btn-label">

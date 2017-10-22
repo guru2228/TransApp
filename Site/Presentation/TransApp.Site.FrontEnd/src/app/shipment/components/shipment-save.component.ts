@@ -138,7 +138,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
                               "/shipment-overview/shipment-edit/" + shipmentId
                           ]);
                           this.notificationService.show(
-                              "Address created.",
+                              "Shipment created.",
                               "success",
                               "center",
                               "top"
@@ -147,7 +147,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
                           //// send data to addreess coponent to be updated
                           // this.addressService.sendAddressModel(this.componentModel);
                           this.notificationService.show(
-                              "Address saved. ",
+                              "Shipment saved. ",
                               "success",
                               "center",
                               "top"
@@ -367,6 +367,11 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       event: MatOptionSelectionChange,
       address: AddressModel
   ) {
+    if(address == null){
+      this.router.navigate(['/address-add']);
+      return;
+    }
+
       this.senderSelectedAddress = address as AddressModel;
       this.addressService
           .get(
@@ -467,6 +472,11 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       event: MatOptionSelectionChange,
       address: AddressModel
   ) {
+
+    if(address == null){
+      this.router.navigate(['/address-add']);
+      return;
+    }
       this.receiverSelectedAddress = address as AddressModel;
       this.addressService
           .get(
