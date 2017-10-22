@@ -663,7 +663,7 @@ namespace TransApp.Domain.Services.Shipment
                     DateModified = currentShipment.DateModified,
                 };
 
-                DbTransaction transaction = null;// _unitOfWork.BeginTransaction();
+                var transaction = _unitOfWork.BeginTransaction();
 
                 if (currentShipment.ShipmentDetails != null)
                 {
@@ -719,7 +719,7 @@ namespace TransApp.Domain.Services.Shipment
                 await CreateShipmentHistory(dest, transaction);
                 await _unitOfWork.ShipmentRepository.DeleteShipment(dest, transaction);
                 
-              //  _unitOfWork.Commit(transaction);
+                _unitOfWork.Commit(transaction);
             }
         }
 
