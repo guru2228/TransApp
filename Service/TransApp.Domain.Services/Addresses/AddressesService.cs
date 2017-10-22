@@ -349,7 +349,8 @@ namespace TransApp.Domain.Services.Addresses
 
         private int? GetNumericZipCode(string locationZipCode)
         {
-            return Convert.ToInt32(locationZipCode.Where(c => Char.IsDigit(c)).ToArray());
+            string result= new string(locationZipCode.Where(c => Char.IsDigit(c)).ToArray());
+            return Convert.ToInt32(result);
         }
 
         public async Task DeleteAddress(AddressModel currentAdrress)
