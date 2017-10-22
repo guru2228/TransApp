@@ -348,10 +348,6 @@ namespace TransApp.Domain.Services.Shipment
                     aAvailability.UserIdModified = userId;
                     if (aAvailability.Id <= 0)
                     {
-                        //if (currentShipment.CommonAvailability)
-                        //{
-                        //    aAvailability.Day = 0;
-                        //}
                         aAvailability.DateCreated = DateTime.Now;
                         aAvailability.UserIdCreated = userId;
                         aAvailability.ShipmentId = dest.Id;
@@ -408,10 +404,6 @@ namespace TransApp.Domain.Services.Shipment
                     aAvailability.UserIdModified = userId;
                     if (aAvailability.Id <= 0)
                     {
-                        //if (currentShipment.CommonAvailability)
-                        //{
-                        //    aAvailability.Day = 0;
-                        //}
                         aAvailability.DateCreated = DateTime.Now;
                         aAvailability.UserIdCreated = userId;
                         aAvailability.ShipmentId = dest.Id;

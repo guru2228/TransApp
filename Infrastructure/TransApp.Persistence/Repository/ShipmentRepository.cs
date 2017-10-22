@@ -300,7 +300,14 @@ namespace TransApp.Persistence.Repository
                 }
                 else
                 {
-                    await UpdateAsync(currentShipment, transaction);
+                    try
+                    {
+                        await UpdateAsync(currentShipment, transaction);
+                    }
+                    catch (Exception ex)
+                    {
+
+                    }
                 }
             }
         }
