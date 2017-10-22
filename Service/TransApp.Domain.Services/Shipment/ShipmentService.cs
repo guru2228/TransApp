@@ -815,7 +815,7 @@ namespace TransApp.Domain.Services.Shipment
             {
                 if (shipmentDetailModel.ToRemove)
                 {
-                    await _unitOfWork.ShipmentDetailRepository.DeleteAsync(aShipmentDetailChild, null);
+                    await _unitOfWork.ShipmentDetailRepository.DeleteAsync(aShipmentDetailChild, transaction);
                 }
                 else
                 {
