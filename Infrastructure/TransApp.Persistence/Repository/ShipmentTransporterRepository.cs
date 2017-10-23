@@ -133,13 +133,14 @@ Where 1=1 ");
             return base.GetAll(predicate).ToList();
         }
 
-        public async Task AssignTransporter(int userId,int shipmentId, DateTime orderDate)
+        public async Task AssignTransporter(int userId,int shipmentId, int amountOfDaysFlexibility)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
                 DynamicParameters d = new DynamicParameters();
                 d.Add("@ShipmentId", shipmentId);
-                d.Add("@OrderDate", orderDate);
+                d.Add("@OrderDate", DateTime.Now);
+                d.Add("@AmountOfDaysFlexibility", amountOfDaysFlexibility);
                 cn.Open();
                 var result = (await cn.QueryAsync<ShipmentTransporter>(GetQueryAssignTransporter(), d)).ToList();
                 if (result.Any())
@@ -159,7 +160,6 @@ Where 1=1 ");
             sb.Append(@"
 -- wat met tijd te laat --> laten interpreteren als morgen
 
-declare @Orderdate datetime2-- this will current date
 declare @RequestedPickupDate datetime2
 declare @Weight int
 declare @PickupCountry varchar(20)
@@ -167,10 +167,6 @@ declare @DeliveryCountry varchar(20)
 declare @PickupZipcode int
 declare @DeliveryZipcode int
 declare @OrderTime time
-declare @AmountOfDaysFlexibility int
-declare @ShipmentId int
-
-
 
 select @RequestedPickupDate =Shipment.PickUpDate,@Weight=Shipment.TotalWeight,
 @PickupCountry=AddressFrom.CountryCode,@PickupZipcode=AddressFrom.ZipCodeNumeric,
@@ -181,11 +177,14 @@ inner join [Address] as AddressTo on AddressTo.Id=Shipment.ReceiverAddressId
 where Shipment.Id=@ShipmentId
 
 set @AmountOfDaysFlexibility = 2 --- we not have this? where should be stored/managed
-if (@RequestedPickupDate>@Orderdate)
+if (cast(@RequestedPickupDate as date)>cast(@Orderdate as date))
 begin
-    set @Orderdate=@RequestedPickupDate
+    set @OrderTime=null
 end
+else
+begin
 set @OrderTime = (select cast(@Orderdate as time))
+end
 
 
 select -1 as Id,
@@ -197,8 +196,6 @@ cast(0 as bit) as Declined,
 cast(0 as bit) as Selected,
 Tariff + PickupDelay.SurtaxFixed + DeliveryDelay.SurtaxFixed as Price,
 PickupDelay.[Delay] as LoadingOn,
----if delivery date from shipment > calculated delivery date  what we do, we all time report on orderdate ( which is in fact current date?)? or we consider PickUpDate
--- we should store this OrderDate on shipmentTransporter
 (PickupDelay.[Delay] + DeliveryDelay.[Delay]) as DeliveryOn
 
 from Tariff
@@ -206,7 +203,7 @@ inner join Region as PickupRegion on PickupRegion.Id = Tariff.PickupRegionId
 inner join Region as DeliveryRegion on DeliveryRegion.Id = Tariff.DeliveryRegionId
 inner join Transporter on Transporter.Id = PickupRegion.TransporterId
 inner join PickupDelay on PickupDelay.RegionId = PickupRegion.Id
-			and PickupDelay.DelayMaxHour >= @OrderTime
+			and (@OrderTime is null or PickupDelay.DelayMaxHour >= @OrderTime)
 inner join DeliveryDelay on DeliveryDelay.DeliveryRegionId = DeliveryRegion.Id
 			and DeliveryDelay.PickupRegionId = PickupRegion.Id
 

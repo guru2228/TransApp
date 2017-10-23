@@ -257,9 +257,9 @@ namespace TransApp.Domain.Services.Shipment
             DataModel.Dto.Shipment dest = new DataModel.Dto.Shipment
             {
                 Id = currentShipment.Id,
-                DeliveryDate = currentShipment.DeliveryDate,
+                DeliveryDate = currentShipment.DeliveryDate.Value.Date,
                 CustomerId = currentShipment.CustomerId,
-                PickUpDate = currentShipment.PickUpDate,
+                PickUpDate = currentShipment.PickUpDate.Value.Date,
                 PoNumber = currentShipment.PoNumber,
                 ShipmentStatus =
                     !string.IsNullOrEmpty(currentShipment.ShipmentStatus) ? currentShipment.ShipmentStatus : "UAS",
@@ -870,8 +870,6 @@ namespace TransApp.Domain.Services.Shipment
                     transaction = _unitOfWork.BeginTransaction();
                 await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction, "UAS");
                 await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, transaction);
-                await _unitOfWork.ShipmentTransporterRepository
-                    .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
                 _unitOfWork.Commit(transaction);
                 return true;
             }
@@ -890,8 +888,6 @@ namespace TransApp.Domain.Services.Shipment
                     _unitOfWork.ShipmentRepository.UpdateShipmentTransporter(userId, shipmentId, transaction,
                         "CON", transpoterId);
                 await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, transaction);
-                await _unitOfWork.ShipmentTransporterRepository
-                    .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
                 _unitOfWork.Commit(transaction);
                 return true;
             }
@@ -915,6 +911,8 @@ namespace TransApp.Domain.Services.Shipment
                 Mapper.Map<List<ShipmentTransporter>, List<ShipmentTransporterHistory>>(shipmentTransporters);
             foreach (ShipmentTransporterHistory shipmentTransporterHistory in result)
                 await _unitOfWork.ShipmentTransporterHistoryRepository.AddAsync(shipmentTransporterHistory, transaction);
+            await _unitOfWork.ShipmentTransporterRepository
+                    .DeleteShipmentTransporter(predicate, transaction);
         }
 
         public async Task<bool> UnassignAndMoveToOpenMarket(int userId, int shipmentId, IDbTransaction transaction = null)
@@ -924,8 +922,6 @@ namespace TransApp.Domain.Services.Shipment
                 if (transaction == null)
                     transaction = _unitOfWork.BeginTransaction();
                 await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, transaction);
-                await _unitOfWork.ShipmentTransporterRepository
-                    .DeleteShipmentTransporter("ShipmentId=" + shipmentId, transaction);
                 await
                    _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, transaction,
                        shipmentStatus: "OPEN");
@@ -945,10 +941,17 @@ namespace TransApp.Domain.Services.Shipment
             return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
         }
 
-        public async Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, DateTime orderDate)
+        public async Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId,
+            int amoutFlexibility = 0)
         {
-            await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, orderDate);
-            return await GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = shipmentId});
+            await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, null);
+            await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, amoutFlexibility);
+            var result = await GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = shipmentId});
+            if (amoutFlexibility == 0 && !result.Any())
+            {
+                return await AssignTransporter(userId, shipmentId, 2);
+            }
+            return result;
         }
 
         public async Task CreateShipmentHistory(DataModel.Dto.Shipment shipment, IDbTransaction transaction = null)

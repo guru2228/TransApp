@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
@@ -80,5 +81,6 @@ namespace TransApp.Domain.Services.Common
             }
             return new List<RequirementParameterModel>();
         }
+
     }
 }

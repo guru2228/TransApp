@@ -505,5 +505,23 @@ namespace TransApp.Tests.Shipment
                 Assert.IsFalse(true);
             }
         }
+        [TestMethod]
+        public async Task Test_AssignTransporter_Is_Ok()
+        {
+            try
+            {
+                var a =
+                    await _shipmentService.AssignTransporter(1000,51);
+                ;
+                {
+                    Assert.IsTrue(true);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+        }
     }
 }

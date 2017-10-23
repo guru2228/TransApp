@@ -38,15 +38,16 @@ namespace TransApp.Domain.Services.Shipment
 
         Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId);
 
-        Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null, int? parentId = null);
+        Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null,
+            int? parentId = null);
 
         Task DeleteShipmentById(int shipmentId);
 
-        Task<bool> AssignToOpenMarket(int userId,int shipmentId, IDbTransaction transaction = null);
+        Task<bool> AssignToOpenMarket(int userId, int shipmentId, IDbTransaction transaction = null);
 
         Task<bool> MoveToUnassigned(int userId, int shipmentId, IDbTransaction transaction = null);
 
-        Task<bool> ConfirmTransporter(int userId, int shipmentId,int transpoterId );
+        Task<bool> ConfirmTransporter(int userId, int shipmentId, int transpoterId);
 
         Task<int> GetAllCount(FilterShipment filter);
 
@@ -56,6 +57,6 @@ namespace TransApp.Domain.Services.Shipment
 
         Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter);
 
-        Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, DateTime orderDate);
+        Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, int amountFlexibility = 0);
     }
 }
