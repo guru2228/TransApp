@@ -38,8 +38,7 @@ namespace TransApp.Domain.Services.Shipment
 
         Task<List<ShipmentTransporterFilterModel>> GetShipmentFilter(int customerId);
 
-        Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null,
-            int? parentId = null);
+        Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId, IDbTransaction transaction = null);
 
         Task DeleteShipmentById(int shipmentId);
 

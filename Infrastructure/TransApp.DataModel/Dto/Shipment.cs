@@ -54,7 +54,12 @@ namespace TransApp.DataModel.Dto
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
+        public decimal? InvoiceAmount { get; set; }
+        public string InvoiceComment { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public string PickUpComment { get; set; }
+        public string DeliveryComment { get; set; }
+        public bool? DeliveryPod { get; set; }
     }
 
 

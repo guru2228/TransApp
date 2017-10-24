@@ -122,9 +122,13 @@ namespace TransApp.Tests.Shipment
             currentShipment.TransporterId = 1;
             currentShipment.UserIdCreated = 100000;
             currentShipment.UserIdModified = 999;
-
+            currentShipment.InvoiceAmount = 6666;
+            currentShipment.InvoiceComment = "InvoiceComment";
+            currentShipment.InvoiceDate = DateTime.Now.AddDays(4);
+            currentShipment.PickUpComment = "yyyyy";
+            currentShipment.DeliveryComment = "rrrrrr";
+            currentShipment.DeliveryPod = true;
             //we must see with parentdetailid
-            List<ShipmentDetailRowModel> shipmentDetail = new List<ShipmentDetailRowModel>();
             ShipmentDetailModel aShipmentDetailModel = new ShipmentDetailModel
             {
                 Height = 1,
@@ -132,7 +136,9 @@ namespace TransApp.Tests.Shipment
                 Quantity = 111,
                 PackTypeId = 1,
                 Weight = 11,
-                Width = 232
+                Width = 232,
+                QuantityDetail = 666,
+                PackTypeDetailId = 2
             };
             ShipmentDetailModel aShipmentDetailModel2 = new ShipmentDetailModel
             {
@@ -141,15 +147,14 @@ namespace TransApp.Tests.Shipment
                 Quantity = 111,
                 PackTypeId = 1,
                 Weight = 11,
-                Width = 232
+                Width = 232,
+                QuantityDetail = 999,
+                PackTypeDetailId = 1
             };
-            ShipmentDetailRowModel detail = new ShipmentDetailRowModel();
-            detail.Master = aShipmentDetailModel;
             List<ShipmentDetailModel> extras = new EditableList<ShipmentDetailModel>();
             extras.Add(aShipmentDetailModel2);
-            detail.Extras = extras;
-            shipmentDetail.Add(detail);
-            currentShipment.ShipmentDetails = shipmentDetail;
+            extras.Add(aShipmentDetailModel);
+            currentShipment.ShipmentDetails = extras;
 
             List<FacilityEntityModel> shipmentReceiverFacilities =
                 new EditableList<FacilityEntityModel>();
@@ -253,7 +258,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(35,1);
+                    await _shipmentService.Get(54,1);
             }
             catch (Exception ex)
             {
@@ -359,17 +364,14 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(44);
+                    await _shipmentService.Get(54);
 
                 foreach (var av in currentShipmentModel.ShipmentDetails)
                 {
-                    av.Master.Length = 54545555;
-                    if (av.Extras.Any())
+                    av.Length = 54545555;
+                    if (av.QuantityDetail==666)
                     {
-                        foreach (var extra in av.Extras)
-                        {
-                            extra.ToRemove = true;
-                        }
+                        av.ToRemove = true;
                     }
                 }
                 foreach (var av in currentShipmentModel.ReceiverFacilities)

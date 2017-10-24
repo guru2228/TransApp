@@ -33,6 +33,10 @@ namespace TransApp.DataModel.Dto
 
         public DateTime? DateModified { get; set; }
 
+        public decimal? QuantityDetail { get; set; }
+
+        public int? PackTypeDetailId { get; set; }
+
     }
 
 }

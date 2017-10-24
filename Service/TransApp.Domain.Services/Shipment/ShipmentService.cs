@@ -65,6 +65,12 @@ namespace TransApp.Domain.Services.Shipment
                     DateCreated = currentShipment.Shipment.DateCreated,
                     UserIdModified = currentShipment.Shipment.UserIdModified,
                     DateModified = currentShipment.Shipment.DateModified,
+                    InvoiceAmount = currentShipment.Shipment.InvoiceAmount,
+                    InvoiceComment = currentShipment.Shipment.InvoiceComment,
+                    InvoiceDate = currentShipment.Shipment.InvoiceDate,
+                    PickUpComment = currentShipment.Shipment.PickUpComment,
+                    DeliveryComment = currentShipment.Shipment.DeliveryComment,
+                    DeliveryPod = currentShipment.Shipment.DeliveryPod,
 
                 };
                 if (currentShipment.ShipmentReceiverAvailability != null)
@@ -145,26 +151,9 @@ namespace TransApp.Domain.Services.Shipment
                         result.UserModified = userModified.FirstName + ' ' + userModified.LastName;
                     }
                 }
-
-                if (currentShipment.ShipmentDetails != null)
-                {
-                    List<ShipmentDetailRowModel> shipmentDetailModelList = new List<ShipmentDetailRowModel>();
-                    var masterDetails =
-                        currentShipment.ShipmentDetails.FindAll(a => !a.ParentDetailId.HasValue).ToList();
-                    foreach (ShipmentDetail master in masterDetails)
-                    {
-                        ShipmentDetailRowModel shipmentDetailModel = new ShipmentDetailRowModel();
-                        shipmentDetailModel.Master = Mapper.Map<ShipmentDetail, ShipmentDetailModel>(master);
-                        var details =
-                            currentShipment.ShipmentDetails.FindAll(
-                                a => a.ParentDetailId.HasValue && a.ParentDetailId == master.Id).ToList();
-                        shipmentDetailModel.Extras = Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
-                            details);
-                        shipmentDetailModelList.Add(shipmentDetailModel);
-                    }
-                    result.ShipmentDetails = shipmentDetailModelList;
-                }
-
+                result.ShipmentDetails =
+                    Mapper.Map<List<ShipmentDetail>, List<ShipmentDetailModel>>(
+                        currentShipment.ShipmentDetails);
                 result.ReceiverFacilities =
                     Mapper.Map<List<ShipmentReceiverFacility>, List<FacilityEntityModel>>(
                         currentShipment.ShipmentReceiverFacilities);
@@ -236,7 +225,13 @@ namespace TransApp.Domain.Services.Shipment
                             TransporterName = currentShipment.TransporterName,
                             AddressFrom = currentShipment.AddressFrom,
                             AddressTo = currentShipment.AddressTo,
-                            OfferCount = currentShipment.OfferCount
+                            OfferCount = currentShipment.OfferCount,
+                            InvoiceAmount = currentShipment.InvoiceAmount,
+                            InvoiceComment = currentShipment.InvoiceComment,
+                            InvoiceDate = currentShipment.InvoiceDate,
+                            PickUpComment = currentShipment.PickUpComment,
+                            DeliveryComment = currentShipment.DeliveryComment,
+                            DeliveryPod = currentShipment.DeliveryPod,
                         };
 
                         result.Add(shipmentModel);
@@ -282,7 +277,12 @@ namespace TransApp.Domain.Services.Shipment
                 DateCreated = currentShipment.DateCreated,
                 UserIdModified = currentShipment.UserIdModified,
                 DateModified = currentShipment.DateModified,
-
+                InvoiceAmount = currentShipment.InvoiceAmount,
+                InvoiceComment = currentShipment.InvoiceComment,
+                InvoiceDate = currentShipment.InvoiceDate,
+                PickUpComment = currentShipment.PickUpComment,
+                DeliveryComment = currentShipment.DeliveryComment,
+                DeliveryPod = currentShipment.DeliveryPod,
             };
 
             var transaction = _unitOfWork.BeginTransaction();
@@ -291,39 +291,11 @@ namespace TransApp.Domain.Services.Shipment
 
             if (currentShipment.ShipmentDetails != null)
             {
-                var shipmentsToSave = currentShipment.ShipmentDetails.Where(item => !item.Master.ToRemove);
-                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in shipmentsToSave)
+                foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails)
                 {
-                    aShipmentDetailRowModel.Master.ShipmentId = dest.Id;
-                    await SaveShipmentDetails(aShipmentDetailRowModel.Master, userId, transaction);
-                    if (aShipmentDetailRowModel.Extras != null && aShipmentDetailRowModel.Extras.Any())
-                    {
-                        foreach (ShipmentDetailModel aShipmentDetailModel in aShipmentDetailRowModel.Extras)
-                        {
-                            aShipmentDetailModel.ShipmentId = dest.Id;
-                            await SaveShipmentDetails(aShipmentDetailModel, userId, transaction,
-                                aShipmentDetailRowModel.Master.Id);
-                        }
-                    }
+                    aShipmentDetailModel.ShipmentId = currentShipment.Id;
+                    await SaveShipmentDetails(aShipmentDetailModel, userId, transaction);
                 }
-
-                var shipmentsToRemove= currentShipment.ShipmentDetails.Where(item => item.Master.ToRemove);
-                foreach (ShipmentDetailRowModel aShipmentDetailRowModel in shipmentsToRemove)
-                {
-                    aShipmentDetailRowModel.Master.ShipmentId = dest.Id;
-                    if (aShipmentDetailRowModel.Extras != null && aShipmentDetailRowModel.Extras.Any())
-                    {
-                        foreach (ShipmentDetailModel aShipmentDetailModel in aShipmentDetailRowModel.Extras)
-                        {
-                            aShipmentDetailModel.ShipmentId = dest.Id;
-                            await SaveShipmentDetails(aShipmentDetailModel, userId, transaction,
-                                aShipmentDetailRowModel.Master.Id);
-                        }
-                    }
-
-                    await SaveShipmentDetails(aShipmentDetailRowModel.Master, userId, transaction);
-                }
-
             }
 
             if (currentShipment.ReceiverAvailabilities != null)
@@ -661,6 +633,12 @@ namespace TransApp.Domain.Services.Shipment
                     DateCreated = currentShipment.DateCreated,
                     UserIdModified = currentShipment.UserIdModified,
                     DateModified = currentShipment.DateModified,
+                    InvoiceAmount = currentShipment.InvoiceAmount,
+                    InvoiceComment = currentShipment.InvoiceComment,
+                    InvoiceDate = currentShipment.InvoiceDate,
+                    PickUpComment = currentShipment.PickUpComment,
+                    DeliveryComment = currentShipment.DeliveryComment,
+                    DeliveryPod = currentShipment.DeliveryPod,
                 };
 
                 var transaction = _unitOfWork.BeginTransaction();
@@ -807,7 +785,7 @@ namespace TransApp.Domain.Services.Shipment
         }
 
         public async Task SaveShipmentDetails(ShipmentDetailModel shipmentDetailModel, int userId,
-            IDbTransaction transaction, int? parentId = null)
+            IDbTransaction transaction)
         {
             ShipmentDetail aShipmentDetailChild =
                 Mapper.Map<ShipmentDetailModel, ShipmentDetail>(shipmentDetailModel);
@@ -821,7 +799,6 @@ namespace TransApp.Domain.Services.Shipment
                 {
                     aShipmentDetailChild.DateModified = DateTime.Now;
                     aShipmentDetailChild.UserIdModified = userId;
-                    aShipmentDetailChild.ParentDetailId = parentId;
                     if (aShipmentDetailChild.Id <= 0)
                     {
                         aShipmentDetailChild.DateCreated = DateTime.Now;

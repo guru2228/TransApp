@@ -76,5 +76,11 @@ namespace TransApp.DataModel.Dto.Custom
         public string AddressFrom { get; set; }
         public string AddressTo { get; set; }
         public int OfferCount { get; set; }
+        public decimal? InvoiceAmount { get; set; }
+        public string InvoiceComment { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public string PickUpComment { get; set; }
+        public string DeliveryComment { get; set; }
+        public bool? DeliveryPod { get; set; }
     }
 }

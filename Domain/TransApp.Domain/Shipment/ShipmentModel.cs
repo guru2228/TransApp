@@ -64,8 +64,14 @@ namespace TransApp.Domain.Shipment
         public string AddressFrom { get; set; }
         public string AddressTo { get; set; }
         public DateTime? DateModified { get; set; }
+        public decimal? InvoiceAmount { get; set; }
+        public string InvoiceComment { get; set; }
+        public DateTime? InvoiceDate { get; set; }
+        public string PickUpComment { get; set; }
+        public string DeliveryComment { get; set; }
+        public bool? DeliveryPod { get; set; }
 
-       public List<ShipmentDetailRowModel> ShipmentDetails { get; set; }
+        public List<ShipmentDetailModel> ShipmentDetails { get; set; }
 
         public List<FacilityEntityModel> ReceiverFacilities { get; set; }
         public List<RequirementEntityModel> ReceiverRequirements { get; set; }

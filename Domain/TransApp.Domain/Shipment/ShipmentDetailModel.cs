@@ -31,7 +31,9 @@ namespace TransApp.Domain.Shipment
         public DateTime? DateModified { get; set; }
 
         public bool ToRemove { get; set; }
+        public decimal? QuantityDetail { get; set; }
 
+        public int? PackTypeDetailId { get; set; }
     }
 
 }
