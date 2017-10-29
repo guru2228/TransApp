@@ -77,6 +77,7 @@ namespace TransApp.Domain.Services
             CreateMap<AvailabilityEntityModel, ShipmentSenderAvailability>().ForMember(dest => dest.ShipmentId, opt => opt.MapFrom(src => src.EntityId));
             CreateMap<ShipmentSenderAvailability, AvailabilityEntityModel>().ForMember(dest => dest.EntityId, opt => opt.MapFrom(src => src.ShipmentId));
             CreateMap<ShipmentTransporter, ShipmentTransporterHistory>();
+            CreateMap<ShipmentTransporterModel, ShipmentTransporterHistory>();
 
             CreateMap<DataModel.Dto.Shipment, ShipmentHistory>();
             CreateMap<ShipmentTransporterDto, ShipmentTransporterModel>();

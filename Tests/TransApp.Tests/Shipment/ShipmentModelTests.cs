@@ -346,7 +346,7 @@ namespace TransApp.Tests.Shipment
             {
 
                 ShipmentModel currentShipmentModel =
-                    await _shipmentService.Get(39);
+                    await _shipmentService.Get(58);
 
                 await _shipmentService.DeleteShipment(currentShipmentModel);
             }

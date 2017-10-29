@@ -288,7 +288,8 @@ namespace TransApp.Domain.Services.Shipment
             var transaction = _unitOfWork.BeginTransaction();
             await _unitOfWork.ShipmentRepository.SaveShipment(userId, dest, transaction);
             currentShipment.Id = dest.Id;
-
+            dest.Reference = dest.Id.ToString();
+            await _unitOfWork.ShipmentRepository.SaveShipment(userId, dest, transaction);
             if (currentShipment.ShipmentDetails != null)
             {
                 foreach (ShipmentDetailModel aShipmentDetailModel in currentShipment.ShipmentDetails)
@@ -681,6 +682,13 @@ namespace TransApp.Domain.Services.Shipment
                 }
                 if (currentShipment.Transporters != null)
                 {
+                    List<ShipmentTransporterHistory> result =
+                        Mapper.Map<List<ShipmentTransporterModel>, List<ShipmentTransporterHistory>>(
+                            currentShipment.Transporters);
+                    foreach (ShipmentTransporterHistory shipmentTransporterHistory in result)
+                        await
+                            _unitOfWork.ShipmentTransporterHistoryRepository.AddAsync(shipmentTransporterHistory,
+                                transaction);
                     await _unitOfWork.ShipmentTransporterRepository
                         .DeleteShipmentTransporter("ShipmentId=" + currentShipment.Id, transaction);
                 }
@@ -938,5 +946,20 @@ namespace TransApp.Domain.Services.Shipment
             result.ShipmentId = shipment.Id;
                 await _unitOfWork.ShipmentHistoryRepository.AddAsync(result, transaction);
         }
+
+        public async Task<bool> CancelShipment(int userId, int shipmentId, IDbTransaction transaction = null)
+        {
+            try
+            {
+                await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "CANCEL");
+                await DeleteShipmentById(shipmentId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
     }
 }
