@@ -62,10 +62,15 @@ namespace TransApp.Persistence.Repository
               ,TransporterRating.AmountReview
               ,[Address].ContactPerson
               ,[Address].Phone
+              ,Transporter.Name as TransporterName
+              ,Transporter.IconName
+              ,Shipment.PickUpDate
+              ,Shipment.DeliveryDate
               FROM ShipmentTransporter
 left outer join ApplicationUser as UserCreatedTable on UserCreatedTable.Id=ShipmentTransporter.UserIdCreated
 left outer join ApplicationUser as UserModifiedTable on UserModifiedTable.Id=ShipmentTransporter.UserIdModified  
 inner join Transporter on Transporter.Id = ShipmentTransporter.TransporterId
+inner join Shipment on Shipment.Id = ShipmentTransporter.ShipmentId
 left outer join [Address] on [Address].id=Transporter.AddressId
 outer apply (select  Round(sum(Rating.Amount)/count(Rating.Id),2) as Rating,count(Rating.Id) as AmountReview from Rating where Rating.TransporterId =Transporter.Id)
 as TransporterRating

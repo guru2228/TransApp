@@ -48,6 +48,10 @@ namespace TransApp.Domain.Shipment
         public int? Rating { get; set; }
         public string ContactPerson { get; set; }
         public string Phone { get; set; }
+        public string TransporterName { get; set; }
+        public string IconName { get; set; }
+        public DateTime? PickUpDate { get; set; }
+        public DateTime? DeliveryDate { get; set; }
     }
 
 }

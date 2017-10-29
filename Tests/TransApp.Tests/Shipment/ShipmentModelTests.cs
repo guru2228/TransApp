@@ -513,7 +513,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.AssignTransporter(1000,51);
+                    await _shipmentService.AssignTransporter(1000,59);
                 ;
                 {
                     Assert.IsTrue(true);
