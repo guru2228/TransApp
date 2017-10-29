@@ -2357,8 +2357,8 @@ body .fc {
 
 /*
  Acceptable font-family overrides for individual icons:
-     "Arial", sans-serif
-     "Times New Roman", serif
+   "Arial", sans-serif
+   "Times New Roman", serif
 
  NOTE: use percentage font sizes or else old IE chokes
  */
@@ -2562,13 +2562,13 @@ fieldset[disabled] .fc button.btn-primary.active {
 
 
 /*.fc-state-default.fc-corner-left { non-theme
-     border-top-left-radius: 4px;
-     border-bottom-left-radius: 4px;
+   border-top-left-radius: 4px;
+   border-bottom-left-radius: 4px;
  }
 
  .fc-state-default.fc-corner-right { /* non-theme
-     border-top-right-radius: 4px;
-     border-bottom-right-radius: 4px;
+   border-top-right-radius: 4px;
+   border-bottom-right-radius: 4px;
  }*/
 
 
@@ -14199,89 +14199,3 @@ footer .btn {
         top: 80px;
     }
 }
-
-
-/*ADDED*/
-
-.filterpanels:hover {
-    box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(156, 39, 176, 0.4);
-}
-
-.filterpanels.active {
-    background-color: #e91e63;
-    box-shadow: 0 4px 20px 0px rgba(0, 0, 0, 0.14), 0 7px 10px -5px rgba(233, 30, 99, 0.4);
-}
-
-
-/*class used to have one label upper and control is disabled */
-
-.nofocusline {
-    background-image: none!important;
-}
-
-.noUihandle {
-    border-color: #9c27b0;
-}
-
-.sliderinfo {
-    background-color: #00bcd4;
-}
-
-.slidersuccess {
-    background-color: #4caf50;
-}
-
-.sliderwarning {
-    background-color: #ff9800;
-}
-
-.sliderdanger {
-    background-color: #f44336;
-}
-
-.noUi-tooltip {
-    display: block;
-    position: absolute;
-    border-radius: 3px;
-    color: #000;
-    background: white;
-    padding: 0px;
-    text-align: center;
-}
-
-.noUi-horizontal .noUi-tooltip {
-    -webkit-transform: translate(-50%, 0);
-    transform: translate(-50%, 0);
-    left: 50%;
-    bottom: 120%;
-}
-
-.noUi-vertical .noUi-tooltip {
-    -webkit-transform: translate(0, -50%);
-    transform: translate(0, -50%);
-    top: 50%;
-    right: 120%;
-}
-
-
-/* CHANGED to render correctly in edit mode labels */
-
-.card .form-horizontal .form-group {
-    /*   margin-top: 0px;*/
-}
-
-
-/* fix autocomplete*/
-
-.mat-autocomplete-visible {
-    background: white;
-}
-
-.autocomplete-address {
-    width: 100%;
-}
-.mat-option span{
-    float:left;
-}
-
-/*# sourceMappingURL=material-dashboard.css.map */

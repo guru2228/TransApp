@@ -1,12 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TransApp.Core.CacheService;
+using TransApp.Core.Exceptions;
 using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Services.Authentication;
 using TransApp.Domain.Services.Common;
 using TransApp.Core.Helper;
+using TransApp.DataModel.Dto;
 
 namespace TransApp.Site.ApiControllers
 {
@@ -22,7 +26,7 @@ namespace TransApp.Site.ApiControllers
         /// <summary>
         /// IAccountService
         /// </summary>
-        private readonly IAuthenticationService _accountService;
+        private readonly IAuthenticationService _authenticationService;
 
         /// <summary>
         /// ICacheService
@@ -31,7 +35,7 @@ namespace TransApp.Site.ApiControllers
 
         public ParametersDataController( IAuthenticationService accountService, ICommonService commonService, ICacheService cacheService)
         {
-            _accountService = accountService;
+            _authenticationService = accountService;
             _commonService = commonService;
             _cacheService = cacheService;
         }
@@ -70,13 +74,38 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("getPackTypes/{language}")]
         public async Task<IEnumerable<PackTypeParameterModel>> GetPackTypes(string language)
         {
-            var items = _cacheService.Get("cache_packTypes") as IEnumerable<PackTypeParameterModel>;
-            if (items != null) return items;
+           // var items = _cacheService.Get("cache_packTypes") as IEnumerable<PackTypeParameterModel>;
+           // if (items != null) return items;
 
             language.ConvertLocaleStringToServerLanguage();
-            items = await _commonService.GetPackTypes(language);
-            _cacheService.Add("cache_packTypes", items);
+          var  items = await _commonService.GetPackTypes(language);
+           // _cacheService.Add("cache_packTypes", items);
             return items;
+        }
+
+        /// <summary>
+        /// Save an address
+        /// </summary>
+        /// <param name="language"></param>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("savePackType/{language}")]
+        public async Task<int> SavePackType(string language, [FromBody] PackTypeParameterModel model)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            language.ConvertLocaleStringToServerLanguage();
+
+            var packTypeId = await _commonService.CreatepackType(model.Code, "", new Dictionary
+            {
+                EN = model.Description,
+                NL = model.Description,
+                FR = model.Description,
+                DE = model.Description,
+                RO = model.Description
+
+            });
+            return packTypeId;
         }
 
         /// <summary>

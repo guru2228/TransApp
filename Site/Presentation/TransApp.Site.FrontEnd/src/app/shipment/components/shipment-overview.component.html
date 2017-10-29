@@ -33,46 +33,44 @@
 
         </div>
 
-        <div class="row">
+        <div *ngIf="showLoader" class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-2">
+                <mat-spinner></mat-spinner>
+            </div>
+            <div class="col-md-5"></div>
+        </div>
+
+        <div class="row" *ngIf="!showLoader">
             <div class="col-md-12">
-
-
                 <div class="card">
-                    <!-- <div class="card-header card-header-icon" data-background-color="rose">
-                        <i class="material-icons">assignment</i>
-                    </div> -->
-
-                    <mat-progress-bar [color]="'primary'" [mode]="'indeterminate'">
-                    </mat-progress-bar>
-
                     <div *ngIf="componentModel && componentModel.length > 0" class="card-content table-full-width">
-                        <!--<h4 class="card-title">Regular Table with Colors</h4>-->
                         <div class="table-responsive">
                             <table class="table table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Pickup date</th>
-                                        <th>Delivery date</th>
-                                        <th>From</th>
-                                        <th>Destination</th>
-                                        <th>Quantity</th>
-                                        <th>Transporter</th>
-                                        <th>Price</th>
-                                        <th *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1">Offer count</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isPickupDateColVisible">Pickup date</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isDeliveryDateColVisible">Delivery date</th>
+                                        <th *ngIf="selectedShipmentFilter.isFromColVisible">From</th>
+                                        <th *ngIf="selectedShipmentFilter.isDestinationColVisible">Destination</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isQuatityColVisible">Quantity</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isTransporterColVisible">Transporter</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isPriceColVisible">Price</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isOfferCountColVisible">Offer count</th>
                                     </tr>
                                 </thead>
                                 <tbody>
 
                                     <ng-container *ngFor="let shipmentRow of componentModel; let rowindex = index">
-                                        <tr (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="(shipmentRow.viewActions ||shipmentRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
-                                            <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.pickUpDate)}}</td>
-                                            <td>{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
-                                            <td>{{shipmentRow.shipment.addressFrom}}</td>
-                                            <td>{{shipmentRow.shipment.addressTo}}</td>
-                                            <td>{{shipmentRow.shipment.totalQuatity}}</td>
-                                            <td>{{shipmentRow.shipment.transporterId}}</td>
-                                            <td>{{shipmentRow.shipment.totalPrice}}</td>
-                                            <td *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 1">{{shipmentRow.shipment.offerCount}}</td>
+                                        <tr id="shipment_row_{{rowindex}}" (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="(shipmentRow.viewActions ||shipmentRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
+                                            <td *ngIf="selectedShipmentFilter.isPickupDateColVisible">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.pickUpDate)}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isDeliveryDateColVisible">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isFromColVisible">{{shipmentRow.shipment.addressFrom}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isDestinationColVisible">{{shipmentRow.shipment.addressTo}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isQuatityColVisible">{{shipmentRow.shipment.totalQuatity}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isTransporterColVisible">{{shipmentRow.shipment.transporterId}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isPriceColVisible">{{shipmentRow.shipment.totalPrice}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isOfferCountColVisible">{{shipmentRow.shipment.offerCount}}</td>
                                         </tr>
 
                                         <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
@@ -86,7 +84,7 @@
                                                         </button>
                                                 <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.deleteActionVisible" class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
                                                             Delete shipment
-                                                            <span class="btn-label btn-label-right">
+                                                            <span class="btn-label ">
                                                                 <i class="material-icons">delete_forever</i>
                                                             </span>
                                                         </button>
@@ -115,6 +113,14 @@
                                                           </span>
                                                          Unassign and publish to open market
                                                  </button>
+                                            </td>
+                                        </tr>
+
+                                        <tr id="editShipmentRddow" *ngIf="shipmentRow.showViewShipmentLoader">
+                                            <td colspan="7">
+                                                <div>
+                                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                                </div>
                                             </td>
                                         </tr>
                                         <tr id="editShipmentRow" *ngIf="shipmentRow.viewEdit">

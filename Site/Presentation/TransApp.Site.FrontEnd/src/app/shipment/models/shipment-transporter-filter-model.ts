@@ -15,4 +15,14 @@ export class ShipmentTransporterFilterModel {
   moveToOpenMarketActionVisible = false;
   moveToUnassingedActionVisible = false;
   assignTransporterActionVisible = false;
+
+  // visible columns
+  isPickupDateColVisible = false;
+  isDeliveryDateColVisible = false;
+  isFromColVisible = false;
+  isDestinationColVisible = false;
+  isQuatityColVisible = false;
+  isTransporterColVisible = false;
+  isPriceColVisible = false;
+  isOfferCountColVisible = false;
 }

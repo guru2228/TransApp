@@ -96,7 +96,7 @@ namespace TransApp.Site.ApiControllers
                 Declined = !inPending
             };
             var shipments = await _shipmentService.GetAll(searchFilter);
-            return shipments;
+            return shipments.OrderByDescending(item=>item.Id);
         }
 
         /// <summary>

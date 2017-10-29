@@ -223,7 +223,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
     this.componentModel.location.latitude = place.geometry.location.lat();
     this.componentModel.location.longitude = place.geometry.location.lng();
 
-
     for (let i = 0; i < place.address_components.length; i++) {
       const addressMember = place.address_components[i].types[0];
       switch (addressMember) {
@@ -235,16 +234,18 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           break;
         case 'administrative_area_level_1':
           {
-            this.componentModel.location.state = place.address_components[i]['short_name'];
+            this.componentModel.location.state = place.address_components[i]['long_name'];
             this.componentModel.location.stateCode = place.address_components[i]['short_name'];
           }
           break;
         case 'locality':
+        case "postal_town":
           {
-            this.componentModel.location.city = place.address_components[i]['short_name'];
+            this.componentModel.location.city = place.address_components[i]['long_name'];
             this.componentModel.location.cityCode = place.address_components[i]['short_name'];
           }
           break;
+
         case 'route':
           {
             this.componentModel.location.street = place.address_components[i]['short_name'];

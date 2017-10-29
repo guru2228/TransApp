@@ -19,7 +19,7 @@ export class ParametersDataService {
   constructor(
     public http: HttpService,
     private errorHandler: GlobalErrorHandler
-  ) {}
+  ) { }
 
   /**
    * getFacilities
@@ -30,7 +30,7 @@ export class ParametersDataService {
   ): Observable<FacilityParameterModel[]> {
     return this.http
       .get(
-        this.serviceUrl + "getAddressRequirementsParameters" + "/" + language
+      this.serviceUrl + "getAddressRequirementsParameters" + "/" + language
       )
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
@@ -79,6 +79,21 @@ export class ParametersDataService {
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
   }
+
+  /**
+ * Save pack type
+ * @param language
+ */
+  savePackType(model: PackTypeParameterModel, language: string) {
+    const headers = new Headers({ "Content-Type": "application/json" });
+    const data = JSON.stringify(model);
+
+    return this.http
+      .post(this.serviceUrl + "savePackType/" + language, data, { headers })
+      .map(response => response.json())
+      .catch(this.errorHandler.throwError);
+  }
+
 
   /**
    * update component model with facilities

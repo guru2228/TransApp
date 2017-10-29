@@ -1,7 +1,7 @@
 /*!
 
  =========================================================
- * Material Dashboard PRO Angular CLI - V1.2.1
+ * Material Dashboard PRO Angular CLI - V1.4.5
  =========================================================
 
  * Product Page: https://www.creative-tim.com/product/material-dashboard-pro-angular2
@@ -11,10 +11,13 @@
  =========================================================
 
  */
+ @import "~@angular/material/prebuilt-themes/indigo-pink.css";
+
 //variables and mixins
 @import "material-dashboard/variables";
 @import "material-dashboard/mixins";
 @import "material-dashboard/shadows";
+@import '../../../node_modules/@angular/material/theming';
 
 //plugin css
 @import "material-dashboard/plugins/plugin-nouislider";
@@ -27,7 +30,6 @@
 @import "material-dashboard/plugins/wizard-card";
 @import "material-dashboard/plugins/chartist";
 @import "material-dashboard/plugins/select-bootstrap";
-@import "material-dashboard/plugins/perfect-scrollbar";
 
 
 // Core CSS
