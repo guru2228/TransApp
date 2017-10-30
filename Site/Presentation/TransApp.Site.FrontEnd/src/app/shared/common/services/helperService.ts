@@ -1,6 +1,6 @@
 ﻿import { Injectable } from "@angular/core";
 import { ComponentStateType } from "app/shared/common/helper/component-state-type";
-
+import PerfectScrollbar from 'perfect-scrollbar';
 declare var $: any;
 
 @Injectable()
@@ -21,8 +21,22 @@ export class HelperService {
 
   scrollOnTop() {
     const $main_panel = $(".main-panel");
-    $main_panel.scrollTop(0).perfectScrollbar("update");
+    $main_panel.scrollTop(0);
   }
+
+  scrollOnElement(elementId) {
+    const $main_panel = $(".main-panel");
+    const elementPosition = $('#' + elementId).offset();
+    $main_panel.scrollTop(elementPosition);
+  }
+
+  setFocusOnElement(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+      element.focus();
+    }
+  }
+
 
   /**
      * Convert datetime to string

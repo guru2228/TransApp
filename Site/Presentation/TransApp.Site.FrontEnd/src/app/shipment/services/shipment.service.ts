@@ -11,7 +11,7 @@ import { ShipmentTransporterFilterModel } from "app/shipment/models/shipment-tra
 @Injectable()
 export class ShipmentService {
   private serviceUrl = Constants.serverUrl + "api/Shipments/";
-  private shipmentModel = new BehaviorSubject<ShipmentModel>(null);
+  private shipmentModel = new BehaviorSubject<any>(null);
   shipmentModelReceivedHandler$ = this.shipmentModel.asObservable();
   sendShipmentModel(value) {
     this.shipmentModel.next(value);
@@ -24,7 +24,7 @@ export class ShipmentService {
   constructor(
     public http: HttpService,
     private errorHandler: GlobalErrorHandler
-  ) {}
+  ) { }
 
   /**
    * get biometrics
@@ -38,7 +38,7 @@ export class ShipmentService {
   ): Observable<ShipmentModel> {
     return this.http
       .get(
-        this.serviceUrl + "get" + "/" + id + "/" + customerId + "/" + language
+      this.serviceUrl + "get" + "/" + id + "/" + customerId + "/" + language
       )
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
@@ -61,20 +61,20 @@ export class ShipmentService {
   ): Observable<ShipmentModel[]> {
     return this.http
       .get(
-        this.serviceUrl +
-          "getAll" +
-          "/" +
-          customerId +
-          "/" +
-          shipmentStatus +
-          "/" +
-          getPending +
-          "/" +
-          startItem +
-          "/" +
-          numberOfRetrievedItems +
-          "/" +
-          language
+      this.serviceUrl +
+      "getAll" +
+      "/" +
+      customerId +
+      "/" +
+      shipmentStatus +
+      "/" +
+      getPending +
+      "/" +
+      startItem +
+      "/" +
+      numberOfRetrievedItems +
+      "/" +
+      language
       )
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
@@ -94,14 +94,14 @@ export class ShipmentService {
   ): Observable<number> {
     return this.http
       .get(
-        this.serviceUrl +
-          "getCount" +
-          "/" +
-          customerId +
-          "/" +
-          shipmentStatus +
-          "/" +
-          language
+      this.serviceUrl +
+      "getCount" +
+      "/" +
+      customerId +
+      "/" +
+      shipmentStatus +
+      "/" +
+      language
       )
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
@@ -135,15 +135,15 @@ export class ShipmentService {
 
     return this.http
       .post(
-        this.serviceUrl +
-          "assignToOpenMarket/" +
-          shipmentId +
-          "/" +
-          customerId +
-          "/" +
-          language,
-        data,
-        { headers }
+      this.serviceUrl +
+      "assignToOpenMarket/" +
+      shipmentId +
+      "/" +
+      customerId +
+      "/" +
+      language,
+      data,
+      { headers }
       )
       .map(response => response.json())
       .catch(this.errorHandler.throwError);
@@ -161,15 +161,15 @@ export class ShipmentService {
 
     return this.http
       .post(
-        this.serviceUrl +
-          "moveToUnassigned/" +
-          shipmentId +
-          "/" +
-          customerId +
-          "/" +
-          language,
-        data,
-        { headers }
+      this.serviceUrl +
+      "moveToUnassigned/" +
+      shipmentId +
+      "/" +
+      customerId +
+      "/" +
+      language,
+      data,
+      { headers }
       )
       .map(response => response.json())
       .catch(this.errorHandler.throwError);
@@ -184,13 +184,13 @@ export class ShipmentService {
   delete(shipmentId: number, customerId: number, language: string) {
     return this.http
       .delete(
-        this.serviceUrl +
-          "delete/" +
-          shipmentId +
-          "/" +
-          customerId +
-          "/" +
-          language
+      this.serviceUrl +
+      "delete/" +
+      shipmentId +
+      "/" +
+      customerId +
+      "/" +
+      language
       )
       .map(response => response.json());
   }
@@ -208,12 +208,12 @@ export class ShipmentService {
   ): Observable<ShipmentTransporterFilterModel[]> {
     return this.http
       .get(
-        this.serviceUrl +
-          "getShipmentFilters" +
-          "/" +
-          customerId +
-          "/" +
-          language
+      this.serviceUrl +
+      "getShipmentFilters" +
+      "/" +
+      customerId +
+      "/" +
+      language
       )
       .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);

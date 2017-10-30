@@ -34,7 +34,9 @@ export class ShipmentOverviewComponent
   currentAddressId = -1;
   currentPage = 0;
   pagesCollection: Array<number>;
-  pageSize = 4;
+  pageSize = 20;
+
+  showLoader = false;
 
   selectedShipmentFilter: ShipmentTransporterFilterModel;
 
@@ -49,15 +51,15 @@ export class ShipmentOverviewComponent
     private helperService: HelperService,
     private errorHandler: GlobalErrorHandler,
     private route: ActivatedRoute
-  ) {}
+  ) { }
   // constructor(private navbarTitleService: NavbarTitleService) { }
   public ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
 
-    this.notificationService.showLoading();
-
     this.getShipmentFilters().subscribe(
       filtersLoaded => {
+        this.showLoader = true;
+
         this.selectedShipmentFilter = this.shipmentFilters[0];
         this.setActionsVisibility();
 
@@ -72,6 +74,7 @@ export class ShipmentOverviewComponent
           "center",
           "top"
         );
+        this.showLoader = false;
         this.errorHandler.handleError(error);
       }
     );
@@ -80,6 +83,7 @@ export class ShipmentOverviewComponent
   }
 
   onFilterClick(shipmentFilter: ShipmentTransporterFilterModel): void {
+    this.showLoader = true;
     this.selectedShipmentFilter = shipmentFilter;
 
     this.setActionsVisibility();
@@ -102,9 +106,6 @@ export class ShipmentOverviewComponent
     this.getShipments();
   }
 
-
-
-
   /**
    * Get addresses
    */
@@ -112,35 +113,39 @@ export class ShipmentOverviewComponent
     if (this.currentUser && this.currentUser.customerId) {
       this.shipmentService
         .getAll(
-          this.currentUser.customerId,
-          this.selectedShipmentFilter.statusType,
-          this.selectedShipmentFilter.inPending,
-          this.pageSize * this.currentPage + 1,
-          this.pageSize,
-          this.translateService.currentLanguage
+        this.currentUser.customerId,
+        this.selectedShipmentFilter.statusType,
+        this.selectedShipmentFilter.inPending,
+        this.pageSize * this.currentPage + 1,
+        this.pageSize,
+        this.translateService.currentLanguage
         )
         .subscribe(
-          result => {
-            this.componentModel = [];
-            if (result && result.length > 0) {
-              if (this.route.firstChild) {
-                this.currentAddressId = +this.route.firstChild.snapshot.params[
-                  "id"
-                ];
-              }
-              for (let i = 0; i < result.length; i++) {
-                const shipmentRow = new ShipmentRowViewModel();
-                shipmentRow.shipment = result[i];
-                // if url contains edit then open it by default
-                shipmentRow.viewActions =
-                  result[i].id === this.currentAddressId;
-                this.componentModel.push(shipmentRow);
-              }
+        result => {
+          this.componentModel = [];
+          if (result && result.length > 0) {
+            if (this.route.firstChild) {
+              this.currentAddressId = +this.route.firstChild.snapshot.params[
+                "id"
+              ];
             }
-          },
-          error => {
-            this.errorHandler.handleError(error);
+            for (let i = 0; i < result.length; i++) {
+              const shipmentRow = new ShipmentRowViewModel();
+              shipmentRow.shipment = result[i];
+              // if url contains edit then open it by default
+              debugger;
+              shipmentRow.viewActions =
+                result[i].id === this.currentAddressId;
+              this.componentModel.push(shipmentRow);
+            }
+
+            this.helperService.scrollOnTop();
           }
+          this.showLoader = false;
+        },
+        error => {
+          this.errorHandler.handleError(error);
+        }
         );
     }
   }
@@ -153,26 +158,25 @@ export class ShipmentOverviewComponent
     if (this.currentUser && this.currentUser.customerId) {
       this.shipmentService
         .getCount(
-          this.currentUser.customerId,
-          this.selectedShipmentFilter.statusType,
-          this.translateService.currentLanguage
+        this.currentUser.customerId,
+        this.selectedShipmentFilter.statusType,
+        this.translateService.currentLanguage
         )
         .subscribe(
-          result => {
-            debugger;
-            this.pagesCollection = [];
-            let numberOfPages = Math.ceil(result / this.pageSize);
-            numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
-            const self = this;
-            setTimeout(function() {
-              for (let i = 0; i < numberOfPages; i++) {
-                self.pagesCollection.push(i);
-              }
-            }, 100);
-          },
-          error => {
-            this.errorHandler.handleError(error);
-          }
+        result => {
+          this.pagesCollection = [];
+          let numberOfPages = Math.ceil(result / this.pageSize);
+          numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
+          const self = this;
+          setTimeout(function () {
+            for (let i = 0; i < numberOfPages; i++) {
+              self.pagesCollection.push(i);
+            }
+          }, 100);
+        },
+        error => {
+          this.errorHandler.handleError(error);
+        }
         );
     }
   }
@@ -185,18 +189,18 @@ export class ShipmentOverviewComponent
       if (this.currentUser && this.currentUser.customerId) {
         this.shipmentService
           .getShipmentFilters(
-            this.currentUser.customerId,
-            this.translateService.currentLanguage
+          this.currentUser.customerId,
+          this.translateService.currentLanguage
           )
           .subscribe(
-            result => {
-              this.shipmentFilters = result;
-              observer.next(true);
-            },
-            error => {
-              this.errorHandler.handleError(error);
-              observer.next(false);
-            }
+          result => {
+            this.shipmentFilters = result;
+            observer.next(true);
+          },
+          error => {
+            this.errorHandler.handleError(error);
+            observer.next(false);
+          }
           );
       }
     });
@@ -204,16 +208,27 @@ export class ShipmentOverviewComponent
 
   private register_updateSavedModel_handler() {
     this.subscriptionReceiveUpdatedShipment = this.shipmentService.shipmentModelReceivedHandler$.subscribe(
-      shipment => {
-        if (shipment != null) {
-          const modelToUpdate = this.componentModel.filter(
-            item => item.shipment.id === shipment.id
-          )[0];
-          if (modelToUpdate) {
-            //modelToUpdate.shipment = shipment;
-            this.helperService.scrollOnTop();
+      result => {
+        if (result != null) {
+          debugger;
+          if (this.componentModel) {
+            const rowToUpdate = this.componentModel.filter(
+              item => item.shipment.id === result.shipment.id)[0];
+            if (result.operation == 'loaded') {
+              rowToUpdate.showViewShipmentLoader = false;
+            } else if (result.operation == 'saved') {
+              rowToUpdate.shipment.pickUpDate = result.shipment.pickUpDate;
+              rowToUpdate.shipment.deliveryDate = result.shipment.deliveryDate;
+              rowToUpdate.shipment.addressFrom = result.shipment.addressFrom;
+              rowToUpdate.shipment.addressTo = result.shipment.addressTo;
+              rowToUpdate.shipment.totalQuatity = result.shipment.totalQuatity;
+              rowToUpdate.shipment.transporterId = result.shipment.transporterId;
+              rowToUpdate.shipment.totalPrice = result.shipment.totalPrice;
+              rowToUpdate.shipment.offerCount = result.shipment.offerCount;
+              this.helperService.scrollOnTop();
+              this.shipmentService.resetSendShipmentModelHandler();
+            }
           }
-          this.shipmentService.resetSendShipmentModelHandler();
         }
       },
       error => {
@@ -234,18 +249,13 @@ export class ShipmentOverviewComponent
       shipmentRow.viewEdit = false;
       this.router.navigate(["/shipment-overview"]);
     }
-
-    setTimeout(function() {
-      // $('#actionsRowContent').slideToggle('slow');
-    }, 500);
   }
 
   /**
    * Show edit
    * */
   onClickEditShipment(shipmentRow: ShipmentRowViewModel) {
-    this.notificationService.showLoading();
-    this.helperService.scrollOnTop();
+    shipmentRow.showViewShipmentLoader = true;
 
     shipmentRow.viewActions = false;
 
@@ -272,69 +282,69 @@ export class ShipmentOverviewComponent
     })
       // delete confirmed
       .then(
-        function() {
-          self.shipmentService
-            .assignToOpenMarket(
-              shipmentId,
-              self.currentUser.customerId,
-              self.translateService.currentLanguage
-            )
-            .subscribe(
-              moved => {
-                if (moved) {
-                  self.componentModel = self.componentModel.filter(
-                    item => item.shipment.id !== shipmentId
-                  );
+      function () {
+        self.shipmentService
+          .assignToOpenMarket(
+          shipmentId,
+          self.currentUser.customerId,
+          self.translateService.currentLanguage
+          )
+          .subscribe(
+          moved => {
+            if (moved) {
+              self.componentModel = self.componentModel.filter(
+                item => item.shipment.id !== shipmentId
+              );
 
-                  const currentFilter = self.shipmentFilters.find(
-                    item =>
-                      item.statusType === self.selectedShipmentFilter.statusType
-                  );
-                  if (currentFilter) {
-                    currentFilter.amount = currentFilter.amount - 1;
-                  }
-
-                  const openMarketFilter = self.shipmentFilters.find(
-                    item =>
-                      item.statusType === ShipmentTransporterStatus.openMarket
-                  );
-                  if (openMarketFilter) {
-                    openMarketFilter.amount = openMarketFilter.amount + 1;
-                    openMarketFilter.lastDateTime = new Date();
-                  }
-
-                  swal(
-                    "Moved!",
-                    "Your shipment has been moved to open market.",
-                    "success"
-                  );
-                  // update model
-                  self.componentModel = self.componentModel.filter(
-                    item => item.shipment.id !== shipmentId
-                  );
-                } else {
-                  swal(
-                    "Not moved!",
-                    "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
-                    "error"
-                  );
-                }
-              },
-              error => {
-                swal(
-                  "Not moved!",
-                  "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
-                  "error"
-                );
-                self.errorHandler.handleError(error);
+              const currentFilter = self.shipmentFilters.find(
+                item =>
+                  item.statusType === self.selectedShipmentFilter.statusType
+              );
+              if (currentFilter) {
+                currentFilter.amount = currentFilter.amount - 1;
               }
+
+              const openMarketFilter = self.shipmentFilters.find(
+                item =>
+                  item.statusType === ShipmentTransporterStatus.openMarket
+              );
+              if (openMarketFilter) {
+                openMarketFilter.amount = openMarketFilter.amount + 1;
+                openMarketFilter.lastDateTime = new Date();
+              }
+
+              swal(
+                "Moved!",
+                "Your shipment has been moved to open market.",
+                "success"
+              );
+              // update model
+              self.componentModel = self.componentModel.filter(
+                item => item.shipment.id !== shipmentId
+              );
+            } else {
+              swal(
+                "Not moved!",
+                "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
+                "error"
+              );
+            }
+          },
+          error => {
+            swal(
+              "Not moved!",
+              "An error occured. Your shipment has not been moved to open market.  Please contact an administrator.",
+              "error"
             );
-        },
-        function(dismiss) {
-          if (dismiss === "cancel") {
-            swal("Cancelled", "Your shipment is safe", "error");
+            self.errorHandler.handleError(error);
           }
+          );
+      },
+      function (dismiss) {
+        if (dismiss === "cancel") {
+          swal("Cancelled", "Your shipment is safe", "error");
         }
+      }
       );
   }
 
@@ -354,74 +364,72 @@ export class ShipmentOverviewComponent
     })
       // move confirmed
       .then(
-        function() {
-          self.shipmentService
-            .moveToUnassigned(
-              shipmentId,
-              self.currentUser.customerId,
-              self.translateService.currentLanguage
-            )
-            .subscribe(
-              moved => {
-                if (moved) {
-                  debugger;
-                  self.componentModel = self.componentModel.filter(
-                    item => item.shipment.id !== shipmentId
-                  );
+      function () {
+        self.shipmentService
+          .moveToUnassigned(
+          shipmentId,
+          self.currentUser.customerId,
+          self.translateService.currentLanguage
+          )
+          .subscribe(
+          moved => {
+            if (moved) {
+              self.componentModel = self.componentModel.filter(
+                item => item.shipment.id !== shipmentId
+              );
 
-                  const currentFilter = self.shipmentFilters.find(
-                    item =>
-                      item.statusType === self.selectedShipmentFilter.statusType
-                  );
-                  if (currentFilter) {
-                    currentFilter.amount = currentFilter.amount - 1;
-                  }
-
-                  const unassignedFilter = self.shipmentFilters.find(
-                    item =>
-                      item.statusType === ShipmentTransporterStatus.unassigned
-                  );
-                  if (unassignedFilter) {
-                    unassignedFilter.amount = unassignedFilter.amount + 1;
-                    unassignedFilter.lastDateTime = new Date();
-                  }
-
-                  swal(
-                    "Moved!",
-                    "Your shipment has been moved to unassigned.",
-                    "success"
-                  );
-                  // update model
-                  self.componentModel = self.componentModel.filter(
-                    item => item.shipment.id !== shipmentId
-                  );
-                } else {
-                  swal(
-                    "Not moved!",
-                    "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
-                    "error"
-                  );
-                }
-              },
-              error => {
-                swal(
-                  "Not moved!",
-                  "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
-                  "error"
-                );
-                self.errorHandler.handleError(error);
+              const currentFilter = self.shipmentFilters.find(
+                item =>
+                  item.statusType === self.selectedShipmentFilter.statusType
+              );
+              if (currentFilter) {
+                currentFilter.amount = currentFilter.amount - 1;
               }
+
+              const unassignedFilter = self.shipmentFilters.find(
+                item =>
+                  item.statusType === ShipmentTransporterStatus.unassigned
+              );
+              if (unassignedFilter) {
+                unassignedFilter.amount = unassignedFilter.amount + 1;
+                unassignedFilter.lastDateTime = new Date();
+              }
+
+              swal(
+                "Moved!",
+                "Your shipment has been moved to unassigned.",
+                "success"
+              );
+              // update model
+              self.componentModel = self.componentModel.filter(
+                item => item.shipment.id !== shipmentId
+              );
+            } else {
+              swal(
+                "Not moved!",
+                "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
+                "error"
+              );
+            }
+          },
+          error => {
+            swal(
+              "Not moved!",
+              "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
+              "error"
             );
-        },
-        function(dismiss) {
-          if (dismiss === "cancel") {
-            swal("Cancelled", "Your shipment is safe", "error");
+            self.errorHandler.handleError(error);
           }
+          );
+      },
+      function (dismiss) {
+        if (dismiss === "cancel") {
+          swal("Cancelled", "Your shipment is safe", "error");
         }
+      }
       );
   }
 
-  /** Show edit address */
   onClickDeleteShipment(shipmentId: number) {
     const self = this;
     swal({
@@ -435,51 +443,60 @@ export class ShipmentOverviewComponent
     })
       // delete confirmed
       .then(
-        function() {
-          self.shipmentService
-            .delete(
-              shipmentId,
-              self.currentUser.customerId,
-              self.translateService.currentLanguage
-            )
-            .subscribe(
-              result => {
-                if (result) {
-                  swal(
-                    "Deleted!",
-                    "Your shipment has been deleted.",
-                    "success"
-                  );
-                  // update model
-                  self.componentModel = self.componentModel.filter(
-                    item => item.shipment.id !== shipmentId
-                  );
-                } else {
-                  swal(
-                    "Not Deleted!",
-                    "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
-                    "error"
-                  );
-                }
-              },
-              error => {
-                swal(
-                  "Not Deleted!",
-                  "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
-                  "error"
-                );
-                self.errorHandler.handleError(error);
+      function () {
+        self.shipmentService
+          .delete(
+          shipmentId,
+          self.currentUser.customerId,
+          self.translateService.currentLanguage
+          )
+          .subscribe(
+          result => {
+            if (result) {
+              swal(
+                "Deleted!",
+                "Your shipment has been deleted.",
+                "success"
+              );
+              // update model
+              self.componentModel = self.componentModel.filter(
+                item => item.shipment.id !== shipmentId
+              );
+
+              const currentFilter = self.shipmentFilters.find(
+                item =>
+                  item.statusType === self.selectedShipmentFilter.statusType
+              );
+              if (currentFilter) {
+                currentFilter.amount = currentFilter.amount - 1;
+                currentFilter.lastDateTime = new Date();
               }
+            } else {
+              swal(
+                "Not Deleted!",
+                "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
+                "error"
+              );
+            }
+          },
+          error => {
+            swal(
+              "Not Deleted!",
+              "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
+              "error"
             );
-        },
-        // delete canceled
-        function(dismiss) {
-          // dismiss can be 'cancel', 'overlay',
-          // 'close', and 'timer'
-          if (dismiss === "cancel") {
-            swal("Cancelled", "Your shipment is safe", "error");
+            self.errorHandler.handleError(error);
           }
+          );
+      },
+      // delete canceled
+      function (dismiss) {
+        // dismiss can be 'cancel', 'overlay',
+        // 'close', and 'timer'
+        if (dismiss === "cancel") {
+          swal("Cancelled", "Your shipment is safe", "error");
         }
+      }
       );
   }
 
@@ -498,10 +515,10 @@ export class ShipmentOverviewComponent
     const breakCards = true;
     if (breakCards === true) {
       // We break the cards headers if there is too much stress on them :-)
-      $('[data-header-animation="true"]').each(function() {
+      $('[data-header-animation="true"]').each(function () {
         const $fix_button = $(this);
         const $card = $(this).parent(".card");
-        $card.find(".fix-broken-card").click(function() {
+        $card.find(".fix-broken-card").click(function () {
           console.log(this);
           const $header = $(this)
             .parent()
@@ -511,12 +528,12 @@ export class ShipmentOverviewComponent
 
           $card.attr("data-count", 0);
 
-          setTimeout(function() {
+          setTimeout(function () {
             $header.removeClass("fadeInDown animate");
           }, 480);
         });
 
-        $card.mouseenter(function() {
+        $card.mouseenter(function () {
           const $this = $(this);
           const hover_count = parseInt($this.attr("data-count"), 10) + 1 || 0;
           $this.attr("data-count", hover_count);
@@ -564,6 +581,18 @@ export class ShipmentOverviewComponent
 
   setActionsVisibility() {
     const status = this.selectedShipmentFilter.statusType;
+
+    // set default columns visibility
+    this.selectedShipmentFilter.isPickupDateColVisible = true;
+    this.selectedShipmentFilter.isDeliveryDateColVisible = true;
+    this.selectedShipmentFilter.isFromColVisible = true;
+    this.selectedShipmentFilter.isDestinationColVisible = true;
+    this.selectedShipmentFilter.isQuatityColVisible = true;
+    this.selectedShipmentFilter.isTransporterColVisible = false;
+    this.selectedShipmentFilter.isPriceColVisible = false;
+    this.selectedShipmentFilter.isOfferCountColVisible = false;
+
+
     switch (status) {
       case ShipmentTransporterStatus.unassigned: {
         this.selectedShipmentFilter.deleteActionVisible = true;
@@ -574,6 +603,9 @@ export class ShipmentOverviewComponent
         break;
       }
       case ShipmentTransporterStatus.openMarket: {
+        // columns
+        this.selectedShipmentFilter.isOfferCountColVisible = true;
+        // actions
         this.selectedShipmentFilter.deleteActionVisible = true;
         this.selectedShipmentFilter.editActionVisible = true;
         this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;
@@ -582,6 +614,10 @@ export class ShipmentOverviewComponent
         break;
       }
       case ShipmentTransporterStatus.assigned: {
+        // columns
+        this.selectedShipmentFilter.isTransporterColVisible = true;
+        this.selectedShipmentFilter.isPriceColVisible = true;
+        // actions
         this.selectedShipmentFilter.deleteActionVisible = true;
         this.selectedShipmentFilter.editActionVisible = true;
         this.selectedShipmentFilter.moveToOpenMarketActionVisible = false;

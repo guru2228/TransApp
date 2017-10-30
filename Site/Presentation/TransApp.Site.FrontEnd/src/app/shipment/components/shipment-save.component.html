@@ -10,16 +10,15 @@
                         <div class="card-content">
                             <h4 class="card-title">{{componentState > 0 ? 'Edit shipment' : 'Create new shipment'}}</h4>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.reference  && componentModel.reference.length > 0 ? '' : 'is-empty ' + ((!componentModel.reference ) && formShipment.submitted ? ' has-error' : '')) ">
-                                <label for="" class="control-label ">
-                                    Transapp shipment reference
-                                    <span class="star">*</span>
+                            <div *ngIf="componentState > 0" [ngClass]="'form-group label-floating ' + (componentModel.reference  && componentModel.reference.length > 0 ? '' : 'is-empty ' + ((!componentModel.reference ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label': ''"> Transapp shipment reference
+                                <span class="star">*</span>
                                 </label>
-                                <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" name="reference" required>
+                                <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" disabled="" name="reference" required>
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ' + ((!componentModel.poNumber ) && formShipment.submitted ? ' has-error' : '')) ">
-                                <label for="" class="control-label ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     PO Number
                                     <span class="star">*</span>
                                 </label>
@@ -39,14 +38,14 @@
                         <div class="card-content">
                             <h4 class="card-title">Sender</h4>
 
-                            <div [ngClass]="'form-group label-floating ' + ((!senderSearchAddressControl || !senderSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
+                            <div [ngClass]="'form-group label-floating ' + ((!senderSelectedAddress ) && formShipment.submitted ? ' has-error' : '')">
                                 <label for="receiverSearchAddress">
                                     Type here to search for a sender
                                     <span class="star">*</span>
                                 </label>
 
                                 <mat-form-field class="autocomplete-address">
-                                    <input matInput type="text" name="senderSearchAddress" [formControl]="senderSearchAddressControl" md-min-length="0" [matAutocomplete]="senderAutocomplete" aria-label="Select sender">
+                                    <input matInput type="text" id="senderSearchAddress" name="senderSearchAddress" [formControl]="senderSearchAddressControl" md-min-length="0" [matAutocomplete]="senderAutocomplete" aria-label="Select sender">
                                     <mat-autocomplete #senderAutocomplete="matAutocomplete">
                                         <mat-option *ngFor="let address of senderFoundAddresses" [value]="address.name" (onSelectionChange)="onSenderAddressSelected($event, address)">
                                             {{ address.name }}
@@ -76,7 +75,7 @@
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.senderAddressInfo  && componentModel.senderAddressInfo.length > 0) ? '' : 'is-empty') + (!componentModel.senderAddressInfo  && formShipment.submitted ? ' has-error' : '') ">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Pickup adress
                                     <span class="star">*</span>
                                 </label>
@@ -84,24 +83,31 @@
                             </div>
 
                             <!-- Opening hours -->
-                            <h3>Opening hours</h3>
-                            <div [ngClass]=" 'form-group label-floating ' + (!componentModel.senderAvailabilities || (componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1 && componentModel.senderAvailabilities[0].isClosed) && formShipment.submitted ? ' has-error' : '')">
-                                <address-availability-slider *ngIf="componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1" [sliderid]="'slider_sender'" [availability]="componentModel.senderAvailabilities[0]"></address-availability-slider>
-                                <small *ngIf="(!componentModel.senderAvailabilities || (componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1 && componentModel.senderAvailabilities[0].isClosed)) && formShipment.submitted" class="text-danger">
-                                  Selected pickup address is not open on this day. Please select another pickup date.
-                               </small>
-                            </div>
+                            <mat-expansion-panel [expanded]="true" *ngIf="senderSelectedAddress && componentModel.pickUpDate">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Opening hours</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.senderContactPerson  && componentModel.senderContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
-                                <label for="" class="control-label ">
+                                <div [ngClass]=" 'form-group label-floating ' + (!componentModel.senderAvailabilities || (componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1 && componentModel.senderAvailabilities[0].isClosed) && formShipment.submitted ? ' has-error' : '')">
+                                    <address-availability-slider *ngIf="componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1" [sliderid]="'slider_sender'" [availability]="componentModel.senderAvailabilities[0]"></address-availability-slider>
+                                    <small *ngIf="(!componentModel.senderAvailabilities || (componentModel.senderAvailabilities && componentModel.senderAvailabilities.length == 1 && componentModel.senderAvailabilities[0].isClosed)) && formShipment.submitted" class="text-danger">
+                                      Selected pickup address is not open on this day. Please select another pickup date.
+                                   </small>
+                                </div>
+                            </mat-expansion-panel>
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.senderContactPerson  && componentModel.senderContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.senderContactPerson  || componentModel.senderContactPerson.length <= 0  ) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Contactperson
                                     <span class="star">*</span>
                                 </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.senderContactPerson" id="senderContactPerson" name="senderContactPerson">
                             </div>
 
-                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.senderPhone  && componentModel.senderPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.senderPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
-                                <label for="" class="control-label">
+                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.senderPhone  && componentModel.senderPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.senderPhone || componentModel.senderPhone.length <= 0 ) && formShipment.submitted ) ? ' has-error' : '')) ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Phone
                                     <span class="star">*</span>
                                 </label>
@@ -109,57 +115,77 @@
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.senderRemark  && componentModel.senderRemark.length > 0) ? '' : 'is-empty') ">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Info
                                 </label>
                                 <textarea class="form-control" rows="5" [(ngModel)]="componentModel.senderRemark" id="senderRemark" name="senderRemark"></textarea>
                             </div>
 
                             <!-- Sender Facilities -->
-                            <h3>Facilities</h3>
-                            <div class="input-group" *ngFor="let facility of componentModel.senderFacilities">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{facility.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="facilityactive_{{facility.facilityId}}"> {{facility.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Facilities</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let facility of componentModel.senderFacilities">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{facility.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </mat-expansion-panel>
 
                             <!-- Sender Truck -->
-                            <h3>Truck</h3>
-                            <div class="input-group" *ngFor="let truck of componentModel.senderTrucks">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{truck.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="truckactive_{{truck.truckId}}"> {{truck.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Truck</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let truck of componentModel.senderTrucks">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{truck.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="truckactive_{{truck.truckId}}"> {{truck.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </mat-expansion-panel>
 
                             <!-- Sender Transport requirments -->
-                            <h3>Transport requirements</h3>
-                            <div class="input-group" *ngFor="let requirement of componentModel.senderRequirements">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{requirement.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Transport requirements</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let requirement of componentModel.senderRequirements">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{requirement.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
+                            </mat-expansion-panel>
 
                         </div>
                     </div>
@@ -172,15 +198,13 @@
                         </div>
                         <div class="card-content">
                             <h4 class="card-title">Receiver</h4>
-
-                            <div [ngClass]="'form-group label-floating ' + ((!receiverSearchAddressControl || !receiverSearchAddressControl.valid ) && formShipment.submitted ? ' has-error' : '')">
-
+                            <div [ngClass]="'form-group label-floating ' + ((!receiverSelectedAddress  ) && formShipment.submitted ? ' has-error' : '')">
                                 <label for="receiverSearchAddress">
                                     Type here to search for a receiver
                                     <span class="star">*</span>
                                 </label>
                                 <mat-form-field class="autocomplete-address">
-                                    <input type="text" matInput name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" [matAutocomplete]="receiverAutocomplete" aria-label="Select receiver">
+                                    <input type="text" matInput id="receiverSearchAddress" name="receiverSearchAddress" [formControl]="receiverSearchAddressControl" [matAutocomplete]="receiverAutocomplete" aria-label="Select receiver">
                                     <mat-autocomplete #receiverAutocomplete="matAutocomplete">
                                         <mat-option *ngFor="let address of receiverFoundAddresses" [value]="address.name" (onSelectionChange)="onReceiverAddressSelected($event, address)">
                                             {{ address.name }}
@@ -203,14 +227,14 @@
                                 <mat-datepicker-toggle mdSuffix [for]=" deliveryDatePicker ">
                                 </mat-datepicker-toggle>
                                 <mat-input-container>
-                                    <input matInput [matDatepicker]="deliveryDatePicker " [(ngModel)]="componentModel.deliveryDate " id="deliveryDate " name="deliveryDate " (dateChange)="onDeliveryDateSelected($event) " required>
+                                    <input matInput [matDatepicker]="deliveryDatePicker " [(ngModel)]="componentModel.deliveryDate " id="deliveryDate" name="deliveryDate" (dateChange)="onDeliveryDateSelected($event) " required>
                                 </mat-input-container>
                                 <mat-datepicker #deliveryDatePicker [touchUi]="touch " [startView]=" 'month' ">
                                 </mat-datepicker>
                             </div>
 
                             <div [ngClass]=" 'form-group label-floating ' + ((componentModel.receiverAddressInfo && componentModel.receiverAddressInfo.length> 0) ? '' : 'is-empty') + (!componentModel.receiverAddressInfo && formShipment.submitted ? ' has-error' : '')">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Delivery adress
                                     <span class="star">*</span>
                                 </label>
@@ -218,24 +242,32 @@
                             </div>
 
                             <!-- Opening hours -->
-                            <h3>Opening hours</h3>
-                            <div [ngClass]=" 'form-group label-floating ' + (!componentModel.receiverAvailabilities || (componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1 && componentModel.receiverAvailabilities[0].isClosed) && formShipment.submitted ? ' has-error' : '')">
-                                <address-availability-slider *ngIf="componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1" [sliderid]="'slider_receiver'" [availability]="componentModel.receiverAvailabilities[0]"></address-availability-slider>
-                                <small *ngIf="(!componentModel.receiverAvailabilities || (componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1 && componentModel.receiverAvailabilities[0].isClosed)) && formShipment.submitted" class="text-danger">
-                                 Selected delivery address is not open on this day. Please select another dalivery date.
-                              </small>
-                            </div>
+                            <mat-expansion-panel [expanded]="true" *ngIf="receiverSelectedAddress && componentModel.deliveryDate">
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Opening hours</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.receiverContactPerson  && componentModel.receiverContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.receiverContactPerson ) && formShipment.submitted ? ' has-error' : '')) ">
-                                <label for="" class="control-label ">
+                                <div [ngClass]=" 'form-group label-floating ' + (!componentModel.receiverAvailabilities || (componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1 && componentModel.receiverAvailabilities[0].isClosed) && formShipment.submitted ? ' has-error' : '')">
+                                    <address-availability-slider *ngIf="componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1" [sliderid]="'slider_receiver'" [availability]="componentModel.receiverAvailabilities[0]"></address-availability-slider>
+                                    <small *ngIf="(!componentModel.receiverAvailabilities || (componentModel.receiverAvailabilities && componentModel.receiverAvailabilities.length == 1 && componentModel.receiverAvailabilities[0].isClosed)) && formShipment.submitted" class="text-danger">
+                                     Selected delivery address is not open on this day. Please select another dalivery date.
+                                  </small>
+                                </div>
+                            </mat-expansion-panel>
+
+
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.receiverContactPerson  && componentModel.receiverContactPerson.length > 0 ? '' : 'is-empty ' + ((!componentModel.receiverContactPerson || componentModel.receiverContactPerson.length <= 0) && formShipment.submitted ? ' has-error' : '')) ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Contactperson
                                     <span class="star">*</span>
                                 </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.receiverContactPerson" id="receiverContactPerson" name="receiverContactPerson">
                             </div>
 
-                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.receiverPhone  && componentModel.receiverPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.receiverPhone) && formShipment.submitted ) ? ' has-error' : '')) ">
-                                <label for="" class="control-label">
+                            <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.receiverPhone  && componentModel.receiverPhone.length > 0 ? '' : 'is-empty' + (((!componentModel.receiverPhone || componentModel.receiverPhone.length <= 0) && formShipment.submitted ) ? ' has-error' : '')) ">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Phone
                                     <span class="star">*</span>
                                 </label>
@@ -243,61 +275,82 @@
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.receiverRemark  && componentModel.receiverRemark.length > 0) ? '' : 'is-empty') ">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     Info
                                 </label>
                                 <textarea class="form-control" rows="5" [(ngModel)]="componentModel.receiverRemark" id="receiverRemark" name="receiverRemark"></textarea>
                             </div>
 
                             <!-- Sender Facilities -->
-                            <h3>Facilities</h3>
-                            <div class="input-group" *ngFor="let facility of componentModel.receiverFacilities">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{facility.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="receiver_facilityactive_{{facility.facilityId}}"> {{facility.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Facilities</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let facility of componentModel.receiverFacilities">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{facility.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="facility.active" [checked]="facility.active" name="receiver_facilityactive_{{facility.facilityId}}"> {{facility.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </mat-expansion-panel>
 
                             <!-- Sender Truck -->
-                            <h3>Truck</h3>
-                            <div class="input-group" *ngFor="let truck of componentModel.receiverTrucks">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{truck.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="receiver_truckactive_{{truck.truckId}}"> {{truck.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Truck</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let truck of componentModel.receiverTrucks">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{truck.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="truck.active" [checked]="truck.active==true" name="receiver_truckactive_{{truck.truckId}}"> {{truck.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
+                            </mat-expansion-panel>
 
                             <!-- Sender Transport requirments -->
-                            <h3>Transport requirements</h3>
-                            <div class="input-group" *ngFor="let requirement of componentModel.receiverRequirements">
-                                <span class="input-group-addon">
-                                    <i class="material-icons">{{requirement.iconName}}</i>
-                                </span>
-                                <div class="form-group label-floating">
-                                    <div class="togglebutton">
-                                        <label>
-                                            <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="receiver_requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
-                                        </label>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title>
+                                        <h3>Transport requirements</h3>
+                                    </mat-panel-title>
+                                </mat-expansion-panel-header>
+
+                                <div class="input-group" *ngFor="let requirement of componentModel.receiverRequirements">
+                                    <span class="input-group-addon">
+                                        <i class="material-icons">{{requirement.iconName}}</i>
+                                    </span>
+                                    <div class="form-group label-floating">
+                                        <div class="togglebutton">
+                                            <label>
+                                                <input type="checkbox" [(ngModel)]="requirement.active" [checked]="requirement.active" name="receiver_requirementactive_{{requirement.requirementId}}"> {{requirement.description}}
+                                            </label>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-
+                            </mat-expansion-panel>
                         </div>
                     </div>
                 </div>
             </div>
+
             <!-- Goods -->
             <div class="row">
                 <div class="col-md-12">
@@ -307,144 +360,181 @@
                         </div>
                         <div class="card-content">
                             <h4 class="card-title">Goods</h4>
-                            <div class="table-responsive">
-                                <table>
-                                    <tbody>
-                                        <ng-container *ngFor="let detailRow of componentModel.shipmentDetails; let detailRowIndex = index">
-                                            <!-- Master row -->
-                                            <tr *ngIf="!detailRow.master.toRemove">
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.quantity || detailRow.master.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Quantity <span class="star">*</span></label>
-                                                        <input class="form-control" type="number" min="1" max="9999" step="1" (input)="computeTotals()" [(ngModel)]="detailRow.master.quantity" name="shipmentDetail_quantity_{{detailRowIndex}}" class="form-control" number="true" required>
+                            <input type="hidden" id="hiddenGoodsGrid" />
+                            <div *ngIf="componentModel.shipmentDetails && getDetailsCount() >0" class="row">
+                                <div class="col-md-5">
+                                </div>
+                                <div class="col-md-3">
+                                </div>
+                                <div class="col-md-4">
+                                    <h4 class="card-title">Detail Goods</h4>
+                                </div>
+                            </div>
+
+                            <div [ngClass]="'row '" *ngFor="let detailRow of componentModel.shipmentDetails; let detailRowIndex = index">
+                                <ng-container *ngIf="!detailRow.toRemove">
+                                    <div class="col-sm-6">
+                                        <div [ngClass]="'row '">
+                                            <div class="col-sm-3">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.quantity || detailRow.quantity <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Quantity <span class="star ">*</span></label>
+                                                    <input class="form-control " type="number " min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantity " id="shipmentDetail_quantity_{{detailRowIndex}}" name="shipmentDetail_quantity_{{detailRowIndex}}" class="form-control"
+                                                        number="true " required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3">
+
+                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.packTypeId || detailRow.packTypeId >= 0 )  ? ' is-focused  ' : '') + ((!detailRow.packTypeId || detailRow.packTypeId <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Pack type<span class="star ">*</span></label>
+
+                                                    <select [(ngModel)]="detailRow.packTypeId " (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtype_{{detailRowIndex}} " class="form-control" required>
+                                                        <option *ngFor="let packtype of packTypes " [ngValue]="packtype.id ">{{packtype.description}}</option>
+                                                        <option  [ngValue]="'-1'">  <input type="text" placeholder="... + Add new pack type" value="-1"/> <i>  + Click here to add new pack type</i> </option>
+                                                     </select>
+
+                                                    <div class="row" *ngIf="detailRow.packTypeId <= 0">
+                                                        <div class="col-sm-9">
+                                                            <input class="form-control " type="text " [(ngModel)]="detailRow.addedPackType" placeholder="Type packtype name" name="packtypenew">
+                                                        </div>
+                                                        <div class="col-sm-3">
+                                                            <button type="submit " name="button_add_packtype_{{detailRowIndex}}" (click)="onClickAddPackType(detailRow)" class="btn btn-fill btn-rose btn-xs">Add</button>
+                                                        </div>
                                                     </div>
-                                                </td>
-                                                <td style="min-width: 150px;">
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.packTypeId || detailRow.master.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Choose pack type<span class="star">*</span></label>
-                                                        <select [(ngModel)]="detailRow.master.packTypeId" (change)="onMasterPackTypeChange(detailRow)" name="shipmentDetail_packtype_{{detailRowIndex}}" class="form-control" required>
-                                                        <option *ngFor="let packtype of packTypes" [ngValue]="packtype.id">{{packtype.description}}</option>
+
+                                                    <!--         <mat-form-field>
+                                                        <mat-select [(ngModel)]="detailRow.packTypeId" (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtype_{{detailRowIndex}}" required>
+                                                            <mat-option *ngFor="let packtype of packTypes" [value]="packtype.id">
+                                                                {{ packtype.description }}
+                                                            </mat-option>
+                                                            <mat-option [value]="-1">
+                                                                <i> Add new pack type...</i>
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>-->
+                                                </div>
+
+                                            </div>
+                                            <div class="col-sm-2 ">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.length || detailRow.length <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Length(cm)<span class="star ">*</span></label>
+                                                    <input class="form-control " type="number " min="1 " (input)="computeTotals() " [(ngModel)]="detailRow.length " name="shipmentDetail_length_{{detailRowIndex}} " number="true " required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2 ">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.width || detailRow.width <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Width(cm)<span class="star ">*</span></label>
+                                                    <input class="form-control " type="number " min="1 " (input)="computeTotals() " [(ngModel)]="detailRow.width " name="shipmentDetail_width_{{detailRowIndex}} " number="true " required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-2">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.height || detailRow.height <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Height(cm)<span class="star ">*</span></label>
+                                                    <input class="form-control " type="number " min="1 " (input)="computeTotals() " [(ngModel)]="detailRow.height " name="shipmentDetail_height_{{detailRowIndex}} " number="true " required>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <div class="row ">
+                                            <div class="col-sm-3 ">
+                                                <i class="material-icons " style="font-size: 48px ">arrow_forward</i>
+                                            </div>
+                                            <div class="col-sm-6 ">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.weight || detailRow.weight <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Weight(kg)<span class="star ">*</span></label>
+                                                    <input class="form-control " type="number " min="1 " (input)="computeTotals() " [(ngModel)]="detailRow.weight " name="shipmentDetail_weigth_{{detailRowIndex}} " number="true " required>
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-3 ">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-sm-4 ">
+                                        <div class="row ">
+                                            <div class="col-sm-3 ">
+                                                <div [ngClass]=" 'form-group label-floating '  + ((detailRow.packTypeDetailId && detailRow.packTypeDetailId>= 0) && (!detailRow.quantityDetail || detailRow.quantityDetail <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label for=" " [ngClass]="componentState == 0 ? 'control-label' : ''">
+                                                        Quantity
+                                                    </label>
+                                                    <input class="form-control " type="number " min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantityDetail " name="shipmentDetail_quantityDetail_{{detailRowIndex}}" class="form-control " number="true ">
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-6 ">
+                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.packTypeDetailId || detailRow.packTypeDetailId >= 0 )  ? ' is-focused  ' : '')  + ((detailRow.quantityDetail && detailRow.quantityDetail>= 0) && (!detailRow.packTypeDetailId || detailRow.packTypeDetailId <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Pack type</label>
+                                                    <select [(ngModel)]="detailRow.packTypeDetailId " (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtypeDetail_{{detailRowIndex}} " class="form-control ">
+                                                          <option *ngFor="let packtype of packTypes " [ngValue]="packtype.id ">{{packtype.description}}</option>
                                                     </select>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.length || detailRow.master.length <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Length(cm)<span class="star">*</span></label>
-                                                        <input class="form-control" type="number" min="1" (input)="computeTotals()" [(ngModel)]="detailRow.master.length" name="shipmentDetail_length_{{detailRowIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.width || detailRow.master.width <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Width(cm)<span class="star">*</span></label>
-                                                        <input class="form-control" type="number" min="1" (input)="computeTotals()" [(ngModel)]="detailRow.master.width" name="shipmentDetail_width_{{detailRowIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.height || detailRow.master.height <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Height(cm)<span class="star">*</span></label>
-                                                        <input class="form-control" type="number" min="1" (input)="computeTotals()" [(ngModel)]="detailRow.master.height" name="shipmentDetail_height_{{detailRowIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <div [ngClass]="'form-group label-floating is-focused'  + ((!detailRow.master.weight || detailRow.master.weight <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                        <label class="control-label">Weight(kg)<span class="star">*</span></label>
-                                                        <input class="form-control" type="number" min="1" (input)="computeTotals()" [(ngModel)]="detailRow.master.weight" name="shipmentDetail_weigth_{{detailRowIndex}}" number="true" required>
-                                                    </div>
-                                                </td>
-                                                <td class="td-actions">
-                                                    <button class="btn btn-simple" (click)="onShipmentDetailsMasterRemove(detailRow, detailRowIndex)" data-placement="left" rel="tooltip" title="Remove item" type="button">
-                                                  <i class="material-icons">close</i>
-                                              </button>
-                                                </td>
-                                            </tr>
-                                            <!-- Child rows -->
-                                            <ng-container *ngFor="let rowExtra of detailRow.extras; let rowExtraIndex = index">
-                                                <tr *ngIf="!detailRow.master.toRemove && !rowExtra.toRemove">
-                                                    <td colspan="2"></td>
-                                                    <td>
-                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.quantity || rowExtra.quantity <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                            <label class="control-label">Quantity</label>
-                                                            <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.quantity" name="shipmentDetail_quantity_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
-                                                        </div>
-                                                    </td>
-                                                    <td style="min-width: 150px;">
-                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.packTypeId || rowExtra.packTypeId <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                            <label class="control-label">Choose pack type</label>
-                                                            <select [(ngModel)]="rowExtra.packTypeId" name="shipmentDetail_packtype_{{detailRowIndex}}_{{rowExtraIndex}}" class="form-control">
-                                                      <option *ngFor="let packtype of packTypes" [ngValue]="packtype.id">{{packtype.description}}</option>
-                                                  </select>
-                                                        </div>
-                                                    </td>
-                                                    <td>
-                                                        <div [ngClass]="'form-group label-floating is-focused'  + ((!rowExtra.length || rowExtra.length <= 0) && formShipment.submitted ? ' has-error' : '')">
-                                                            <label class="control-label">Length(cm)</label>
-                                                            <input class="form-control" type="number" min="1" [(ngModel)]="rowExtra.length" name="shipmentDetail_length_{{detailRowIndex}}_{{rowExtraIndex}}" number="true" required>
-                                                        </div>
-                                                    </td>
-                                                    <td class="td-actions">
-                                                        <button class="btn btn-simple" (click)="onShipmentDetailsExtraRemove(detailRow, rowExtra, rowExtraIndex)" data-placement="left" rel="tooltip" title="Remove item" type="button">
-                                                  <i class="material-icons">close</i>
-                                              </button>
-                                                    </td>
-                                                </tr>
-                                            </ng-container>
-                                        </ng-container>
-                                    </tbody>
-                                </table>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-3 ">
+                                                <button class="btn btn-simple " (click)="onShipmentDetailsMasterRemove(detailRow, detailRowIndex) " data-placement="left " rel="tooltip " title="Remove item " type="button ">
+                                        <i class="material-icons ">close</i>
+                                        </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+
+                            <div>
                                 <div>
-                                    <small *ngIf="(!componentModel.shipmentDetails || componentModel.shipmentDetails.length <= 0) && formShipment.submitted" class="text-danger">
+                                    <small *ngIf="(!componentModel.shipmentDetails ||  getDetailsCount() <=0 ) && formShipment.submitted " class="text-danger ">
                                   Good are required. You have to add at least one row in goods grid.
                                </small></div>
                                 <div>
-                                    <button type="submit" class="btn btn-fill btn-rose" (click)="onAddPackageClick()">+ Add more packages</button>
+                                    <button type="submit " class="btn btn-fill btn-rose " (click)="onAddPackageClick() ">+ Add more packages</button>
                                 </div>
                             </div>
+
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Total -->
-            <div class="row">
-                <div class="col-xs-4">
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <span class="input-group-addon">
-                                <i class="fa fa-list  fa-2x" aria-hidden="true"></i>
+            <div class="row ">
+                <div class="col-xs-4 ">
+                    <div class="card ">
+                        <div class="card-content text-center ">
+                            <span class="input-group-addon ">
+                                <i class="fa fa-list fa-2x " aria-hidden="true "></i>
                             </span>
-                            <div class="form-group label-floating">
+                            <div class="form-group label-floating ">
                                 <h4>Total quantity: {{componentModel.totalQuatity? formatNumber(componentModel.totalQuatity) + ' items': ''}} </h4>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-4">
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <span class="input-group-addon">
-                                <i class="fa fa-cube  fa-2x" aria-hidden="true"></i>
+                <div class="col-xs-4 ">
+                    <div class="card ">
+                        <div class="card-content text-center ">
+                            <span class="input-group-addon ">
+                                <i class="fa fa-cube fa-2x " aria-hidden="true "></i>
                             </span>
-                            <div class="form-group label-floating">
+                            <div class="form-group label-floating ">
                                 <h4>Total volume: {{componentModel.totalVolume? formatNumber(componentModel.totalVolume) + ' &#13221;': ''}} </h4>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-xs-4">
-                    <div class="card">
-                        <div class="card-content text-center">
-                            <span class="input-group-addon">
-                                <i class="fa fa-balance-scale  fa-2x" aria-hidden="true"></i>
+                <div class="col-xs-4 ">
+                    <div class="card ">
+                        <div class="card-content text-center ">
+                            <span class="input-group-addon ">
+                                <i class="fa fa-balance-scale fa-2x " aria-hidden="true "></i>
                             </span>
-                            <div class="form-group label-floating">
+                            <div class="form-group label-floating ">
                                 <h4>Total weight: {{componentModel.totalWeight ? formatNumber(componentModel.totalWeight) + ' kg': ''}} </h4>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="card-footer text-center">
-                <button type="submit" class="btn btn-rose btn-fill">Save</button>
+            <div class="card-footer text-center ">
+                <button type="submit " class="btn btn-rose btn-fill ">Save</button>
             </div>
         </form>
 

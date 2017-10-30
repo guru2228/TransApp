@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using TransApp.DataModel.Dto;
 using TransApp.Domain.Common;
 using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Shipment;
@@ -24,5 +26,15 @@ namespace TransApp.Domain.Services.Common
         Task<List<TruckParameterModel>> GetTrucks(string language);
 
         Task<List<PackTypeParameterModel>> GetPackTypes(string language);
+
+        /// <summary>
+        /// CreatepackType
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="iconName"></param>
+        /// <param name="dictionary"></param>
+        /// <param name="transaction"></param>
+        /// <returns></returns>
+        Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction=null);
     }
 }

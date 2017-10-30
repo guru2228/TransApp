@@ -3,6 +3,7 @@ using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using TransApp.DataModel.Dto;
+using TransApp.Domain.Services.Common;
 using TransApp.Persistence.UnitOfWork;
 
 namespace TransApp.Application.SeedData
@@ -10,7 +11,7 @@ namespace TransApp.Application.SeedData
     public static class CommonConfigurationSeedDataService
     {
         private static IUnitOfWork _unitOfWork;
-
+        private static ICommonService _commonService;
         /// <summary>
         /// SeedData
         /// </summary>
@@ -20,6 +21,7 @@ namespace TransApp.Application.SeedData
             using (var serviceScope = scopeFactory.CreateScope())
             {
                 _unitOfWork = serviceScope.ServiceProvider.GetService<IUnitOfWork>();
+                _commonService = serviceScope.ServiceProvider.GetService<ICommonService>();
 
                 await CreateFacility("PLJ", "local_shipping", new Dictionary
                 {
@@ -164,7 +166,7 @@ namespace TransApp.Application.SeedData
                 });
 
                 //Create Shipment Status
-                await CreatepackType("Box", "local_shipping", new Dictionary
+                await _commonService.CreatepackType("Box", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
@@ -172,15 +174,15 @@ namespace TransApp.Application.SeedData
                     NL = "Box",
                     FR = "Box",
 
-                }, false);
-                await CreatepackType("PAL", "local_shipping", new Dictionary
+                });
+                await _commonService.CreatepackType("PAL", "local_shipping", new Dictionary
                 {
                     DateCreated = DateTime.Now,
                     UserIdCreated = 1,
                     EN = "Pallet",
                     NL = "Pallet",
                     FR = "Pallet"
-                }, true);
+                });
             }
         }
 
@@ -359,50 +361,6 @@ namespace TransApp.Application.SeedData
                 _unitOfWork.DictionaryRepository.UpdateAsync(dictionary, transaction, true, null, false);
             item.DictionaryId = dictionary.Id;
             await _unitOfWork.RequirementRepository.UpdateAsync(item, transaction);
-            return item.Id;
-        }
-
-        /// <summary>
-        /// CreatepackType
-        /// </summary>
-        /// <param name="code"></param>
-        /// <param name="iconName"></param>
-        /// <param name="dictionary"></param>
-        /// <param name="transaction"></param>
-        /// <returns></returns>
-        private static async Task<int> CreatepackType(string code, string iconName, Dictionary dictionary,bool hasExtra,
-       IDbTransaction transaction = null)
-        {
-            var item = _unitOfWork.PackTypeRepository.Get("Code='" + code + "'");
-            if (item == null)
-            {
-                var dictionaryId =
-                    await _unitOfWork.DictionaryRepository.AddAsync(dictionary, transaction, true, false);
-                item = new PackType
-                {
-                    DateCreated = DateTime.Now,
-                    DateModified = DateTime.Now,
-                    UserIdCreated = 1000,
-                    Code = code,
-                    HasExtra = hasExtra,
-                    DictionaryId = dictionaryId
-                };
-                return await _unitOfWork.PackTypeRepository.AddAsync(item);
-            }
-            if (!item.DictionaryId.HasValue)
-            {
-                item.DictionaryId =
-                    await _unitOfWork.DictionaryRepository.AddAsync(dictionary, transaction, true, false);
-            }
-            if (item.DictionaryId == null) return item.Id;
-            var currentDictionary =
-                await _unitOfWork.DictionaryRepository.GetAsync(item.DictionaryId.Value);
-            dictionary.Id = currentDictionary.Id;
-            dictionary.DateModified = DateTime.Now;
-            await
-                _unitOfWork.DictionaryRepository.UpdateAsync(dictionary, transaction, true, null, false);
-            item.DictionaryId = dictionary.Id;
-            await _unitOfWork.PackTypeRepository.UpdateAsync(item, transaction);
             return item.Id;
         }
     }

@@ -18,6 +18,7 @@ import { MdModule } from 'app/shared/md/md.module';
 import { CommonAppModule } from 'app/shared/common/common-app.module';
 
 
+
 import { AuthenticationModule } from 'app/authentication/authentication.module';
 import { FooterModule } from 'app/shared/footer/footer.module';
 import { NavbarModule } from 'app/shared/navbar/navbar.module';
@@ -25,6 +26,8 @@ import { SidebarModule } from 'app/shared/sidebar/sidebar.module';
 
 import { ShipmentModule } from 'app/shipment/shipment.module';
 import { AddressModule } from 'app/address/address.module';
+
+
 
 
 @NgModule({

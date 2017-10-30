@@ -49,7 +49,7 @@ export class AddressOverviewComponent
     private errorHandler: GlobalErrorHandler,
     private authenticationService: AuthenticationService,
     private translateService: TranslateService
-  ) {}
+  ) { }
 
   /**
    * Initialize data
@@ -102,33 +102,33 @@ export class AddressOverviewComponent
     if (this.currentUser && this.currentUser.customerId) {
       this.addressService
         .getAll(
-          this.currentUser.customerId,
-          searchquery,
-          this.pageSize * this.currentPage + 1,
-          this.pageSize,
-          this.translateService.currentLanguage
+        this.currentUser.customerId,
+        searchquery,
+        this.pageSize * this.currentPage + 1,
+        this.pageSize,
+        this.translateService.currentLanguage
         )
         .subscribe(
-          result => {
-            this.componentModel = [];
-            if (result && result.length > 0) {
-              if (this.route.firstChild) {
-                this.currentAddressId = +this.route.firstChild.snapshot.params[
-                  "id"
-                ];
-              }
-              for (let i = 0; i < result.length; i++) {
-                const addressRow = new AddressRowViewModel();
-                addressRow.address = result[i];
-                // if url contains edit then open it by default
-                addressRow.viewActions = result[i].id === this.currentAddressId;
-                this.componentModel.push(addressRow);
-              }
+        result => {
+          this.componentModel = [];
+          if (result && result.length > 0) {
+            if (this.route.firstChild) {
+              this.currentAddressId = +this.route.firstChild.snapshot.params[
+                "id"
+              ];
             }
-          },
-          error => {
-            this.errorHandler.handleError(error);
+            for (let i = 0; i < result.length; i++) {
+              const addressRow = new AddressRowViewModel();
+              addressRow.address = result[i];
+              // if url contains edit then open it by default
+              addressRow.viewActions = result[i].id === this.currentAddressId;
+              this.componentModel.push(addressRow);
+            }
           }
+        },
+        error => {
+          this.errorHandler.handleError(error);
+        }
         );
     }
   }
@@ -151,25 +151,25 @@ export class AddressOverviewComponent
     if (this.currentUser && this.currentUser.customerId) {
       this.addressService
         .getCount(
-          this.currentUser.customerId,
-          searchQueryParam,
-          this.translateService.currentLanguage
+        this.currentUser.customerId,
+        searchQueryParam,
+        this.translateService.currentLanguage
         )
         .subscribe(
-          result => {
-            this.pagesCollection = [];
-            let numberOfPages = Math.ceil(result / this.pageSize);
-            numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
-            const self = this;
-            setTimeout(function() {
-              for (let i = 0; i < numberOfPages; i++) {
-                self.pagesCollection.push(i);
-              }
-            }, 100);
-          },
-          error => {
-            this.errorHandler.handleError(error);
-          }
+        result => {
+          this.pagesCollection = [];
+          let numberOfPages = Math.ceil(result / this.pageSize);
+          numberOfPages = numberOfPages < 0 ? 1 : numberOfPages;
+          const self = this;
+          setTimeout(function () {
+            for (let i = 0; i < numberOfPages; i++) {
+              self.pagesCollection.push(i);
+            }
+          }, 100);
+        },
+        error => {
+          this.errorHandler.handleError(error);
+        }
         );
     }
   }
@@ -179,27 +179,27 @@ export class AddressOverviewComponent
       this.currentPage = 0;
       this.addressService
         .getAll(
-          this.currentUser.customerId,
-          searchTerm,
-          this.pageSize * this.currentPage + 1,
-          this.pageSize,
-          this.translateService.currentLanguage
+        this.currentUser.customerId,
+        searchTerm,
+        this.pageSize * this.currentPage + 1,
+        this.pageSize,
+        this.translateService.currentLanguage
         )
         .subscribe(
-          result => {
-            this.componentModel = [];
-            if (result && result.length > 0) {
-              for (let i = 0; i < result.length; i++) {
-                const addressRow = new AddressRowViewModel();
-                addressRow.address = result[i];
-                // if url contains edit then open it by default
-                this.componentModel.push(addressRow);
-              }
+        result => {
+          this.componentModel = [];
+          if (result && result.length > 0) {
+            for (let i = 0; i < result.length; i++) {
+              const addressRow = new AddressRowViewModel();
+              addressRow.address = result[i];
+              // if url contains edit then open it by default
+              this.componentModel.push(addressRow);
             }
-          },
-          error => {
-            this.errorHandler.handleError(error);
           }
+        },
+        error => {
+          this.errorHandler.handleError(error);
+        }
         );
     }
   }
@@ -250,10 +250,6 @@ export class AddressOverviewComponent
       addressRow.viewEdit = false;
       this.router.navigate(["/address-overview"]);
     }
-
-    setTimeout(function() {
-      // $('#actionsRowContent').slideToggle('slow');
-    }, 500);
   }
 
   /** Show edit address */
@@ -283,47 +279,47 @@ export class AddressOverviewComponent
     })
       // delete confirmed
       .then(
-        function() {
-          self.addressService
-            .delete(
-              addressId,
-              self.currentUser.customerId,
-              self.translateService.currentLanguage
-            )
-            .subscribe(
-              result => {
-                if (result) {
-                  swal("Deleted!", "Your file has been deleted.", "success");
-                  // update model
-                  self.componentModel = self.componentModel.filter(
-                    item => item.address.id !== addressId
-                  );
-                } else {
-                  swal(
-                    "Not Deleted!",
-                    "An error occured. Your file has not been deleted.  Please contact an administrator.",
-                    "error"
-                  );
-                }
-              },
-              error => {
-                swal(
-                  "Not Deleted!",
-                  "An error occured. Your file has not been deleted.  Please contact an administrator.",
-                  "error"
-                );
-                self.errorHandler.handleError(error);
-              }
+      function () {
+        self.addressService
+          .delete(
+          addressId,
+          self.currentUser.customerId,
+          self.translateService.currentLanguage
+          )
+          .subscribe(
+          result => {
+            if (result) {
+              swal("Deleted!", "Your file has been deleted.", "success");
+              // update model
+              self.componentModel = self.componentModel.filter(
+                item => item.address.id !== addressId
+              );
+            } else {
+              swal(
+                "Not Deleted!",
+                "An error occured. Your file has not been deleted.  Please contact an administrator.",
+                "error"
+              );
+            }
+          },
+          error => {
+            swal(
+              "Not Deleted!",
+              "An error occured. Your file has not been deleted.  Please contact an administrator.",
+              "error"
             );
-        },
-        // delete canceled
-        function(dismiss) {
-          // dismiss can be 'cancel', 'overlay',
-          // 'close', and 'timer'
-          if (dismiss === "cancel") {
-            swal("Cancelled", "Your address is safe :)", "error");
+            self.errorHandler.handleError(error);
           }
+          );
+      },
+      // delete canceled
+      function (dismiss) {
+        // dismiss can be 'cancel', 'overlay',
+        // 'close', and 'timer'
+        if (dismiss === "cancel") {
+          swal("Cancelled", "Your address is safe :)", "error");
         }
+      }
       );
   }
 }

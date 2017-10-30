@@ -8,7 +8,13 @@ export class ShipmentDetailModel {
   public height: number;
   public weight: number;
   public toRemove: boolean;
-  public parentDetailId: number;
+
+  public quantityDetail: number;
+  public packTypeDetailId: number;
+
+  // property used to store value of new created packtype
+  public addedPackType: string;
+
   public userIdCreated: number;
   public dateCreated: Date;
   public userIdModified: number;
