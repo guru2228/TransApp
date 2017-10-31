@@ -6,6 +6,7 @@ using AutoMapper;
 using TransApp.Core.CacheService;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
+using TransApp.Domain.Common;
 using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Shipment;
 using TransApp.Persistence.UnitOfWork;
@@ -141,6 +142,16 @@ namespace TransApp.Domain.Services.Common
             item.DictionaryId = dictionary.Id;
             await _unitOfWork.PackTypeRepository.UpdateAsync(item, transaction);
             return item.Id;
+        }
+        public async Task<List<RatingModel>> GetRating(string language, int? transporterId)
+        {
+            var ratingList =
+                await _unitOfWork.RatingRepository.GetRating(language, transporterId);
+            if (ratingList != null)
+            {
+                return Mapper.Map<List<RatingDto>, List<RatingModel>>(ratingList);
+            }
+            return new List<RatingModel>();
         }
     }
 }

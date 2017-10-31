@@ -21,7 +21,8 @@ namespace TransApp.Domain.Common
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
+        public string UserCreated { get; set; }
+        public string UserModified { get; set; }
     }
 
 

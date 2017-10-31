@@ -37,7 +37,10 @@ namespace TransApp.Domain.Services.Common
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction = null, int? customerId = null,
+        Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction = null,
+            int? customerId = null,
             decimal? length = null, decimal? height = null, decimal? width = null);
+
+        Task<List<RatingModel>> GetRating(string language, int? transporterId = null);
     }
 }

@@ -17,16 +17,21 @@ namespace TransApp.Persistence.Repository
         {
         }
 
-        public async Task<List<RatingDto>> GetRating(string language)
+        public async Task<List<RatingDto>> GetRating(string language, int? transporterId =null)
         {
             using (IDbConnection cn = new SqlConnection(ConnectionString))
             {
+                DynamicParameters d = new DynamicParameters();
+                if (transporterId.HasValue)
+                {
+                    d.Add("@TransporterId", transporterId.Value);
+                }
                 cn.Open();
-                return (List<RatingDto>)await cn.QueryAsync<RatingDto>(GetQuery(language));
+                return (List<RatingDto>)await cn.QueryAsync<RatingDto>(GetQuery(language,transporterId),d);
             }
         }
 
-        private string GetQuery(string language)
+        private string GetQuery(string language,int? transporterId)
         {
             language = GetCorrectLanguage(language);
             var sb = new StringBuilder();
@@ -45,7 +50,10 @@ namespace TransApp.Persistence.Repository
 from Rating
 left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Rating.UserIdCreated
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Rating.UserIdModified  ");
-
+            if (transporterId.HasValue)
+            {
+                sb.Append("where  Rating.TransporterId=@TransporterId");
+            }
             return sb.ToString();
         }
     }

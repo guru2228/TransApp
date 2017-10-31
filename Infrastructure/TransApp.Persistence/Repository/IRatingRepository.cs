@@ -10,6 +10,6 @@ namespace TransApp.Persistence.Repository
 {
     public interface IRatingRepository : ILocalizedGenericRepository<Rating>
     {
-        Task<List<RatingDto>> GetRating(string language);
+        Task<List<RatingDto>> GetRating(string languageint, int? transporterId = null);
     }
 }

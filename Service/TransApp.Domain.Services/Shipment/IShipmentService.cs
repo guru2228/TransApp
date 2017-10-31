@@ -59,5 +59,10 @@ namespace TransApp.Domain.Services.Shipment
         Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, int amountFlexibility = 0);
 
         Task<bool> CancelShipment(int userId, int shipmentId, IDbTransaction transaction = null);
+
+        Task<bool> MoveToHistory(int userId, int shipmentId, int transporterId, int amountRating, string review,
+            IDbTransaction transaction = null);
+
+        
     }
 }

@@ -552,5 +552,21 @@ namespace TransApp.Tests.Shipment
                 Assert.IsFalse(true);
             }
         }
+
+        [TestMethod]
+        public async Task Test_RatingAndMoveToHistory_is_ok()
+        {
+            try
+            {
+                await _shipmentService.MoveToHistory(1, 66, 1, 5, "ddsds");
+                var a = await _commonService.GetRating("EN", 1);
+                Assert.IsTrue(true);
+                return;
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+        }
     }
 }

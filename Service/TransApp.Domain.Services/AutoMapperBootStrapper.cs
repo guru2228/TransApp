@@ -81,6 +81,7 @@ namespace TransApp.Domain.Services
 
             CreateMap<DataModel.Dto.Shipment, ShipmentHistory>();
             CreateMap<ShipmentTransporterDto, ShipmentTransporterModel>();
+            CreateMap<RatingDto, RatingModel>();
         }
     }
 }
