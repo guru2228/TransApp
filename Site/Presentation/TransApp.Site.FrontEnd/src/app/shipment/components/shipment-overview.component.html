@@ -33,9 +33,12 @@
 
         </div>
 
+        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 0" class="btn btn-info" [routerLink]="['/shipment-add']">(+) Create new shipment</button>
+
         <div *ngIf="showLoader" class="row">
             <div class="col-md-5"></div>
             <div class="col-md-2">
+                <br>
                 <mat-spinner></mat-spinner>
             </div>
             <div class="col-md-5"></div>
@@ -53,7 +56,7 @@
                                         <th style="width: 10%;" *ngIf="selectedShipmentFilter.isDeliveryDateColVisible">Delivery date</th>
                                         <th *ngIf="selectedShipmentFilter.isFromColVisible">From</th>
                                         <th *ngIf="selectedShipmentFilter.isDestinationColVisible">Destination</th>
-                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isQuatityColVisible">Quantity</th>
+                                        <th style="width: 15%;" *ngIf="selectedShipmentFilter.isQuatityColVisible">Quantity</th>
                                         <th style="width: 10%;" *ngIf="selectedShipmentFilter.isTransporterColVisible">Transporter</th>
                                         <th style="width: 10%;" *ngIf="selectedShipmentFilter.isPriceColVisible">Price</th>
                                         <th style="width: 10%;" *ngIf="selectedShipmentFilter.isOfferCountColVisible">Offer count</th>
@@ -67,7 +70,7 @@
                                             <td *ngIf="selectedShipmentFilter.isDeliveryDateColVisible">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
                                             <td *ngIf="selectedShipmentFilter.isFromColVisible">{{shipmentRow.shipment.addressFrom}}</td>
                                             <td *ngIf="selectedShipmentFilter.isDestinationColVisible">{{shipmentRow.shipment.addressTo}}</td>
-                                            <td *ngIf="selectedShipmentFilter.isQuatityColVisible">{{shipmentRow.shipment.totalQuatity}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isQuatityColVisible">{{shipmentRow.shipment.totalQuatity + ' items, ' + shipmentRow.shipment.totalVolume + ' &#13221;, ' + shipmentRow.shipment.totalWeight + ' kg'}}</td>
                                             <td *ngIf="selectedShipmentFilter.isTransporterColVisible">{{shipmentRow.shipment.transporterId}}</td>
                                             <td *ngIf="selectedShipmentFilter.isPriceColVisible">{{shipmentRow.shipment.totalPrice}}</td>
                                             <td *ngIf="selectedShipmentFilter.isOfferCountColVisible">{{shipmentRow.shipment.offerCount}}</td>
@@ -83,12 +86,12 @@
                                                             Edit shipment
                                                         </button>
                                                 <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.deleteActionVisible" class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
-                                                            Delete shipment
                                                             <span class="btn-label ">
                                                                 <i class="material-icons">delete_forever</i>
                                                             </span>
+                                                            Delete shipment
                                                         </button>
-                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToOpenMarketActionVisible" class="btn btn-success" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
+                                                <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToOpenMarketActionVisible" class="btn btn-info" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">assignment_returned</i>
                                                             </span>

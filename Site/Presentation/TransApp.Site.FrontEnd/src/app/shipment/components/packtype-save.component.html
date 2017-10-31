@@ -1,0 +1,40 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header card-header-icon" data-background-color="rose">
+                <i class="material-icons">mail_outline</i>
+            </div>
+            <div class="card-content">
+                <h4 class="card-title">Add new pack type</h4>
+                <form #formPackType="ngForm" novalidate class="form-horizontal" novalidate (ngSubmit)="save(formPackType.value, formPackType.valid)">
+                    <div [ngClass]=" 'form-group label-floating ' + ((!dialogModel.description|| dialogModel.description.length <=0 ) && formPackType.submitted ? ' has-error' : '') ">
+                        <label class="control-label">Name</label>
+                        <input class="form-control" type="text" [(ngModel)]="dialogModel.description" name="packtypelength" required>
+                    </div>
+
+                    <div class="form-group label-floating">
+                        <label class="control-label">Length</label>
+                        <input class="form-control " type="number" min="1" [(ngModel)]="dialogModel.length" name="packtypelength" number="true" required>
+                    </div>
+
+                    <div class="form-group label-floating">
+                        <label class="control-label">Width</label>
+                        <input class="form-control " type="number" min="1" [(ngModel)]="dialogModel.width " name="packtypewidth" number="true" required>
+                    </div>
+
+                    <div class="form-group label-floating">
+                        <label class="control-label">Height</label>
+                        <input class="form-control " type="number" min="1" [(ngModel)]="dialogModel.height " name="packtypeheight" number="true " required>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                        <input type="checkbox" name="optionsCheckboxes"> Subscribe to newsletter
+                    </label>
+                    </div>
+                    <button mat-button class="btn btn-fill btn-rose" type="submit" tabindex="2">Add</button>
+                    <button mat-button class="btn btn-fill btn-rose" (click)="onNoClick()" tabindex="-1">No Thanks</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

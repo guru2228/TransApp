@@ -21,7 +21,7 @@ import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandle
 import { NotificationService } from "app/shared/common/services/notification.service";
 import { ApplicationUser } from "app/authentication/viewmodels/application-user";
 import { AddressModel } from "app/address/models/address-model";
-import { MatOptionSelectionChange } from "@angular/material";
+import { MatOptionSelectionChange, MatDialog } from "@angular/material";
 import { ComponentStateType } from "app/shared/common/helper/component-state-type";
 import { ShipmentModel } from "app/shipment/models/shipment-model";
 import { TruckParameterModel } from "app/shared/common/models/parameter/truck-parameter-model";
@@ -35,13 +35,11 @@ import { ShipmentDetailModel } from "app/shipment/models/shipment-detail-model";
 import { ShipmentTransporterModel } from "app/shipment/models/shipment-transporter-model";
 import { ShipmentService } from "app/shipment/services/shipment.service";
 import { PackTypeParameterModel } from "app/shared/common/models/parameter/pack-type-parameter-model";
+import { PackTypeSaveDialog } from "app/shipment/components/packtype-save.component";
 
 declare var google: any;
 declare var $: any;
-declare interface TableData {
-  headerRow: string[];
-  dataRows: string[][];
-}
+declare var swal: any;
 
 @Component({
   moduleId: module.id,
@@ -91,7 +89,8 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     private translateService: TranslateService,
     private errorHandler: GlobalErrorHandler,
     private notificationService: NotificationService,
-    private dateAdapter: DateAdapter<NativeDateAdapter>
+    private dateAdapter: DateAdapter<NativeDateAdapter>,
+    public dialog: MatDialog
   ) {
     // set datepickerlocale
   }
@@ -593,6 +592,64 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
    * @param currentShipmentRow
    */
   onMasterPackTypeChange(currentDetailsRow: ShipmentDetailModel): void {
+    if (currentDetailsRow.packTypeId <= 0) {
+      let packType = new PackTypeParameterModel();
+      packType.id = -1;
+      debugger;
+      let dialogRef = this.dialog.open(PackTypeSaveDialog, {
+        width: '350px',
+        data: packType
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.packTypes.push(result);
+          currentDetailsRow.packTypeId = result.id;
+        }
+        debugger;
+        console.log('The dialog was closed');
+        packType = result;
+      });
+    }
+  }
+
+  onClickDeletePackType(packtype: PackTypeParameterModel, event): boolean {
+    alert('delete');
+
+    event.stopPropagation();
+
+    const self = this;
+    swal({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      type: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    })
+      // delete confirmed
+      .then(
+      function () {
+
+        swal(
+          "Deleted!",
+          "Your shipment has been deleted.",
+          "success"
+        );
+
+      },
+      error => {
+        swal(
+          "Not Deleted!",
+          "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
+          "error"
+        );
+        self.errorHandler.handleError(error);
+      }
+      );
+
+    return false;
   }
 
   /**

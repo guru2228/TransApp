@@ -11,40 +11,150 @@ import { HttpService } from "app/shared/common/services/httpService";
 import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandler";
 import { ParametersDataService } from "app/shared/common/services/parameters-data.service";
 import { TranslateService } from "app/shared/common/services/localization/translate.service";
+
 import { NotificationService } from 'app/shared/common/services/notification.service';
 import { AddressAvailabilitySliderComponent } from "app/shared/common/components/address-availability-slider.component";
 import { PagerService } from 'app/shared/common/services/pager.service';
 
 
+import {
+  MatAutocompleteModule,
+  MatButtonModule,
+  MatButtonToggleModule,
+  MatCardModule,
+  MatCheckboxModule,
+  MatChipsModule,
+  MatDatepickerModule,
+  MatDialogModule,
+  MatExpansionModule,
+  MatGridListModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatMenuModule,
+  MatNativeDateModule,
+  MatPaginatorModule,
+  MatProgressBarModule,
+  MatProgressSpinnerModule,
+  MatRadioModule,
+  MatRippleModule,
+  MatSelectModule,
+  MatSidenavModule,
+  MatSliderModule,
+  MatSlideToggleModule,
+  MatSnackBarModule,
+  MatSortModule,
+  MatTableModule,
+  MatTabsModule,
+  MatToolbarModule,
+  MatTooltipModule,
+  MatStepperModule,
+} from '@angular/material';
+
 @NgModule({
-    imports: [
-        CommonModule,
-        RouterModule,
-        FormsModule
-    ],
-    exports: [
-        AddressAvailabilitySliderComponent
-    ],
-    declarations: [
-        ErrorComponent,
-        PageNotFoundComponent,
-        AddressAvailabilitySliderComponent
-    ],
-    providers: [
-        HelperService,
-        HttpService,
-        GlobalErrorHandler,
-        NotificationService,
-        ParametersDataService,
-        PagerService,
-        TranslateService,
-        {
-            provide: HttpService,
-            useFactory: httpFactory,
-            deps: [XHRBackend, RequestOptions]
-        }
-        
-    ]
+  exports: [
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule
+  ],
+  imports: [
+    MatAutocompleteModule,
+    MatButtonModule,
+    MatButtonToggleModule,
+    MatCardModule,
+    MatProgressBarModule,
+    MatCheckboxModule,
+    MatChipsModule,
+    MatStepperModule,
+    MatDatepickerModule,
+    MatDialogModule,
+    MatExpansionModule,
+    MatGridListModule,
+    MatIconModule,
+    MatInputModule,
+    MatListModule,
+    MatMenuModule,
+    MatNativeDateModule,
+    MatPaginatorModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatRadioModule,
+    MatRippleModule,
+    MatSelectModule,
+    MatSidenavModule,
+    MatSliderModule,
+    MatSlideToggleModule,
+    MatSnackBarModule,
+    MatSortModule,
+    MatTableModule,
+    MatTabsModule,
+    MatToolbarModule,
+    MatTooltipModule
+  ]
+})
+export class MaterialModule { }
+
+@NgModule({
+  imports: [
+    CommonModule,
+    RouterModule,
+    FormsModule,
+    MaterialModule
+  ],
+  exports: [
+    MaterialModule,
+    AddressAvailabilitySliderComponent,
+
+  ],
+  declarations: [
+    ErrorComponent,
+    PageNotFoundComponent,
+    AddressAvailabilitySliderComponent,
+  ],
+  providers: [
+    HelperService,
+    HttpService,
+    GlobalErrorHandler,
+    NotificationService,
+    ParametersDataService,
+    PagerService,
+    TranslateService,
+    {
+      provide: HttpService,
+      useFactory: httpFactory,
+      deps: [XHRBackend, RequestOptions]
+    }
+
+  ]
 })
 export class CommonAppModule { }
-export function httpFactory(backend: XHRBackend, options: RequestOptions) {  return new HttpService(backend, options)};
+export function httpFactory(backend: XHRBackend, options: RequestOptions) { return new HttpService(backend, options) };
