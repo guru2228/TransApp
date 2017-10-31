@@ -12,7 +12,7 @@ using TransApp.Persistence.UnitOfWork;
 
 namespace TransApp.Domain.Services.Common
 {
-    public class CommonService: ICommonService
+    public class CommonService : ICommonService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly ICacheService _cacheService;
@@ -42,7 +42,7 @@ namespace TransApp.Domain.Services.Common
         public async Task<List<ShipmentStatusModel>> GetStatuses(string language)
         {
             var shipmentStatusList =
-               await _unitOfWork.ShipmentStatusRepository.GetStatuses(language);
+                await _unitOfWork.ShipmentStatusRepository.GetStatuses(language);
             if (shipmentStatusList != null)
             {
                 return Mapper.Map<List<ShipmentStatusDto>, List<ShipmentStatusModel>>(shipmentStatusList);
@@ -53,7 +53,7 @@ namespace TransApp.Domain.Services.Common
         public async Task<List<TruckParameterModel>> GetTrucks(string language)
         {
             var truckList =
-               await _unitOfWork.TruckRepository.GetTrucks(language);
+                await _unitOfWork.TruckRepository.GetTrucks(language);
             if (truckList != null)
             {
                 return Mapper.Map<List<TruckDto>, List<TruckParameterModel>>(truckList);
@@ -64,10 +64,22 @@ namespace TransApp.Domain.Services.Common
         public async Task<List<PackTypeParameterModel>> GetPackTypes(string language)
         {
             var typeList =
-              await _unitOfWork.PackTypeRepository.GetPackTypes(language);
+                await _unitOfWork.PackTypeRepository.GetPackTypes(language);
             if (typeList != null)
             {
                 return Mapper.Map<List<PackTypeDto>, List<PackTypeParameterModel>>(typeList);
+            }
+            return new List<PackTypeParameterModel>();
+        }
+
+        public async Task<List<PackTypeParameterModel>> GetPackTypes(string language, int? customerId)
+        {
+            var typeList =
+                await _unitOfWork.PackTypeRepository.GetPackTypes(language);
+            if (typeList != null)
+            {
+                return
+                    Mapper.Map<List<PackTypeDto>, List<PackTypeParameterModel>>(typeList);
             }
             return new List<PackTypeParameterModel>();
         }
@@ -91,7 +103,9 @@ namespace TransApp.Domain.Services.Common
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        public async  Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction=null)
+        public async Task<int> CreatepackType(string code, string iconName, Dictionary dictionary,
+            IDbTransaction transaction = null,
+            int? customerId = null, decimal? length = null, decimal? height = null, decimal? width = null)
         {
             var item = _unitOfWork.PackTypeRepository.Get("Code='" + code + "'");
             if (item == null)
@@ -104,7 +118,11 @@ namespace TransApp.Domain.Services.Common
                     DateModified = DateTime.Now,
                     UserIdCreated = 1000,
                     Code = code,
-                    DictionaryId = dictionaryId
+                    DictionaryId = dictionaryId,
+                    CustomerId = customerId,
+                    PackLength = length,
+                    PackWidth = width,
+                    PackHeight = height
                 };
                 return await _unitOfWork.PackTypeRepository.AddAsync(item);
             }

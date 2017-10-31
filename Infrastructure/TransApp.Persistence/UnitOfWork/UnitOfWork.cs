@@ -49,6 +49,7 @@ namespace TransApp.Persistence.UnitOfWork
         private GenericRepository<ShipmentReceiverAvailability> _shipmentReceiverAvailabilityRepository;
         private GenericRepository<ShipmentSenderAvailability> _shipmentSenderAvailabilityRepository;
         private IShipmentTransporterRepository _shipmentTransporterRepository;
+        private IRatingRepository _ratingRepository;
 
         public UnitOfWork(IOptions<SiteDbContext> dataBaseConfig)
         {
@@ -497,6 +498,18 @@ namespace TransApp.Persistence.UnitOfWork
                     this._shipmentHistoryRepository = new GenericRepository<ShipmentHistory>("ShipmentHistory", _dataBaseConfig.Value.DefaultConnectionString);
                 }
                 return _shipmentHistoryRepository;
+            }
+        }
+
+        public IRatingRepository RatingRepository
+        {
+            get
+            {
+                if (this._ratingRepository == null)
+                {
+                    this._ratingRepository = new RatingRepository("Rating", _dataBaseConfig.Value.DefaultConnectionString);
+                }
+                return _ratingRepository;
             }
         }
     }

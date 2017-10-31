@@ -961,5 +961,30 @@ namespace TransApp.Domain.Services.Shipment
             }
         }
 
+        public async Task<bool> MoveToHistory(int userId, int shipmentId,int transporterId,int amountRating,string review, IDbTransaction transaction = null)
+        {
+            try
+            {
+                Rating rating = new Rating
+                {
+                    TransporterId = transporterId,
+                    UserId = userId,
+                    UserIdModified = userId,
+                    UserIdCreated = userId,
+                    DateModified = DateTime.Now,
+                    DateCreated = DateTime.Now,
+                    Amount = amountRating,
+                    Review = review
+                };
+                await _unitOfWork.RatingRepository.AddAsync(rating);
+                await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "DELIVER");//??
+                await DeleteShipmentById(shipmentId);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

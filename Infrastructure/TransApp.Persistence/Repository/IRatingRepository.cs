@@ -8,8 +8,8 @@ using TransApp.Persistence.Repository.Generic;
 
 namespace TransApp.Persistence.Repository
 {
-    public interface IPackTypeRepository: ILocalizedGenericRepository<PackType>
+    public interface IRatingRepository : ILocalizedGenericRepository<Rating>
     {
-        Task<List<PackTypeDto>> GetPackTypes(string language,int? customerId = null);
+        Task<List<RatingDto>> GetRating(string language);
     }
 }

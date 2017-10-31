@@ -5,13 +5,17 @@ using System.Threading.Tasks;
 
 namespace TransApp.DataModel.Dto.Custom
 {
-    public class PackTypeDto
+    public class RatingDto
     {
         public int Id { get; set; }
 
-        public string Code { get; set; }
+        public int? UserId { get; set; }
 
-        public int? DictionaryId { get; set; }
+        public int? TransporterId { get; set; }
+
+        public int? Amount { get; set; }
+
+        public string Review { get; set; }
 
         public int? UserIdCreated { get; set; }
 
@@ -20,15 +24,7 @@ namespace TransApp.DataModel.Dto.Custom
         public int? UserIdModified { get; set; }
 
         public DateTime? DateModified { get; set; }
-
         public string UserCreated { get; set; }
         public string UserModified { get; set; }
-
-        public string Description { get; set; }
-
-        public int? CustomerId { get; set; }
-        public decimal? PackLength { get; set; }
-        public decimal? PackHeight { get; set; }
-        public decimal? PackWidth { get; set; }
     }
 }

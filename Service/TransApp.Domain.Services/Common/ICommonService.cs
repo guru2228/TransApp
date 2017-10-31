@@ -27,6 +27,8 @@ namespace TransApp.Domain.Services.Common
 
         Task<List<PackTypeParameterModel>> GetPackTypes(string language);
 
+        Task<List<PackTypeParameterModel>> GetPackTypes(string language, int? customerId);
+
         /// <summary>
         /// CreatepackType
         /// </summary>
@@ -35,6 +37,7 @@ namespace TransApp.Domain.Services.Common
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
         /// <returns></returns>
-        Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction=null);
+        Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction = null, int? customerId = null,
+            decimal? length = null, decimal? height = null, decimal? width = null);
     }
 }

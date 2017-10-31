@@ -6,8 +6,10 @@ using Castle.Components.DictionaryAdapter;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using TransApp.Core.ShipmentTransporter;
+using TransApp.DataModel.Dto;
 using TransApp.Domain.Addresses;
 using TransApp.Domain.Common.Entity;
+using TransApp.Domain.Common.Parameter;
 using TransApp.Domain.Services;
 using TransApp.Domain.Services.Addresses;
 using TransApp.Domain.Services.Common;
@@ -513,12 +515,37 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.AssignTransporter(1000,59);
+                    await _shipmentService.AssignTransporter(1000,60);
                 ;
                 {
                     Assert.IsTrue(true);
                     return;
                 }
+            }
+            catch (Exception ex)
+            {
+                Assert.IsFalse(true);
+            }
+        }
+
+        [TestMethod]
+        public async Task Test_PackType_Is_Ok()
+        {
+            try
+            {
+
+                await _commonService.CreatepackType("xxx", "", new Dictionary
+                {
+                    DateCreated = DateTime.Now,
+                    UserIdCreated = 1,
+                    EN = "xxx",
+                    NL = "xxx",
+                    FR = "xxx",
+
+                }, null, 1, 11, 12, 13);
+                List<PackTypeParameterModel> a = await _commonService.GetPackTypes("EN", 1);
+                Assert.IsTrue(true);
+                return;
             }
             catch (Exception ex)
             {

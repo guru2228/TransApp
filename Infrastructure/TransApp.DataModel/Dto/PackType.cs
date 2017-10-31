@@ -23,5 +23,10 @@ namespace TransApp.DataModel.Dto
 
         public DateTime? DateModified { get; set; }
 
+        public int? CustomerId { get; set; }
+        public decimal? PackLength { get; set; }
+        public decimal? PackHeight { get; set; }
+        public decimal? PackWidth { get; set; }
+
     }
 }

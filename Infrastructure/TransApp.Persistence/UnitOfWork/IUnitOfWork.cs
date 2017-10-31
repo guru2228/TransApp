@@ -127,6 +127,8 @@ namespace TransApp.Persistence.UnitOfWork
         GenericRepository<ShipmentTransporterHistory> ShipmentTransporterHistoryRepository { get; }
         GenericRepository<ShipmentHistory> ShipmentHistoryRepository { get; }
 
+        IRatingRepository RatingRepository { get; }
+
         #endregion
 
     }
