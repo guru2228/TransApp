@@ -36,10 +36,22 @@ namespace TransApp.Domain.Services.Common
         /// <param name="iconName"></param>
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
+        /// <param name="customerId"></param>
+        /// <param name="length"></param>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
         /// <returns></returns>
         Task<int> CreatepackType(string code, string iconName, Dictionary dictionary, IDbTransaction transaction = null,
             int? customerId = null,
-            decimal? length = null, decimal? height = null, decimal? width = null);
+            int? length = null, int? height = null, int? width = null);
+
+        /// <summary>
+        /// Delete pack type only if customer is set
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="customerId"></param>
+        /// <returns></returns>
+        Task<bool> DeletepackType(int id, int customerId);
 
         Task<List<RatingModel>> GetRating(string language, int? transporterId = null);
     }

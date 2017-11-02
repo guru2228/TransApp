@@ -26,9 +26,9 @@ namespace TransApp.Domain.Common.Parameter
         public string Description { get; set; }
 
         public int? CustomerId { get; set; }
-        public decimal? PackLength { get; set; }
-        public decimal? PackHeight { get; set; }
-        public decimal? PackWidth { get; set; }
+        public int? PackLength { get; set; }
+        public int? PackHeight { get; set; }
+        public int? PackWidth { get; set; }
     }
 
 }

@@ -6,4 +6,5 @@ export class AddressRowViewModel {
   public viewActions: boolean;
   public viewEdit: boolean;
   public address: AddressModel;
+  public showViewLoader: boolean;
 }

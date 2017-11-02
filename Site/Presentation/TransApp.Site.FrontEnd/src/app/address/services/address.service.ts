@@ -13,7 +13,7 @@ export class AddressService {
 
   private serviceUrl = Constants.serverUrl + 'api/Addresses/';
 
-  private addressModel = new BehaviorSubject<AddressModel>(null);
+  private addressModel = new BehaviorSubject<any>(null);
   addressModelReceivedHandler$ = this.addressModel.asObservable();
 
   constructor(public http: HttpService, private errorHandler: GlobalErrorHandler) { }

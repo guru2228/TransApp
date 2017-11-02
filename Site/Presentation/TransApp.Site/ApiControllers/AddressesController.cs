@@ -204,9 +204,5 @@ namespace TransApp.Site.ApiControllers
             return true;
         }
 
-
-
-
-
     }
 }

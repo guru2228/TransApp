@@ -74,12 +74,8 @@ namespace TransApp.Site.ApiControllers
         [HttpGet("getPackTypes/{language}")]
         public async Task<IEnumerable<PackTypeParameterModel>> GetPackTypes(string language)
         {
-           // var items = _cacheService.Get("cache_packTypes") as IEnumerable<PackTypeParameterModel>;
-           // if (items != null) return items;
-
             language.ConvertLocaleStringToServerLanguage();
           var  items = await _commonService.GetPackTypes(language);
-           // _cacheService.Add("cache_packTypes", items);
             return items;
         }
 
@@ -94,6 +90,11 @@ namespace TransApp.Site.ApiControllers
         public async Task<int> SavePackType(string language, [FromBody] PackTypeParameterModel model)
         {
             var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != model.CustomerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError,
+                    "Provided customer is not assigned to your account");
+            }
             language.ConvertLocaleStringToServerLanguage();
 
             var packTypeId = await _commonService.CreatepackType(model.Code, "", new Dictionary
@@ -104,8 +105,22 @@ namespace TransApp.Site.ApiControllers
                 DE = model.Description,
                 RO = model.Description
 
-            });
+            }, null, model.CustomerId, model.PackLength, model.PackHeight, model.PackWidth);
             return packTypeId;
+        }
+
+
+        [Authorize(Policy = "TransAppUser")]
+        [HttpDelete("deletePackType/{packtypeId}/{customerId}")]
+        public async Task<bool> DeletePackType(int packtypeId, int customerId)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError,
+                    "Provided customer is not assigned to your account");
+            }
+            return await _commonService.DeletepackType(packtypeId, customerId);
         }
 
         /// <summary>
