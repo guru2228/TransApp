@@ -85,7 +85,7 @@ Where 1=1 ");
             }
             if (filter.CustomerId.HasValue)
             {
-                sb.Append(" and ShipmentTransporter.CustomerId=" + filter.CustomerId.Value);
+                sb.Append(" and Shipment.CustomerId=" + filter.CustomerId.Value);
             }
             if (!string.IsNullOrEmpty(filter.Predicate))
             {
