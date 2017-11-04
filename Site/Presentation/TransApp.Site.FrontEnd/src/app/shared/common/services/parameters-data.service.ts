@@ -96,6 +96,23 @@ export class ParametersDataService {
 
 
   /**
+   * Delete packtypes
+   * @param shipmentId
+   * @param customerId
+   */
+  deletePackType(packtypeId: number, customerId: number) {
+    return this.http
+      .delete(
+      this.serviceUrl +
+      "deletePackType/" +
+      packtypeId +
+      "/" +
+      customerId)
+      .map(response => response.json());
+  }
+
+
+  /**
    * update component model with facilities
    * @param entityId
    * @param parametersList

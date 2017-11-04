@@ -17,10 +17,9 @@
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.reference" id="reference" disabled="" name="reference" required>
                             </div>
 
-                            <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ' + ((!componentModel.poNumber ) && formShipment.submitted ? ' has-error' : '')) ">
+                            <div [ngClass]="'form-group label-floating ' + (componentModel.poNumber  && componentModel.poNumber.length > 0 ? '' : 'is-empty ') ">
                                 <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                     PO Number
-                                    <span class="star">*</span>
                                 </label>
                                 <input type="text" class="form-control" [(ngModel)]="componentModel.poNumber" id="poNumber" name="poNumber">
                             </div>
@@ -377,27 +376,24 @@
                                         <div [ngClass]="'row '">
                                             <div class="col-sm-3">
                                                 <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.quantity || detailRow.quantity <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Quantity <span class="star ">*</span></label>
-                                                    <input class="form-control " type="number " min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantity " id="shipmentDetail_quantity_{{detailRowIndex}}" name="shipmentDetail_quantity_{{detailRowIndex}}" class="form-control"
+                                                    <label [ngClass]="componentState >= 0 ? 'control-label' : ''">Quantity <span class="star ">*</span></label>
+                                                    <input class="form-control " type="number" min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantity " id="shipmentDetail_quantity_{{detailRowIndex}}" name="shipmentDetail_quantity_{{detailRowIndex}}" class="form-control"
                                                         number="true " required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-3">
-
                                                 <div [ngClass]=" 'form-group label-floating ' + ((detailRow.packTypeId || detailRow.packTypeId >= 0 )  ? ' is-focused  ' : '') + ((!detailRow.packTypeId || detailRow.packTypeId <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Pack type<span class="star ">*</span></label>
 
-                                                    <mat-form-field>
-                                                        <mat-select [(ngModel)]="detailRow.packTypeId" (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtype_{{detailRowIndex}}" required>
+                                                    <mat-form-field style="min-width:120px;top: -7px;">
+                                                        <mat-select placeholder="PackType" [(ngModel)]="detailRow.packTypeId" (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtype_{{detailRowIndex}}" required>
                                                             <mat-option *ngFor="let packtype of packTypes" [value]="packtype.id">
-
                                                                 <div class="row">
                                                                     <div class="col-sm-9" style="min-width:200px;">
                                                                         {{ packtype.description }}
                                                                     </div>
-                                                                    <div *ngIf="packtype.id !== detailRow.packTypeId" class="col-sm-3">
-                                                                        <button class="btn btn-simple " (click)="onClickDeletePackType(packtype, $event)" data-placement="left " rel="tooltip " title="Remove item " type="button ">
-                                                                      <i class="material-icons ">close</i>
+                                                                    <div *ngIf="detailRow.packTypeId != packtype.id && packtype.customerId" class="col-sm-3">
+                                                                        <button class="btn btn-simple " (click)="onClickDeletePackType(detailRow, packtype, $event)" data-placement="left " rel="tooltip " title="Remove item " type="button ">
+                                                                      <i class="material-icons " style="top: -7px;font-size: 20px;">close</i>
                                                                      </button>
                                                                     </div>
                                                                 </div>
@@ -409,23 +405,22 @@
                                                         </mat-select>
                                                     </mat-form-field>
                                                 </div>
-
                                             </div>
                                             <div class="col-sm-2 ">
-                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.length || detailRow.length <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Length(cm)<span class="star ">*</span></label>
+                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.length || detailRow.length >= 0 )  ? ' is-focused  ' : '') + ((!detailRow.length || detailRow.length <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState >= 0  ? 'control-label' : ''">Length(cm)<span class="star ">*</span></label>
                                                     <input class="form-control " type="number" min="1" (input)="computeTotals()" [(ngModel)]="detailRow.length" name="shipmentDetail_length_{{detailRowIndex}} " number="true" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2 ">
-                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.width || detailRow.width <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Width(cm)<span class="star ">*</span></label>
+                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.width || detailRow.width >= 0 )  ? ' is-focused  ' : '') + ((!detailRow.width || detailRow.width <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState >= 0  ? 'control-label' : ''">Width(cm)<span class="star ">*</span></label>
                                                     <input class="form-control " type="number" min="1" (input)="computeTotals() " [(ngModel)]="detailRow.width" name="shipmentDetail_width_{{detailRowIndex}} " number="true" required>
                                                 </div>
                                             </div>
                                             <div class="col-sm-2">
-                                                <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.height || detailRow.height <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Height(cm)<span class="star ">*</span></label>
+                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.height || detailRow.height >= 0 )  ? ' is-focused  ' : '') + ((!detailRow.height || detailRow.height <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+                                                    <label [ngClass]="componentState >= 0 ? 'control-label' : ''">Height(cm)<span class="star ">*</span></label>
                                                     <input class="form-control" type="number" min="1" (input)="computeTotals() " [(ngModel)]="detailRow.height " name="shipmentDetail_height_{{detailRowIndex}} " number="true" required>
                                                 </div>
                                             </div>
@@ -439,7 +434,7 @@
                                             </div>
                                             <div class="col-sm-6 ">
                                                 <div [ngClass]=" 'form-group label-floating ' + ((!detailRow.weight || detailRow.weight <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Weight(kg)<span class="star ">*</span></label>
+                                                    <label [ngClass]="componentState  >= 0  ? 'control-label' : ''">Weight(kg)<span class="star ">*</span></label>
                                                     <input class="form-control" type="number" min="1 " (input)="computeTotals() " [(ngModel)]="detailRow.weight" name="shipmentDetail_weigth_{{detailRowIndex}} " number="true " required>
                                                 </div>
                                             </div>
@@ -452,18 +447,23 @@
                                         <div class="row ">
                                             <div class="col-sm-3 ">
                                                 <div [ngClass]=" 'form-group label-floating '  + ((detailRow.packTypeDetailId && detailRow.packTypeDetailId>= 0) && (!detailRow.quantityDetail || detailRow.quantityDetail <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label for=" " [ngClass]="componentState == 0 ? 'control-label' : ''">
+                                                    <label for=" " [ngClass]="componentState >= 0  ? 'control-label' : ''">
                                                         Quantity
                                                     </label>
-                                                    <input class="form-control " type="number " min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantityDetail " name="shipmentDetail_quantityDetail_{{detailRowIndex}}" class="form-control " number="true ">
+                                                    <input class="form-control " type="number" min="1 " max="9999 " step="1 " (input)="computeTotals() " [(ngModel)]="detailRow.quantityDetail " name="shipmentDetail_quantityDetail_{{detailRowIndex}}" class="form-control " number="true ">
                                                 </div>
                                             </div>
                                             <div class="col-sm-6 ">
-                                                <div [ngClass]=" 'form-group label-floating ' + ((detailRow.packTypeDetailId || detailRow.packTypeDetailId >= 0 )  ? ' is-focused  ' : '')  + ((detailRow.quantityDetail && detailRow.quantityDetail>= 0) && (!detailRow.packTypeDetailId || detailRow.packTypeDetailId <=0 ) && formShipment.submitted ? ' has-error' : '') ">
-                                                    <label [ngClass]="componentState == 0 ? 'control-label' : ''">Pack type</label>
-                                                    <select [(ngModel)]="detailRow.packTypeDetailId " (change)="onMasterPackTypeChange(detailRow) " name="shipmentDetail_packtypeDetail_{{detailRowIndex}} " class="form-control ">
-                                                          <option *ngFor="let packtype of packTypes " [ngValue]="packtype.id ">{{packtype.description}}</option>
-                                                    </select>
+                                                <div [ngClass]=" 'form-group label-floating '  + ((detailRow.quantityDetail && detailRow.quantityDetail>= 0) && (!detailRow.packTypeDetailId || detailRow.packTypeDetailId <=0 ) && formShipment.submitted ? ' has-error' : '') ">
+
+
+                                                    <mat-form-field style="top: -7px; min-width:120px;">
+                                                        <mat-select placeholder="PackType" [(ngModel)]="detailRow.packTypeDetailId" name="shipmentDetail_packtypeDetail_{{detailRowIndex}}">
+                                                            <mat-option *ngFor="let packtype of packTypes" [value]="packtype.id">
+                                                                {{ packtype.description }}
+                                                            </mat-option>
+                                                        </mat-select>
+                                                    </mat-form-field>
                                                 </div>
                                             </div>
                                             <div class="col-xs-3 ">

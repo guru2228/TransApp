@@ -81,6 +81,12 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
         this.loadParamsData().subscribe(paramsDataLoaded => {
           if (paramsDataLoaded) {
             this.register_googleMapsPlaceSearchHandler();
+            if (this.componentState > 0) {
+              this.addressService.sendAddressModel({
+                operation: 'loaded',
+                address: this.componentModel
+              });
+            }
           }
         })
       }
@@ -103,7 +109,10 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           this.notificationService.show('Address created.', 'success', 'center', 'top');
         } else {
           //// send data to addreess coponent to be updated
-          this.addressService.sendAddressModel(this.componentModel);
+          this.addressService.sendAddressModel({
+            operation: 'saved',
+            address: this.componentModel
+          });
           this.notificationService.show('Address saved. ', 'success', 'center', 'top');
         }
       }, error => {

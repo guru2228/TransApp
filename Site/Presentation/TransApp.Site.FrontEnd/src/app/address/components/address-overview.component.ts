@@ -38,6 +38,8 @@ export class AddressOverviewComponent
   pagesCollection: Array<number>;
   pageSize = 20;
 
+  showLoader = false;
+
   private subscriptionReceiveUpdatedAddress: Subscription;
 
   constructor(
@@ -55,6 +57,7 @@ export class AddressOverviewComponent
    * Initialize data
    */
   public ngOnInit() {
+    this.showLoader = true;
     this.currentUser = this.authenticationService.getCurrentUser();
 
     this.getNumberOfAddresses("", false);
@@ -80,6 +83,7 @@ export class AddressOverviewComponent
    * @param page
    */
   paginate(page: number) {
+    this.showLoader = true;
     this.currentPage = page;
     this.getAddresses();
 
@@ -125,8 +129,10 @@ export class AddressOverviewComponent
               this.componentModel.push(addressRow);
             }
           }
+          this.showLoader = false;
         },
         error => {
+          this.showLoader = false;
           this.errorHandler.handleError(error);
         }
         );
@@ -221,16 +227,20 @@ export class AddressOverviewComponent
 
   private register_updateSavedModel_handler() {
     this.subscriptionReceiveUpdatedAddress = this.addressService.addressModelReceivedHandler$.subscribe(
-      address => {
-        if (address != null) {
-          const modelToUpdate = this.componentModel.filter(
-            item => item.address.id === address.id
-          )[0];
-          if (modelToUpdate) {
-            modelToUpdate.address = address;
-            this.helperService.scrollOnTop();
+      result => {
+        if (result != null) {
+          debugger;
+          if (this.componentModel) {
+            const rowToUpdate = this.componentModel.filter(
+              item => item.address.id === result.address.id)[0];
+            if (result.operation == 'loaded') {
+              rowToUpdate.showViewLoader = false;
+            } else if (result.operation == 'saved') {
+              rowToUpdate.address = result.address;
+              this.helperService.scrollOnTop();
+              this.addressService.resetSendAddressModelHandler();
+            }
           }
-          this.addressService.resetSendAddressModelHandler();
         }
       },
       error => {
@@ -254,7 +264,7 @@ export class AddressOverviewComponent
 
   /** Show edit address */
   onClickEditAddress(addressRow: AddressRowViewModel) {
-    this.notificationService.showLoading();
+    addressRow.showViewLoader = true;
 
     addressRow.viewActions = false;
 

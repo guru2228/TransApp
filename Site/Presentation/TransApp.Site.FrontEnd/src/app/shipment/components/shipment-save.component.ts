@@ -48,16 +48,6 @@ declare var swal: any;
 })
 export class ShipmentSaveComponent implements OnInit, AfterViewInit {
 
-  cities = [
-    { value: 'paris-0', viewValue: 'Paris' },
-    { value: 'miami-1', viewValue: 'Miami' },
-    { value: 'bucharest-2', viewValue: 'Bucharest' },
-    { value: 'new-york-3', viewValue: 'New York' },
-    { value: 'london-4', viewValue: 'London' },
-    { value: 'barcelona-5', viewValue: 'Barcelona' },
-    { value: 'moscow-6', viewValue: 'Moscow' },
-  ];
-
 
   currentUser: ApplicationUser;
   /** main component model */
@@ -117,12 +107,12 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     this.loadComponentModel(this.componentState).subscribe(modelLoaded => {
       if (modelLoaded) {
         this.loadParamsData().subscribe(paramsDataLoaded => {
-
-          this.shipmentService.sendShipmentModel({
-            operation: 'loaded',
-            shipment: this.componentModel
-          });
-
+          if (this.componentState > 0) {
+            this.shipmentService.sendShipmentModel({
+              operation: 'loaded',
+              shipment: this.componentModel
+            });
+          }
         });
       }
     });
@@ -592,30 +582,47 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
    * @param currentShipmentRow
    */
   onMasterPackTypeChange(currentDetailsRow: ShipmentDetailModel): void {
+    debugger;
+    //// add new item option has id -1
     if (currentDetailsRow.packTypeId <= 0) {
-      let packType = new PackTypeParameterModel();
-      packType.id = -1;
-      debugger;
-      let dialogRef = this.dialog.open(PackTypeSaveDialog, {
+      // open dialog
+      const dialogRef = this.dialog.open(PackTypeSaveDialog, {
         width: '350px',
-        data: packType
+        data: new PackTypeParameterModel(),
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
+          const packtype = result as PackTypeParameterModel;
           this.packTypes.push(result);
           currentDetailsRow.packTypeId = result.id;
+
+          currentDetailsRow.length = packtype.packLength;
+          currentDetailsRow.height = packtype.packHeight;
+          currentDetailsRow.width = packtype.packWidth;
+
+          this.computeTotals();
         }
-        debugger;
-        console.log('The dialog was closed');
-        packType = result;
       });
+    } else {
+      const selectedPacktype = this.packTypes.find(item => item.id === currentDetailsRow.packTypeId);
+      if (selectedPacktype) {
+        currentDetailsRow.length = selectedPacktype.packLength;
+        currentDetailsRow.height = selectedPacktype.packHeight;
+        currentDetailsRow.width = selectedPacktype.packWidth;
+
+        this.computeTotals();
+      }
     }
   }
 
-  onClickDeletePackType(packtype: PackTypeParameterModel, event): boolean {
-    alert('delete');
-
+  /**
+   * On click delete packtype
+   * @param packtype
+   * @param event
+   */
+  onClickDeletePackType(currentDetailsRow: ShipmentDetailModel, packtype: PackTypeParameterModel, event): boolean {
+    // stop selecting item
     event.stopPropagation();
 
     const self = this;
@@ -631,21 +638,41 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       // delete confirmed
       .then(
       function () {
-
-        swal(
-          "Deleted!",
-          "Your shipment has been deleted.",
-          "success"
-        );
-
+        self.parametersDataService.deletePackType(packtype.id, self.currentUser.customerId)
+          .subscribe(
+          result => {
+            if (result) {
+              swal("Deleted!", "Packtype has been deleted.", "success");
+              // update model
+              self.packTypes = self.packTypes.filter(
+                item => item.id !== packtype.id
+              );
+              currentDetailsRow.packTypeId = null;
+            } else {
+              swal(
+                "Not Deleted!",
+                "An error occured. Packtype has not been deleted.  Please contact an administrator.",
+                "error"
+              );
+            }
+          },
+          error => {
+            swal(
+              "Not Deleted!",
+              "An error occured. Packtype has not been deleted.  Please contact an administrator.",
+              "error"
+            );
+            self.errorHandler.handleError(error);
+          }
+          );
       },
-      error => {
-        swal(
-          "Not Deleted!",
-          "An error occured. Your shipment has not been deleted.  Please contact an administrator.",
-          "error"
-        );
-        self.errorHandler.handleError(error);
+      // delete canceled
+      function (dismiss) {
+        // dismiss can be 'cancel', 'overlay',
+        // 'close', and 'timer'
+        if (dismiss === "cancel") {
+          swal("Cancelled", "Packtype is safe :)", "error");
+        }
       }
       );
 
@@ -723,11 +750,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
   }
 
   private isModelValid(): boolean {
-    if (!this.componentModel.poNumber || this.componentModel.poNumber.length <= 0) {
-      this.helperService.scrollOnElement('poNumber');
-      this.helperService.setFocusOnElement('poNumber');
-      return false;
-    }
+
     if (!this.senderSelectedAddress) {
       this.helperService.scrollOnElement('senderSearchAddress');
       this.helperService.setFocusOnElement('senderSearchAddress');

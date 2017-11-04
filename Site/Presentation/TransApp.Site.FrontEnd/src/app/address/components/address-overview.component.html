@@ -10,7 +10,17 @@
         </div>
         <button class="btn btn-info" [routerLink]="['/address-add']">(+) Create a new address</button>
 
-        <div class="row">
+
+        <div *ngIf="showLoader" class="row">
+            <div class="col-md-5"></div>
+            <div class="col-md-2">
+                <br>
+                <mat-spinner></mat-spinner>
+            </div>
+            <div class="col-md-5"></div>
+        </div>
+
+        <div class="row" *ngIf="!showLoader">
             <div class="col-md-12">
                 <div class="card">
                     <!-- <div class="card-header card-header-icon" data-background-color="rose">
@@ -55,6 +65,15 @@
                                                         </button>
                                             </td>
                                         </tr>
+
+                                        <tr id="editAddressRowProgress" *ngIf="addressRow.showViewLoader">
+                                            <td colspan="7">
+                                                <div>
+                                                    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                                                </div>
+                                            </td>
+                                        </tr>
+
                                         <tr id="editAddressRow" *ngIf="addressRow.viewEdit">
                                             <td colspan="4">
                                                 <router-outlet></router-outlet>

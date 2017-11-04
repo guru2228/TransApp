@@ -215,7 +215,7 @@ export class ShipmentOverviewComponent
             const rowToUpdate = this.componentModel.filter(
               item => item.shipment.id === result.shipment.id)[0];
             if (result.operation == 'loaded') {
-              rowToUpdate.showViewShipmentLoader = false;
+              rowToUpdate.showViewLoader = false;
             } else if (result.operation == 'saved') {
               rowToUpdate.shipment.pickUpDate = result.shipment.pickUpDate;
               rowToUpdate.shipment.deliveryDate = result.shipment.deliveryDate;
@@ -255,7 +255,7 @@ export class ShipmentOverviewComponent
    * Show edit
    * */
   onClickEditShipment(shipmentRow: ShipmentRowViewModel) {
-    shipmentRow.showViewShipmentLoader = true;
+    shipmentRow.showViewLoader = true;
 
     shipmentRow.viewActions = false;
 
@@ -496,8 +496,7 @@ export class ShipmentOverviewComponent
         if (dismiss === "cancel") {
           swal("Cancelled", "Your shipment is safe", "error");
         }
-      }
-      );
+      });
   }
 
   /**
@@ -505,6 +504,7 @@ export class ShipmentOverviewComponent
  * @param page
  */
   paginate(page: number) {
+    this.showLoader = true;
     this.currentPage = page;
     this.getShipments();
 

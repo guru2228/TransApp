@@ -1,12 +1,16 @@
 export class PackTypeParameterModel {
   public id: number;
   public code: string;
-  public dictionaryId: number;
-  public description: string;
 
-  public length: number;
-  public width: number;
-  public height: number;
+  public customerId: number;
+
+  public packLength: number;
+  public packHeight: number;
+  public packWidth: number;
+
+  public dictionaryId: number;
+
+  public description: string;
 
   public userIdCreated: number;
   public dateCreated: Date;

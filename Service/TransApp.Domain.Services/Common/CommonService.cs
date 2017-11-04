@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Net;
 using System.Threading.Tasks;
 using AutoMapper;
 using TransApp.Core.CacheService;
+using TransApp.Core.Exceptions;
 using TransApp.DataModel.Dto;
 using TransApp.DataModel.Dto.Custom;
 using TransApp.Domain.Common;
@@ -103,10 +105,14 @@ namespace TransApp.Domain.Services.Common
         /// <param name="iconName"></param>
         /// <param name="dictionary"></param>
         /// <param name="transaction"></param>
+        /// <param name="customerId"></param>
+        /// <param name="length"></param>
+        /// <param name="height"></param>
+        /// <param name="width"></param>
         /// <returns></returns>
         public async Task<int> CreatepackType(string code, string iconName, Dictionary dictionary,
             IDbTransaction transaction = null,
-            int? customerId = null, decimal? length = null, decimal? height = null, decimal? width = null)
+            int? customerId = null, int? length = null, int? height = null, int? width = null)
         {
             var item = _unitOfWork.PackTypeRepository.Get("Code='" + code + "'");
             if (item == null)
@@ -143,6 +149,16 @@ namespace TransApp.Domain.Services.Common
             await _unitOfWork.PackTypeRepository.UpdateAsync(item, transaction);
             return item.Id;
         }
+
+        public async Task<bool> DeletepackType(int id, int customerId)
+        {
+            var packType = await _unitOfWork.PackTypeRepository.GetAsync(id);
+            if(packType.CustomerId != customerId)
+                throw new HttpResponseException(HttpStatusCode.InternalServerError,"Packtype doesn't belong to specified customer");
+            _unitOfWork.PackTypeRepository.Delete(packType);
+            return true;
+        }
+
         public async Task<List<RatingModel>> GetRating(string language, int? transporterId)
         {
             var ratingList =
@@ -155,3 +171,4 @@ namespace TransApp.Domain.Services.Common
         }
     }
 }
+

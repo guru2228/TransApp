@@ -176,7 +176,7 @@ export class ShipmentService {
   }
 
   /**
-  * Delete address
+  * Delete shipment
   * @param medicalEncryptedData
   * @param componentName
   * @param language
