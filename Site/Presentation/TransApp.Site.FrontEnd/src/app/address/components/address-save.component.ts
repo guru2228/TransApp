@@ -40,7 +40,6 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
   componentState: ComponentStateType;
 
   public searchControl: FormControl;
-
   @ViewChild('searchElement')
   public searchElementRef: ElementRef;
 
@@ -71,6 +70,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     this.currentUser = this.authenticationService.getCurrentUser();
+
     // create search FormControl
     this.searchControl = new FormControl();
     // get component state
@@ -82,7 +82,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           if (paramsDataLoaded) {
             this.register_googleMapsPlaceSearchHandler();
             if (this.componentState > 0) {
-              this.addressService.sendAddressModel({
+              this.helperService.sendSharedDataBetweenComponents({
                 operation: 'loaded',
                 address: this.componentModel
               });
@@ -109,7 +109,7 @@ export class AddressSaveComponent implements OnInit, AfterViewInit {
           this.notificationService.show('Address created.', 'success', 'center', 'top');
         } else {
           //// send data to addreess coponent to be updated
-          this.addressService.sendAddressModel({
+          this.helperService.sendSharedDataBetweenComponents({
             operation: 'saved',
             address: this.componentModel
           });

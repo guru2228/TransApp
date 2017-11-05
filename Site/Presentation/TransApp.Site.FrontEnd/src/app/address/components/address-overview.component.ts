@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, OnDestroy } from "@angular/core";
+import { Component, OnInit, AfterViewInit, OnDestroy, HostListener } from "@angular/core";
 import { Router, ActivatedRoute } from "@angular/router";
 
 import { TableData } from "app/shared/md/md-table/md-table.component";
@@ -46,7 +46,7 @@ export class AddressOverviewComponent
     private router: Router,
     private route: ActivatedRoute,
     private addressService: AddressService,
-    private helperService: HelperService,
+    public helperService: HelperService,
     private notificationService: NotificationService,
     private errorHandler: GlobalErrorHandler,
     private authenticationService: AuthenticationService,
@@ -71,6 +71,7 @@ export class AddressOverviewComponent
     //  Activate the tooltips
     $('[rel="tooltip"]').tooltip();
   }
+
 
   ngOnDestroy(): void {
     if (this.subscriptionReceiveUpdatedAddress) {
@@ -226,7 +227,7 @@ export class AddressOverviewComponent
   }
 
   private register_updateSavedModel_handler() {
-    this.subscriptionReceiveUpdatedAddress = this.addressService.addressModelReceivedHandler$.subscribe(
+    this.subscriptionReceiveUpdatedAddress = this.helperService.receiveSharedDataBetweenComponentsHandler$.subscribe(
       result => {
         if (result != null) {
           debugger;
@@ -238,7 +239,7 @@ export class AddressOverviewComponent
             } else if (result.operation == 'saved') {
               rowToUpdate.address = result.address;
               this.helperService.scrollOnTop();
-              this.addressService.resetSendAddressModelHandler();
+              this.helperService.resetSendSharedDataHandler();
             }
           }
         }

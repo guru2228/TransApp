@@ -89,9 +89,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
     this.currentUser = this.authenticationService.getCurrentUser();
 
     // get component state
-    this.componentState = this.helperService.getComponentStateByUrl(
-      this.router.url
-    ) as ComponentStateType;
+    this.componentState = this.helperService.getComponentStateByUrl(this.router.url) as ComponentStateType;
 
     // create search FormControl
     this.senderSearchAddressControl = new FormControl();
@@ -108,7 +106,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
       if (modelLoaded) {
         this.loadParamsData().subscribe(paramsDataLoaded => {
           if (this.componentState > 0) {
-            this.shipmentService.sendShipmentModel({
+            this.helperService.sendSharedDataBetweenComponents({
               operation: 'loaded',
               shipment: this.componentModel
             });
@@ -149,7 +147,7 @@ export class ShipmentSaveComponent implements OnInit, AfterViewInit {
             // this.addressService.sendAddressModel(this.componentModel);
             this.notificationService.show("Shipment saved. ", "success", "center", "top");
 
-            this.shipmentService.sendShipmentModel({
+            this.helperService.sendSharedDataBetweenComponents({
               operation: 'saved',
               shipment: this.componentModel
             });

@@ -1,15 +1,39 @@
-<div #maincontent class="main-content">
+<div class="main-content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-10">
-                <div class="form-group label-floating is-empty">
-                    <label class="control-label"></label>
-                    <input type="text" class="form-control" [formControl]="searchTerm" placeholder="Search address">
+
+            <div *ngFor="let shipmentFilter of shipmentFilters; let rowindex = index" (click)="onFilterClick(shipmentFilter)" [ngClass]="'col-lg-3 col-md-6 col-sm-6  filterpanels ' + (shipmentFilter.statusType == selectedShipmentFilter.statusType ? 'active':'')">
+                <div class="card card-stats">
+                    <div class="card-header" [attr.data-background-color]="getFilterColor(shipmentFilter.statusType)">
+                        <i class="material-icons">{{getFilterIcon(shipmentFilter.statusType)}}</i>
+                    </div>
+                    <div class="card-content">
+                        <p class="category">{{shipmentFilter.description}}</p>
+                        <h3 class="card-title">{{shipmentFilter.statusType == 2 ? (shipmentFilter.inPending ? shipmentFilter.pending: shipmentFilter.declined) : shipmentFilter.amount}}</h3>
+                    </div>
+                    <div class="card-footer">
+                        <div class="stats">
+                            <i class="material-icons">date_range</i> Last updated {{translateService.generateFromNowOnString(shipmentFilter.lastDateTime)}}
+                        </div>
+                    </div>
+                </div>
+
+                <div style="padding-left:25px" *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 2 && shipmentFilter.statusType === 2">
+                    <button class="btn btn-primary" (click)="onAssignedSubfilterClick(true, shipmentFilter)">
+                        <span *ngIf="selectedShipmentFilter.inPending" class="btn-label">
+                            <i class="material-icons">check</i>
+                        </span>
+                        Pending</button>
+                    <button class="btn btn-info" (click)="onAssignedSubfilterClick(false, shipmentFilter)">
+                      <span *ngIf="!selectedShipmentFilter.inPending" class="btn-label">
+                        <i class="material-icons">check</i>
+                    </span>Declined</button>
                 </div>
             </div>
-        </div>
-        <button class="btn btn-info" [routerLink]="['/address-add']">(+) Create a new address</button>
 
+        </div>
+
+        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.statusType === 0" class="btn btn-info" [routerLink]="['/shipment-add']">(+) Create new shipment</button>
 
         <div *ngIf="showLoader" class="row">
             <div class="col-md-5"></div>
@@ -23,67 +47,146 @@
         <div class="row" *ngIf="!showLoader">
             <div class="col-md-12">
                 <div class="card">
-                    <!-- <div class="card-header card-header-icon" data-background-color="rose">
-                        <i class="material-icons">assignment</i>
-                    </div> -->
                     <div *ngIf="componentModel && componentModel.length > 0" class="card-content table-full-width">
-                        <!--<h4 class="card-title">Regular Table with Colors</h4>-->
-                        <div class="table-responsive" id="addresseGrid" *ngIf="componentModel && componentModel.length > 0">
-                            <table class="table table-hover">
+                        <div class="">
+                            <table class="table table-responsive table-hover">
                                 <thead>
                                     <tr>
-                                        <th>Name</th>
-                                        <th>Street, Number, Zipcode, City</th>
-                                        <th>Country code</th>
-                                        <th>Contact person</th>
-                                        <th>Phone</th>
+                                        <th style="width: 10%;" *ngIf="selectedShipmentFilter.isPickupDateColVisible">Pickup date</th>
+                                        <th style="width: 10%;" *ngIf="!helperService.isMobile() && selectedShipmentFilter.isDeliveryDateColVisible">Delivery date</th>
+                                        <th *ngIf="selectedShipmentFilter.isFromColVisible">From</th>
+                                        <th *ngIf="!helperService.isMobile() && selectedShipmentFilter.isDestinationColVisible">Destination</th>
+                                        <th style="width: 15%;" *ngIf="!helperService.isMobile() && selectedShipmentFilter.isQuatityColVisible">Quantity</th>
+                                        <th style="width: 10%;" *ngIf="!helperService.isMobile() && selectedShipmentFilter.isTransporterColVisible">Transporter</th>
+                                        <th style="width: 10%;" *ngIf="!helperService.isMobile() && selectedShipmentFilter.isPriceColVisible">Price</th>
+                                        <th style="width: 10%;" *ngIf="!helperService.isMobile() && selectedShipmentFilter.isOfferCountColVisible">Offer count</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <ng-container *ngFor="let addressRow of componentModel; let rowindex = index">
-                                        <tr (click)="onClickShowActions(addressRow, rowindex)" [ngClass]="(addressRow.viewActions ||addressRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
-                                            <td>{{addressRow.address.name}}</td>
-                                            <td>{{addressRow.address.location.street + ', ' + addressRow.address.location.streetNumber + ', ' + addressRow.address.location.zipCode + ', ' + addressRow.address.location.city}}</td>
-                                            <td>{{addressRow.address.location.countryCode}}</td>
-                                            <td>{{addressRow.address.contactPerson}}</td>
-                                            <td>{{addressRow.address.phone}}</td>
+
+                                    <ng-container *ngFor="let shipmentRow of componentModel; let rowindex = index">
+                                        <tr id="shipment_row_{{rowindex}}" (click)="onClickShowActions(shipmentRow, rowindex)" [ngClass]="(shipmentRow.viewActions ||shipmentRow.viewEdit   ? 'danger' : (rowindex%2==0?'info':''))">
+                                            <td *ngIf="selectedShipmentFilter.isPickupDateColVisible">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.pickUpDate)}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isDeliveryDateColVisible">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</td>
+                                            <td *ngIf="selectedShipmentFilter.isFromColVisible">{{shipmentRow.shipment.addressFrom}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isDestinationColVisible">{{shipmentRow.shipment.addressTo}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isQuatityColVisible">{{shipmentRow.shipment.totalQuatity + ' items, ' + shipmentRow.shipment.totalVolume + ' &#13221;, ' + shipmentRow.shipment.totalWeight + ' kg'}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isTransporterColVisible">{{shipmentRow.shipment.transporterId}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isPriceColVisible">{{shipmentRow.shipment.totalPrice}}</td>
+                                            <td *ngIf="!helperService.isMobile() && selectedShipmentFilter.isOfferCountColVisible">{{shipmentRow.shipment.offerCount}}</td>
                                         </tr>
 
-                                        <tr id="actionsRow" *ngIf="addressRow.viewActions">
-                                            <td id="actionsRowContent" colspan="5" align="center">
-                                                <button class="btn btn-warning" (click)="onClickEditAddress(addressRow)">
+                                        <tr id="actionsRow" *ngIf="shipmentRow.viewActions">
+                                            <td id="actionsRowContent" [attr.colspan]="helperService.isMobile() ? 2 : 7" align="center">
+
+                                                <div *ngIf="helperService.isMobile()">
+                                                    <div *ngIf="selectedShipmentFilter.isDeliveryDateColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Delivery date </label>
+                                                            <p class="form-control-static">{{translateService.formatToShortLocaleDate(shipmentRow.shipment.deliveryDate)}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="selectedShipmentFilter.isDestinationColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Destination</label>
+                                                            <p class="form-control-static">{{shipmentRow.shipment.addressTo}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="selectedShipmentFilter.isQuatityColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Quantity </label>
+                                                            <p class="form-control-static">{{shipmentRow.shipment.totalQuatity + ' items, ' + shipmentRow.shipment.totalVolume + ' &#13221;, ' + shipmentRow.shipment.totalWeight + ' kg'}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="selectedShipmentFilter.isTransporterColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Transporter</label>
+                                                            <p class="form-control-static">{{shipmentRow.shipment.transporterId}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="selectedShipmentFilter.isPriceColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Price</label>
+                                                            <p class="form-control-static">{{shipmentRow.shipment.totalPrice}}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div *ngIf="selectedShipmentFilter.isOfferCountColVisible" [ngClass]="'row'">
+                                                        <div class="col-sm-12">
+                                                            <label>Offer count</label>
+                                                            <p class="form-control-static">{{shipmentRow.shipment.offerCount}}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-12">
+
+                                                        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.editActionVisible" class="btn btn-warning" (click)="onClickEditShipment(shipmentRow)">
                                                             <span class="btn-label">
                                                                 <i class="material-icons">border_color</i>
                                                             </span>
-                                                            Edit address
+                                                            Edit shipment
                                                         </button>
-                                                <button class="btn btn-danger" (click)="onClickDeleteAddress(addressRow.address.id)">
-                                                            <span class="btn-label">
+                                                        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.deleteActionVisible" class="btn btn-danger" (click)="onClickDeleteShipment(shipmentRow.shipment.id)">
+                                                            <span class="btn-label ">
                                                                 <i class="material-icons">delete_forever</i>
                                                             </span>
-                                                            Delete address
+                                                            Delete shipment
                                                         </button>
+                                                        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToOpenMarketActionVisible" class="btn btn-info" (click)="assignToOpenMarket(shipmentRow.shipment.id)">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">assignment_returned</i>
+                                                            </span>
+                                                            Assign to open market
+                                                        </button>
+                                                        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.moveToUnassingedActionVisible" (click)="moveToUnassigned(shipmentRow.shipment.id)" class="btn btn-info">
+                                                          <span class="btn-label">
+                                                              <i class="material-icons">assignment_turned_in</i>
+                                                          </span>
+                                                          Move to unassigned
+                                                      </button>
+                                                        <button *ngIf="selectedShipmentFilter && selectedShipmentFilter.assignTransporterActionVisible" class="btn btn-info">
+                                                            <span class="btn-label">
+                                                                <i class="material-icons">assignment_turned_in</i>
+                                                            </span>
+                                                            Assign to haulier
+                                                        </button>
+
+                                                        <button *ngIf="false" class="btn btn-info">
+                                                          <span class="btn-label">
+                                                              <i class="material-icons">assignment_turned_in</i>
+                                                          </span>
+                                                         Unassign and publish to open market
+                                                 </button>
+                                                    </div>
+                                                </div>
                                             </td>
                                         </tr>
 
-                                        <tr id="editAddressRowProgress" *ngIf="addressRow.showViewLoader">
+                                        <tr id="editShipmentRowProgress" *ngIf="shipmentRow.showViewLoader">
                                             <td colspan="7">
                                                 <div>
                                                     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
                                                 </div>
                                             </td>
                                         </tr>
-
-                                        <tr id="editAddressRow" *ngIf="addressRow.viewEdit">
-                                            <td colspan="4">
+                                        <tr id="editShipmentRow" *ngIf="shipmentRow.viewEdit">
+                                            <td colspan="7">
                                                 <router-outlet></router-outlet>
                                             </td>
                                         </tr>
                                     </ng-container>
+
+
                                 </tbody>
                             </table>
-
                         </div>
+
                         <ul *ngIf="pagesCollection && pagesCollection.length > 0" class="pagination pagination-info">
                             <li>
                                 <a href="javascript:void(0);" (click)="paginate((currentPage -1 < 0 ? 0 : currentPage -1))"> prev</a>
@@ -95,10 +198,12 @@
                                 <a href="javascript:void(0);" (click)="paginate((currentPage +1 > pagesCollection.length -1 ? pagesCollection.length -1 : currentPage +1))"> next</a>
                             </li>
                         </ul>
+
                     </div>
                     <h4 *ngIf="componentModel && componentModel.length <= 0">
-                        &nbsp;&nbsp;&nbsp;&nbsp;There are no addresses. You can create a new one by clicking on 'Create new address' button
+                        &nbsp;&nbsp;&nbsp;&nbsp;There are no shipments for selected filter.
                     </h4>
+
                 </div>
             </div>
         </div>

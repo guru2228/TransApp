@@ -8,7 +8,7 @@
                         <div class="card-content">
                             <form id="searchForm" #searchForm="ngForm" [hidden]="componentState !== 0">
                                 <div [ngClass]="'form-group label-floating ' + ((!searchControl || !searchControl.valid ) && formAddress.submitted ? ' has-error' : '')">
-                                    <label for="" class="control-label">
+                                    <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                             Search by address
                                             <span class="star">*</span>
                                         </label>
@@ -17,7 +17,7 @@
                             </form>
 
                             <div [ngClass]="'form-group label-floating ' + ((componentModel.name  && componentModel.name.length > 0) ? '' : 'is-empty') + (!componentModel.name  && formAddress.submitted ? ' has-error' : '') ">
-                                <label for="" class="control-label">
+                                <label [ngClass]="componentState == 0 ? 'control-label' : ''">
                                         Name
                                         <span class="star">*</span>
                                     </label>
@@ -80,7 +80,7 @@
                             </div>
 
                             <div [ngClass]="'form-group label-floating ' + (componentModel.email  && componentModel.email.length > 0 ? '' : 'is-empty ' + ((componentModel.email && !emailValidator(componentModel.email)) && formAddress.submitted ? ' has-error' : '')) ">
-                                <label class="control-label">
+                                <label [ngClass]="componentState == 0 ? 'control-label' : ''">
                                         Email address
                                     </label>
                                 <input type="email" class="form-control" [(ngModel)]="componentModel.email" id="email" name="addressEmail">
@@ -92,7 +92,7 @@
                             </div>
 
                             <div class="form-group label-floating" [ngClass]="'form-group label-floating ' + (componentModel.phone  && componentModel.phone.length > 0 ? '' : 'is-empty' + (((!componentModel.phone) && formAddress.submitted ) ? ' has-error' : '')) ">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                         Phone
                                         <span class="star">*</span>
                                     </label>
@@ -100,7 +100,7 @@
                             </div>
 
                             <div class="form-group label-floating">
-                                <label for="" class="control-label">
+                                <label for="" [ngClass]="componentState == 0 ? 'control-label' : ''">
                                         Remarks
                                     </label>
                                 <textarea class="form-control" rows="5" [(ngModel)]="componentModel.remark" id="remark" name="openremarkNow"></textarea>

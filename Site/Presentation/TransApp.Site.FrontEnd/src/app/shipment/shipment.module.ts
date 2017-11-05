@@ -12,6 +12,7 @@ import { ShipmentSaveComponent } from "app/shipment/components/shipment-save.com
 import { CommonAppModule } from 'app/shared/common/common-app.module';
 import { ShipmentService } from 'app/shipment/services/shipment.service';
 import { PackTypeSaveDialog } from 'app/shipment/components/packtype-save.component';
+import { ShipmentAssignTransporterComponent } from 'app/shipment/components/shipment-assign-transporter.component';
 
 
 
@@ -34,6 +35,7 @@ import { PackTypeSaveDialog } from 'app/shipment/components/packtype-save.compon
   declarations: [
     ShipmentOverviewComponent,
     ShipmentSaveComponent,
+    ShipmentAssignTransporterComponent,
     PackTypeSaveDialog
 
   ],

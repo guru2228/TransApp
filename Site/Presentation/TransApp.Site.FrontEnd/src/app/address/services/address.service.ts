@@ -13,18 +13,7 @@ export class AddressService {
 
   private serviceUrl = Constants.serverUrl + 'api/Addresses/';
 
-  private addressModel = new BehaviorSubject<any>(null);
-  addressModelReceivedHandler$ = this.addressModel.asObservable();
-
   constructor(public http: HttpService, private errorHandler: GlobalErrorHandler) { }
-
-  sendAddressModel(value) {
-    this.addressModel.next(value);
-  }
-  // don't forget to reset handler
-  resetSendAddressModelHandler() {
-    this.addressModel.next(null);
-  }
 
   /**
    * get biometrics

@@ -1,10 +1,24 @@
-﻿import { Injectable } from "@angular/core";
+﻿import { Injectable, HostListener } from "@angular/core";
 import { ComponentStateType } from "app/shared/common/helper/component-state-type";
 import PerfectScrollbar from 'perfect-scrollbar';
+import { BehaviorSubject } from "rxjs/BehaviorSubject";
 declare var $: any;
 
 @Injectable()
 export class HelperService {
+
+  private sharedData = new BehaviorSubject<any>(null);
+  receiveSharedDataBetweenComponentsHandler$ = this.sharedData.asObservable();
+  sendSharedDataBetweenComponents(value) {
+    this.sharedData.next(value);
+  }
+  // don't forget to reset handler
+  resetSendSharedDataHandler() {
+    this.sharedData.next(null);
+  }
+
+  screenSize: number;
+
   /**
      * Get component state based on current url
      * @param url
@@ -24,12 +38,17 @@ export class HelperService {
     $main_panel.scrollTop(0);
   }
 
+
   scrollOnElement(elementId) {
     const $main_panel = $(".main-panel");
     const elementPosition = $('#' + elementId).offset();
     $main_panel.scrollTop(elementPosition);
   }
 
+  /**
+   * Move focus on an element
+   * @param elementId
+   */
   setFocusOnElement(elementId) {
     const element = document.getElementById(elementId);
     if (element) {
@@ -37,6 +56,14 @@ export class HelperService {
     }
   }
 
+  /**
+   * Returns true if mobile devices width is detected
+   */
+  isMobile() {
+    if (this.screenSize <= 768)
+      return true;
+    return false;
+  }
 
   /**
      * Convert datetime to string

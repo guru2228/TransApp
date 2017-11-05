@@ -14,6 +14,7 @@ import { AddressOverviewComponent } from "app/address/components/address-overvie
 import { ShipmentSaveComponent } from "app/shipment/components/shipment-save.component";
 import { ShipmentOverviewComponent } from "app/shipment/components/shipment-overview.component";
 import { AuthGuard } from "app/authentication/guard/auth-guard.service";
+import { ShipmentAssignTransporterComponent } from 'app/shipment/components/shipment-assign-transporter.component';
 
 
 
@@ -52,6 +53,10 @@ const routes: Routes = [
         component: ShipmentSaveComponent
       },
       {
+        path: 'shipment-assign-transporter/:id',
+        component: ShipmentAssignTransporterComponent
+      },
+      {
         path: '',
         children: [{
           path: 'shipment-overview',
@@ -59,6 +64,10 @@ const routes: Routes = [
           children: [{
             path: 'shipment-edit/:id',
             component: ShipmentSaveComponent
+          },
+          {
+            path: 'shipment-assign-transporter/:id',
+            component: ShipmentAssignTransporterComponent
           }]
         }]
       },

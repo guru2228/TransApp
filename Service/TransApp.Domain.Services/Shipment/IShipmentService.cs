@@ -56,7 +56,7 @@ namespace TransApp.Domain.Services.Shipment
 
         Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter);
 
-        Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId, int amountFlexibility = 0);
+        Task<bool> AssignTransporter(int userId, int shipmentId, int amountFlexibility = 0);
 
         Task<bool> CancelShipment(int userId, int shipmentId, IDbTransaction transaction = null);
 

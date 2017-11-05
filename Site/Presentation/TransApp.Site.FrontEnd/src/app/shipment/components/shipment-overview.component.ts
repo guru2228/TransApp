@@ -31,7 +31,7 @@ export class ShipmentOverviewComponent
   shipmentFilters: ShipmentTransporterFilterModel[];
   currentUser: ApplicationUser;
   // search term
-  currentAddressId = -1;
+  currentShipmentId = -1;
   currentPage = 0;
   pagesCollection: Array<number>;
   pageSize = 20;
@@ -48,7 +48,7 @@ export class ShipmentOverviewComponent
     private notificationService: NotificationService,
     private authenticationService: AuthenticationService,
     public translateService: TranslateService,
-    private helperService: HelperService,
+    public helperService: HelperService,
     private errorHandler: GlobalErrorHandler,
     private route: ActivatedRoute
   ) { }
@@ -125,7 +125,7 @@ export class ShipmentOverviewComponent
           this.componentModel = [];
           if (result && result.length > 0) {
             if (this.route.firstChild) {
-              this.currentAddressId = +this.route.firstChild.snapshot.params[
+              this.currentShipmentId = +this.route.firstChild.snapshot.params[
                 "id"
               ];
             }
@@ -135,7 +135,7 @@ export class ShipmentOverviewComponent
               // if url contains edit then open it by default
               debugger;
               shipmentRow.viewActions =
-                result[i].id === this.currentAddressId;
+                result[i].id === this.currentShipmentId;
               this.componentModel.push(shipmentRow);
             }
 
@@ -207,16 +207,16 @@ export class ShipmentOverviewComponent
   }
 
   private register_updateSavedModel_handler() {
-    this.subscriptionReceiveUpdatedShipment = this.shipmentService.shipmentModelReceivedHandler$.subscribe(
+    this.subscriptionReceiveUpdatedShipment = this.helperService.receiveSharedDataBetweenComponentsHandler$.subscribe(
       result => {
         if (result != null) {
           debugger;
           if (this.componentModel) {
             const rowToUpdate = this.componentModel.filter(
               item => item.shipment.id === result.shipment.id)[0];
-            if (result.operation == 'loaded') {
+            if (result.operation === 'loaded') {
               rowToUpdate.showViewLoader = false;
-            } else if (result.operation == 'saved') {
+            } else if (result.operation === 'saved') {
               rowToUpdate.shipment.pickUpDate = result.shipment.pickUpDate;
               rowToUpdate.shipment.deliveryDate = result.shipment.deliveryDate;
               rowToUpdate.shipment.addressFrom = result.shipment.addressFrom;
@@ -226,7 +226,7 @@ export class ShipmentOverviewComponent
               rowToUpdate.shipment.totalPrice = result.shipment.totalPrice;
               rowToUpdate.shipment.offerCount = result.shipment.offerCount;
               this.helperService.scrollOnTop();
-              this.shipmentService.resetSendShipmentModelHandler();
+              this.helperService.resetSendSharedDataHandler();
             }
           }
         }
@@ -265,6 +265,31 @@ export class ShipmentOverviewComponent
 
     shipmentRow.viewEdit = !shipmentRow.viewEdit;
   }
+
+
+  /**
+   * On assign transporter click
+   * @param shipmentId
+   */
+  assignToTransporter(shipmentRow: ShipmentRowViewModel) {
+    shipmentRow.showViewLoader = true;
+
+    shipmentRow.viewActions = false;
+
+    this.shipmentService.assignToTransporters(shipmentRow.shipment.id, this.currentUser.customerId, this.translateService.currentLanguage).subscribe(
+      assigned => {
+        if (assigned) {
+          this.router.navigate(["./shipment-assign-transporter/" + shipmentRow.shipment.id], {
+            relativeTo: this.route
+          });
+
+          shipmentRow.viewEdit = !shipmentRow.viewEdit;
+        }
+      }, error => {
+        this.errorHandler.handleError(error);
+      });
+  }
+
 
   /**
  * assignToOpenMarket
@@ -363,71 +388,42 @@ export class ShipmentOverviewComponent
       confirmButtonText: "Yes, move it to unassigned!"
     })
       // move confirmed
-      .then(
-      function () {
-        self.shipmentService
-          .moveToUnassigned(
-          shipmentId,
-          self.currentUser.customerId,
-          self.translateService.currentLanguage
-          )
-          .subscribe(
+      .then(function () {
+        self.shipmentService.moveToUnassigned(shipmentId, self.currentUser.customerId, self.translateService.currentLanguage).subscribe(
           moved => {
             if (moved) {
-              self.componentModel = self.componentModel.filter(
-                item => item.shipment.id !== shipmentId
-              );
+              self.componentModel = self.componentModel.filter(item => item.shipment.id !== shipmentId);
 
-              const currentFilter = self.shipmentFilters.find(
-                item =>
-                  item.statusType === self.selectedShipmentFilter.statusType
-              );
+              const currentFilter = self.shipmentFilters.find(item => item.statusType === self.selectedShipmentFilter.statusType);
               if (currentFilter) {
                 currentFilter.amount = currentFilter.amount - 1;
               }
 
-              const unassignedFilter = self.shipmentFilters.find(
-                item =>
-                  item.statusType === ShipmentTransporterStatus.unassigned
-              );
+              const unassignedFilter = self.shipmentFilters.find(item => item.statusType === ShipmentTransporterStatus.unassigned);
               if (unassignedFilter) {
                 unassignedFilter.amount = unassignedFilter.amount + 1;
                 unassignedFilter.lastDateTime = new Date();
               }
 
-              swal(
-                "Moved!",
-                "Your shipment has been moved to unassigned.",
-                "success"
-              );
+              swal("Moved!", "Your shipment has been moved to unassigned.", "success");
               // update model
               self.componentModel = self.componentModel.filter(
                 item => item.shipment.id !== shipmentId
               );
             } else {
-              swal(
-                "Not moved!",
-                "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
-                "error"
-              );
+              swal("Not moved!", "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.", "error");
             }
           },
           error => {
-            swal(
-              "Not moved!",
-              "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.",
-              "error"
-            );
+            swal("Not moved!", "An error occured. Your shipment has not been moved to unassigned. Please contact an administrator.", "error");
             self.errorHandler.handleError(error);
-          }
-          );
+          });
       },
       function (dismiss) {
         if (dismiss === "cancel") {
           swal("Cancelled", "Your shipment is safe", "error");
         }
-      }
-      );
+      });
   }
 
   onClickDeleteShipment(shipmentId: number) {

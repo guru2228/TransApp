@@ -6,6 +6,7 @@ import 'rxjs/add/operator/filter';
 import { NavbarComponent } from '../../shared/navbar/navbar.component';
 import { NavItem, NavItemType } from 'app/shared/md/md.module';
 import PerfectScrollbar from 'perfect-scrollbar';
+import { HelperService } from 'app/shared/common/services/helperService';
 declare const $: any;
 
 @Component({
@@ -18,12 +19,29 @@ export class AppLayoutComponent implements OnInit, AfterViewInit {
   private _router: Subscription;
   url: string;
   location: Location;
+  currentPageWidth: number;
 
   @ViewChild('sidebar') sidebar: any;
   @ViewChild(NavbarComponent) navbar: NavbarComponent;
-  constructor(private router: Router, location: Location) {
+
+  constructor(private router: Router, location: Location, private helperService: HelperService) {
     this.location = location;
+
+    // get window width
+    this.currentPageWidth = window.innerWidth;
+    this.helperService.screenSize = window.innerWidth;
   }
+
+  /**
+ * Update screen size
+ * @param event
+ */
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    this.currentPageWidth = window.innerWidth;
+    this.helperService.screenSize = window.innerWidth;
+  }
+
   ngOnInit() {
     const elemMainPanel = <HTMLElement>document.querySelector('.main-panel');
     const elemSidebar = <HTMLElement>document.querySelector('.sidebar .sidebar-wrapper');
@@ -86,6 +104,9 @@ export class AppLayoutComponent implements OnInit, AfterViewInit {
       { type: NavItemType.NavbarLeft, title: 'Log out' }
     ];
   }
+
+
+
   ngAfterViewInit() {
     this.runOnRouteChange();
   }

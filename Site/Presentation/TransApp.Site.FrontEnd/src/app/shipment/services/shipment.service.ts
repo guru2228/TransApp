@@ -7,19 +7,11 @@ import { GlobalErrorHandler } from "app/shared/common/services/globalErrorHandle
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 import { ShipmentModel } from "app/shipment/models/shipment-model";
 import { ShipmentTransporterFilterModel } from "app/shipment/models/shipment-transporter-filter-model";
+import { ShipmentTransporterModel } from "app/shipment/models/shipment-transporter-model";
 
 @Injectable()
 export class ShipmentService {
   private serviceUrl = Constants.serverUrl + "api/Shipments/";
-  private shipmentModel = new BehaviorSubject<any>(null);
-  shipmentModelReceivedHandler$ = this.shipmentModel.asObservable();
-  sendShipmentModel(value) {
-    this.shipmentModel.next(value);
-  }
-  // don't forget to reset handler
-  resetSendShipmentModelHandler() {
-    this.shipmentModel.next(null);
-  }
 
   constructor(
     public http: HttpService,
@@ -51,14 +43,7 @@ export class ShipmentService {
    * @param numberOfRetrievedItems
    * @param language
    */
-  getAll(
-    customerId: number,
-    shipmentStatus: number,
-    getPending: boolean,
-    startItem: number,
-    numberOfRetrievedItems: number,
-    language: string
-  ): Observable<ShipmentModel[]> {
+  getAll(customerId: number, shipmentStatus: number, getPending: boolean, startItem: number, numberOfRetrievedItems: number, language: string): Observable<ShipmentModel[]> {
     return this.http
       .get(
       this.serviceUrl +
@@ -146,6 +131,54 @@ export class ShipmentService {
       { headers }
       )
       .map(response => response.json())
+      .catch(this.errorHandler.throwError);
+  }
+
+
+  /**
+   * assignToTransporters
+   * @param shipmentId
+   * @param customerId
+   * @param language
+   */
+  assignToTransporters(shipmentId: number, customerId: number, language: string) {
+    const headers = new Headers({ "Content-Type": "application/json" });
+    const data = JSON.stringify({});
+
+    return this.http
+      .post(
+      this.serviceUrl +
+      "assignToTransporters/" +
+      shipmentId +
+      "/" +
+      customerId +
+      "/" +
+      language,
+      data,
+      { headers }
+      )
+      .map(response => response.json())
+      .catch(this.errorHandler.throwError);
+  }
+
+  /**
+   * getAssignedTransporters
+   * @param shipmentId
+   * @param customerId
+   * @param language
+   */
+  getAssignedTransporters(shipmentId: number, customerId: number, language: string): Observable<ShipmentTransporterModel[]> {
+    return this.http
+      .get(
+      this.serviceUrl +
+      "getAssignedTransporters" +
+      "/" +
+      shipmentId +
+      "/" +
+      customerId +
+      "/" +
+      language)
+      .map((res: Response) => res.json())
       .catch(this.errorHandler.throwError);
   }
 

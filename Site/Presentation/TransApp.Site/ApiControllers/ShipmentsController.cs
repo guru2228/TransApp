@@ -173,6 +173,61 @@ namespace TransApp.Site.ApiControllers
         }
 
         /// <summary>
+        /// Assign shipment to transporters
+        /// </summary>
+        /// <param name="shipmentId"></param>
+        /// <param name="customerId"></param>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("assignToTransporters/{shipmentId}/{customerId}/{language}")]
+        public async Task<bool> AssignToTransporters(int shipmentId, int customerId, string language)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+            language.ConvertLocaleStringToServerLanguage();
+
+            return await _shipmentService.AssignTransporter(currentUser.Id, shipmentId);
+        }
+
+
+        /// <summary>
+        /// Get all assigned shipment transporters for a shipment id.
+        /// </summary>
+        /// <param name=")"></param>
+        /// <param name="shipmentId"></param>
+        /// <param name="customerId"></param>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpGet("getAssignedTransporters/{shipmentId}/{customerId}/{language}")]
+        public async Task<IEnumerable<ShipmentTransporterModel>> GetAssignedTransporters(int shipmentId, int customerId,  string language)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+            language.ConvertLocaleStringToServerLanguage();
+
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError, "Provided customer is not assigned to your account");
+            }
+
+            var searchFilter = new FilterShipmentTransporter
+            {
+                ShipmentId = shipmentId,
+                CustomerId = customerId,
+            };
+            var shipments = await _shipmentService.GetShipmentTransporterAll(searchFilter);
+            return shipments.OrderByDescending(item => item.Id);
+        }
+
+        /// <summary>
         /// Move to unassigned
         /// </summary>
         /// <param name="shipmentId"></param>

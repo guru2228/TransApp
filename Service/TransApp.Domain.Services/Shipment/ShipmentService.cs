@@ -926,17 +926,12 @@ namespace TransApp.Domain.Services.Shipment
             return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
         }
 
-        public async Task<List<ShipmentTransporterModel>> AssignTransporter(int userId, int shipmentId,
+        public async Task<bool> AssignTransporter(int userId, int shipmentId,
             int amoutFlexibility = 0)
         {
             await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, null);
             await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, amoutFlexibility);
-            var result = await GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = shipmentId});
-            if (amoutFlexibility == 0 && !result.Any())
-            {
-                return await AssignTransporter(userId, shipmentId, 2);
-            }
-            return result;
+            return true;
         }
 
         public async Task CreateShipmentHistory(DataModel.Dto.Shipment shipment, IDbTransaction transaction = null)
