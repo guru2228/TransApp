@@ -984,11 +984,24 @@ namespace TransApp.Domain.Services.Shipment
             return true;
         }
 
-        public async Task<bool> UpdateTransporterAssigned(int userId, bool assigned, int shipmentTransporterId,
+        public async Task<bool> UpdateTransporterAssigned(int userId, bool assigned,int shipmentId, int shipmentTransporterId,
             IDbTransaction transaction = null)
         {
-            return await _unitOfWork.ShipmentTransporterRepository.UpdateTransporterAssigned(userId, assigned,
+            bool result =  await _unitOfWork.ShipmentTransporterRepository.UpdateTransporterAssigned(userId, assigned,
                 shipmentTransporterId, transaction);
+
+            if (result)
+            {
+                if (!assigned)
+                {
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "UAS");
+                }
+                else
+                {
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "ASS");
+                }
+            }
+            return result;
         }
 
         #endregion assign transporter
