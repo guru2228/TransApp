@@ -497,7 +497,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = 45});
+                    await _shipmentService.GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = 60});
                 ;
                 {
                     Assert.IsTrue(true);

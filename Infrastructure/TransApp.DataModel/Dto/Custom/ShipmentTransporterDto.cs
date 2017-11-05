@@ -55,5 +55,6 @@ namespace TransApp.DataModel.Dto.Custom
         public string IconName { get; set; }
         public DateTime? PickUpDate { get; set; }
         public DateTime? DeliveryDate { get; set; }
+        public string AddressName { get; set; }
     }
 }
