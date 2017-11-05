@@ -21,5 +21,8 @@ namespace TransApp.Persistence.Repository
 
         List<ShipmentTransporter> GetAllBasic(string predicate);
         Task AssignTransporter(int userId, int shipmentId,int amountOfDaysFlexibility);
+
+        Task<bool> UpdateTransporterAssigned(int userId, bool assigned, int shipmentTransporterId,
+            IDbTransaction transaction = null);
     }
 }
