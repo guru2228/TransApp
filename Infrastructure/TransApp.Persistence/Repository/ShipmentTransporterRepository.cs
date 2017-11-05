@@ -66,6 +66,7 @@ namespace TransApp.Persistence.Repository
               ,Transporter.IconName
               ,Shipment.PickUpDate
               ,Shipment.DeliveryDate
+              ,[Address].Name as AddressName
               FROM ShipmentTransporter
 left outer join ApplicationUser as UserCreatedTable on UserCreatedTable.Id=ShipmentTransporter.UserIdCreated
 left outer join ApplicationUser as UserModifiedTable on UserModifiedTable.Id=ShipmentTransporter.UserIdModified  
