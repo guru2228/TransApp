@@ -212,11 +212,14 @@ export class ShipmentOverviewComponent
         if (result != null) {
           debugger;
           if (this.componentModel) {
-            const rowToUpdate = this.componentModel.filter(
-              item => item.shipment.id === result.shipment.id)[0];
-            if (result.operation === 'loaded') {
+            if (result.operation === 'loaded-transporters') {
+              const rowToUpdate = this.componentModel.filter(item => item.shipment.id === result.shipmentId)[0];
+              rowToUpdate.showViewLoader = false;
+            } else if (result.operation === 'loaded') {
+              const rowToUpdate = this.componentModel.filter(item => item.shipment.id === result.shipment.id)[0];
               rowToUpdate.showViewLoader = false;
             } else if (result.operation === 'saved') {
+              const rowToUpdate = this.componentModel.filter(item => item.shipment.id === result.shipment.id)[0];
               rowToUpdate.shipment.pickUpDate = result.shipment.pickUpDate;
               rowToUpdate.shipment.deliveryDate = result.shipment.deliveryDate;
               rowToUpdate.shipment.addressFrom = result.shipment.addressFrom;

@@ -36,12 +36,12 @@ namespace TransApp.Domain.Shipment
         /// <summary>
         /// used only for assigned group
         /// </summary>
-        public int Declined { get; set; }
+        public int DeclinedAmount { get; set; }
 
         /// <summary>
         /// used only for assigned
         /// </summary>
-        public int Pending { get; set; }
+        public int PendingAmount { get; set; }
 
     }
 }

@@ -768,8 +768,8 @@ namespace TransApp.Domain.Services.Shipment
 
                 if (fields != null)
                 {
-                    assigned.Declined = Convert.ToInt32(fields["Declined"]);
-                    assigned.Pending = Convert.ToInt32(fields["Pending"]);
+                    assigned.DeclinedAmount = Convert.ToInt32(fields["Declined"]);
+                    assigned.PendingAmount = Convert.ToInt32(fields["Pending"]);
                 }
             }
             result.Add(assigned);

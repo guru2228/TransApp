@@ -74,7 +74,11 @@ export class ShipmentAssignTransporterComponent
         .subscribe(
         result => {
           this.componentModel = result;
-          this.showLoader = false;
+
+          this.helperService.sendSharedDataBetweenComponents({
+            operation: 'loaded-transporters',
+            shipmentId: currentShipmentId
+          });
         },
         error => {
           this.errorHandler.handleError(error);

@@ -15,12 +15,18 @@ namespace TransApp.Domain.Shipment
 
         public bool Assigned { get; set; }
 
+        /// <summary>
+        /// if assigned =  true then accept or decline, if both false (accepted and decline then return all assigned)
+        /// </summary>
         public bool Accepted { get; set; }
 
         public bool Declined { get; set; }
 
         public bool Selected { get; set; }
 
+        /// <summary>
+        /// 
+        /// </summary>
         public DateTime? AssignedDate { get; set; }
 
         public DateTime? AcceptedDate { get; set; }
@@ -43,6 +49,9 @@ namespace TransApp.Domain.Shipment
 
         public DateTime? DateModified { get; set; }
 
+        /// <summary>
+        /// Valability  of price when transporter offer in openmarket
+        /// </summary>
         public DateTime? ExpiredDate { get; set; }
         public int? AmountReview { get; set; }
         public int? Rating { get; set; }
