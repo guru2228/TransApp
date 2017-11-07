@@ -778,7 +778,7 @@ where [Shipment].Id =  " + id);
       ,[Shipment].[ReceiverContactPerson]
       ,[Shipment].[ReceiverPhone]
       ,[Shipment].[ReceiverRemark]
-      ,[Shipment].[TotalPrice]
+      ,isnull([Shipment].[TotalPrice],ShipmentTransporter.Price) as TotalPrice
       ,[Shipment].[TotalVolume]
       ,[Shipment].[TotalQuatity]
       ,[Shipment].[TotalWeight]
@@ -796,7 +796,7 @@ where [Shipment].Id =  " + id);
       ,[Shipment].[DateModified]
       ,isnull(UserCreatedTable.FirstName,'') + ' '+isnull(UserCreatedTable.LastName,'') as UserCreated
 	  ,isnull(UserModifiedTable.FirstName,'') + ' '+isnull(UserModifiedTable.LastName,'') as UserModified
-      ,Transporter.Name as TransporterName
+      ,isnull(Transporter.Name,AssignedTransporter.Name) as TransporterName
       ,FromAddress.Name as AddressFrom
       ,ToAddress.Name as AddressTo");
             if (filter.TransporterStatus == ShipmentTransporterStatus.OpenMarket)
@@ -810,8 +810,10 @@ left outer join [ApplicationUser] as UserCreatedTable on UserCreatedTable.Id=Shi
 left outer join [ApplicationUser] as UserModifiedTable on UserModifiedTable.Id=Shipment.UserIdModified
 left outer join [Transporter] on Transporter.Id=Shipment.TransporterId
 left outer join [Address] as FromAddress on FromAddress.Id=Shipment.SenderAddressId
-left outer join [Address] as ToAddress on ToAddress.Id=Shipment.ReceiverAddressId");
-           
+left outer join [Address] as ToAddress on ToAddress.Id=Shipment.ReceiverAddressId
+left outer join ShipmentTransporter on ShipmentTransporter.ShipmentId =Shipment.Id and ShipmentTransporter.Assigned=1
+left outer join Transporter as AssignedTransporter on AssignedTransporter.Id=ShipmentTransporter.TransporterId ");
+
  sb.Append(@" where 1=1");
             if (filter.CustomerId.HasValue)
             {

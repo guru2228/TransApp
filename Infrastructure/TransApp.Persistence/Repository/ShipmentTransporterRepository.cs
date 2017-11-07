@@ -228,5 +228,35 @@ order by Tariff + PickupDelay.SurtaxFixed + DeliveryDelay.SurtaxFixed
           
             return sb.ToString();
         }
+
+        public async Task<bool> UpdateTransporterAssigned(int userId,bool assigned, int shipmentTransporterId, IDbTransaction transaction = null)
+        {
+            DataModel.Dto.ShipmentTransporter currentShipmentTransporter = new DataModel.Dto.ShipmentTransporter
+            {
+                Id = shipmentTransporterId,
+                Assigned = assigned,
+                UserIdModified = userId,
+                DateModified = DateTime.Now,
+                AssignedDate = DateTime.Now
+            };
+            if (!assigned)
+            {
+                currentShipmentTransporter.AssignedDate = null;
+            }
+            List<string> columnsToUpdateList = new List<string>();
+            columnsToUpdateList.Add("Assigned");
+            columnsToUpdateList.Add("UserIdModified");
+            columnsToUpdateList.Add("DateModified");
+            columnsToUpdateList.Add("AssignedDate");
+            try
+            {
+                await UpdateAsync(currentShipmentTransporter, transaction, true, columnsToUpdateList);
+            }
+            catch
+            {
+                return false;
+            }
+            return true;
+        }
     }
 }

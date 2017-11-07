@@ -919,20 +919,6 @@ namespace TransApp.Domain.Services.Shipment
             }
         }
 
-        public async Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter)
-        {
-            var shipmentTransporters =
-                await _unitOfWork.ShipmentTransporterRepository.GetAll(filter);
-            return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
-        }
-
-        public async Task<bool> AssignTransporter(int userId, int shipmentId,
-            int amoutFlexibility = 0)
-        {
-            await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, null);
-            await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, amoutFlexibility);
-            return true;
-        }
 
         public async Task CreateShipmentHistory(DataModel.Dto.Shipment shipment, IDbTransaction transaction = null)
         {
@@ -981,5 +967,43 @@ namespace TransApp.Domain.Services.Shipment
                 return false;
             }
         }
-    }
+
+        #region assign transporter
+        public async Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter)
+        {
+            var shipmentTransporters =
+                await _unitOfWork.ShipmentTransporterRepository.GetAll(filter);
+            return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
+        }
+
+        public async Task<bool> AssignTransporter(int userId, int shipmentId,
+            int amoutFlexibility = 0)
+        {
+            await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, null);
+            await _unitOfWork.ShipmentTransporterRepository.AssignTransporter(userId, shipmentId, amoutFlexibility);
+            return true;
+        }
+
+        public async Task<bool> UpdateTransporterAssigned(int userId, bool assigned,int shipmentId, int shipmentTransporterId,
+            IDbTransaction transaction = null)
+        {
+            bool result =  await _unitOfWork.ShipmentTransporterRepository.UpdateTransporterAssigned(userId, assigned,
+                shipmentTransporterId, transaction);
+
+            if (result)
+            {
+                if (!assigned)
+                {
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "UAS");
+                }
+                else
+                {
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "ASS");
+                }
+            }
+            return result;
+        }
+
+        #endregion assign transporter
+        }
 }

@@ -63,6 +63,7 @@ namespace TransApp.Domain.Services.Shipment
         Task<bool> MoveToHistory(int userId, int shipmentId, int transporterId, int amountRating, string review,
             IDbTransaction transaction = null);
 
-        
+        Task<bool> UpdateTransporterAssigned(int userId, bool assigned, int shipmentId, int shipmentTransporterId,
+           IDbTransaction transaction = null);
     }
 }
