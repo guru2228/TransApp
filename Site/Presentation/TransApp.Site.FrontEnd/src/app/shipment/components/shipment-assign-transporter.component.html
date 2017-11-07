@@ -5,11 +5,11 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header card-header-icon" data-background-color="rose">
-                        <i class="material-icons">assignment</i>
+                        <i class="material-icons">local_shipping</i>
                     </div>
                     <div class="card-content">
-                        <h4 class="card-title">Shipment transporters</h4>
-                        <div class="">
+                        <h4 class="card-title">Assigned transporters</h4>
+                        <div *ngIf="componentModel && componentModel.length > 0" class="">
                             <table class="table table-responsive table-shopping">
                                 <thead>
                                     <tr>
@@ -18,7 +18,7 @@
                                         <th class="td-center">Price</th>
                                         <th class="text-center">Loading/Delivery Date</th>
                                         <th class="text-center">Rating</th>
-                                        <th class="text-center">Contact</th>
+                                        <th class="text-left">Contact</th>
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -36,20 +36,21 @@
                                         </td>
                                         <td class="td-center"><small>&euro;</small>{{transporter.price}}</td>
                                         <td class="text-center">
-                                            <span>Loading:</span><br>
-                                            <span>Delivey:</span>
+                                            <span>Loading: {{translateService.formatToShortLocaleDate(helperService.toMomentDate(transporter.pickUpDate).add(transporter.loadingOn, 'days'))}}</span><br>
+                                            <span>Delivery: {{translateService.formatToShortLocaleDate(helperService.toMomentDate(transporter.deliveryDate).add(transporter.deliveryOn, 'days'))}}</span>
                                         </td>
                                         <td class="text-center">
-                                            <span>{{transporter.rating}} </span><br>
-                                            <span>{{transporter.amountReview}} </span>
+                                            <star-rating-comp [starType]="'svg'" [disabled]="true" [rating]="transporter.rating == null ? 0 : transporter.rating"></star-rating-comp>
+                                            <span>{{'('+ (transporter.amountReview ? transporter.amountReview : 0).toString() + ' reviews)' }} </span>
                                         </td>
-                                        <td class="text-center">
-                                            <span>{{transporter.contactPerson}} </span><br>
-                                            <span>{{transporter.phone}} </span>
+                                        <td class="text-left">
+                                            <i class="material-icons">email</i> <span>{{transporter.contactPerson}} </span><br>
+                                            <i class="material-icons">perm_phone_msg</i> <span>{{transporter.phone}} </span>
                                         </td>
 
                                         <td class="td-actions">
-                                            <button class="btn btn-success">
+                                            <span *ngIf="transporter.assigned"><b>Assigned</b></span>
+                                            <button *ngIf="!transporter.assigned" class="btn btn-success" (click)="onClickAssignToTransporter(transporter)">
                                                 <span class="btn-label ">
                                                     <i class="material-icons">done</i>
                                                 </span>
@@ -61,6 +62,10 @@
                                 </tbody>
                             </table>
                         </div>
+
+                        <h4 *ngIf="componentModel && componentModel.length <= 0">
+                            &nbsp;&nbsp;&nbsp;&nbsp;There are no available transporters
+                        </h4>
                     </div>
                 </div>
             </div>

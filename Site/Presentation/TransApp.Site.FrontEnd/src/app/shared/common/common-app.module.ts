@@ -15,6 +15,7 @@ import { TranslateService } from "app/shared/common/services/localization/transl
 import { NotificationService } from 'app/shared/common/services/notification.service';
 import { AddressAvailabilitySliderComponent } from "app/shared/common/components/address-availability-slider.component";
 import { PagerService } from 'app/shared/common/services/pager.service';
+import { StarRatingModule } from 'angular-star-rating';
 
 
 import {
@@ -128,11 +129,13 @@ export class MaterialModule { }
     CommonModule,
     RouterModule,
     FormsModule,
-    MaterialModule
+    MaterialModule,
+    StarRatingModule.forRoot()
   ],
   exports: [
     MaterialModule,
     AddressAvailabilitySliderComponent,
+    StarRatingModule
 
   ],
   declarations: [

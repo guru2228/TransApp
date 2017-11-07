@@ -14,7 +14,7 @@ export class NotificationService {
    * @param horizontalPosition vertical position, allowed: 'left', 'center','right'
    * @param verticalPosition horizontal position, allowed: 'bottom', 'top'
    */
-  show(message: string, notificationType: string, horizontalPosition: any, verticalPosition: any) {
+  show(message: string, notificationType: string, horizontalPosition: any = 'center', verticalPosition: any = 'top') {
     const type = ['', 'info', 'success', 'warning', 'danger', 'rose', 'primary'];
 
     const color = Math.floor((Math.random() * 6) + 1);

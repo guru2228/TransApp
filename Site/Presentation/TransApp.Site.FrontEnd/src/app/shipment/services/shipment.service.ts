@@ -161,6 +161,35 @@ export class ShipmentService {
       .catch(this.errorHandler.throwError);
   }
 
+
+  /**
+  * assignToTransporters
+  * @param shipmentId
+  * @param customerId
+  * @param language
+  */
+  assignToTransporter(shipmentId: number, shipmentTransporterId: number, customerId: number, language: string) {
+    const headers = new Headers({ "Content-Type": "application/json" });
+    const data = JSON.stringify({});
+
+    return this.http
+      .post(
+      this.serviceUrl +
+      "assignToTransporter/" +
+      shipmentId +
+      "/" +
+      shipmentTransporterId +
+      "/" +
+      customerId +
+      "/" +
+      language,
+      data,
+      { headers }
+      )
+      .map(response => response.json())
+      .catch(this.errorHandler.throwError);
+  }
+
   /**
    * getAssignedTransporters
    * @param shipmentId

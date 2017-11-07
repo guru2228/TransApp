@@ -18,13 +18,9 @@ import { Observable } from "rxjs/Observable";
 import { ShipmentTransporterModel } from "app/shipment/models/shipment-transporter-model";
 import { ComponentStateType } from "app/shared/common/helper/component-state-type";
 
-const moment = require("moment/moment");
 declare var $: any;
 declare var swal: any;
-declare interface TableData2 {
-  headerRow: string[];
-  dataRows: string[][];
-}
+
 @Component({
   selector: "app-shipment-assign-transporter",
   templateUrl: "./shipment-assign-transporter.component.html"
@@ -35,7 +31,7 @@ export class ShipmentAssignTransporterComponent
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
   componentModel: ShipmentTransporterModel[];
   currentUser: ApplicationUser;
-
+  currentShipmentId: number;
   /** component state : display, add or edit */
   componentState: ComponentStateType;
 
@@ -51,33 +47,58 @@ export class ShipmentAssignTransporterComponent
     public helperService: HelperService,
     private errorHandler: GlobalErrorHandler,
     private route: ActivatedRoute
-  ) { }
+  ) {
+  }
   // constructor(private navbarTitleService: NavbarTitleService) { }
   public ngOnInit() {
     debugger;
     this.currentUser = this.authenticationService.getCurrentUser();
 
+    this.parametersSubscription = this.route.params.subscribe(params => {
+      this.currentShipmentId = +params['id'];
+    });
+
+
     this.getAssignedTransporters();
   };
+
+  onClickAssignToTransporter(shipmentTransporter: ShipmentTransporterModel) {
+    debugger;
+    this.shipmentService.assignToTransporter(this.currentShipmentId, shipmentTransporter.id, this.currentUser.customerId, this.translateService.currentLanguage)
+      .subscribe(
+      result => {
+        if (result) {
+          const otherAssignedTransporter = this.componentModel.find(item => item.assigned);
+          if (otherAssignedTransporter) {
+            otherAssignedTransporter.assigned = false;
+
+          }
+
+          shipmentTransporter.assigned = true;
+          shipmentTransporter.assignedDate = new Date();
+
+          this.notificationService.show('Transporter assigned', 'success');
+        }
+      }
+      , error => {
+        this.errorHandler.handleError(error);
+      });
+  }
 
   /**
    * Get addresses
    */
   private getAssignedTransporters() {
-    let currentShipmentId = -1;
-    this.parametersSubscription = this.route.params.subscribe(params => {
-      currentShipmentId = +params['id'];
-    });
 
-    if (currentShipmentId > 0 && this.currentUser && this.currentUser.customerId) {
-      this.shipmentService.getAssignedTransporters(currentShipmentId, this.currentUser.customerId, this.translateService.currentLanguage)
+    if (this.currentShipmentId > 0 && this.currentUser && this.currentUser.customerId) {
+      this.shipmentService.getAssignedTransporters(this.currentShipmentId, this.currentUser.customerId, this.translateService.currentLanguage)
         .subscribe(
         result => {
           this.componentModel = result;
 
           this.helperService.sendSharedDataBetweenComponents({
             operation: 'loaded-transporters',
-            shipmentId: currentShipmentId
+            shipmentId: this.currentShipmentId
           });
         },
         error => {

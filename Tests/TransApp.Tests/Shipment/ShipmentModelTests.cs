@@ -497,7 +497,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.GetShipmentTransporterAll(new FilterShipmentTransporter {ShipmentId = 60});
+                    await _shipmentService.GetAssignedTransporters(new FilterShipmentTransporter {ShipmentId = 60});
                 ;
                 {
                     Assert.IsTrue(true);
@@ -515,7 +515,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.AssignTransporter(1000,60);
+                    await _shipmentService.AssignToTransporters(1000,60);
                 ;
                 {
                     Assert.IsTrue(true);
@@ -575,7 +575,7 @@ namespace TransApp.Tests.Shipment
             try
             {
                 var a =
-                    await _shipmentService.UpdateTransporterAssigned(1000,false,60, 88);
+                    await _shipmentService.AssignToTransporter(1000,false,60, 88);
                 ;
                 {
                     Assert.IsTrue(true);

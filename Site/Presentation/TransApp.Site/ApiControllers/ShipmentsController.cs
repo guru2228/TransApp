@@ -190,9 +190,52 @@ namespace TransApp.Site.ApiControllers
             }
             language.ConvertLocaleStringToServerLanguage();
 
-            return await _shipmentService.AssignTransporter(currentUser.Id, shipmentId);
+            return await _shipmentService.AssignToTransporters(currentUser.Id, shipmentId);
         }
 
+
+        /// <summary>
+        /// Assign shipment to transporters
+        /// Unassign previously selected transporter
+        /// </summary>
+        /// <param name="shipmentId"></param>
+        /// <param name="shipmentTransporterId"></param>
+        /// <param name="customerId"></param>
+        /// <param name="language"></param>
+        /// <returns></returns>
+        [Authorize(Policy = "TransAppUser")]
+        [HttpPost("assignToTransporter/{shipmentId}/{shipmentTransporterId}/{customerId}/{language}")]
+        public async Task<bool> AssignToTransporter(int shipmentId, int shipmentTransporterId, int customerId,
+            string language)
+        {
+            var currentUser = await _authenticationService.GetUser(User.Identity.Name);
+            if (currentUser.CustomerId != customerId)
+            {
+                throw new HttpResponseException(HttpStatusCode.InternalServerError,
+                    "Provided customer is not assigned to your account");
+            }
+            language.ConvertLocaleStringToServerLanguage();
+
+            //// check if there is other shipment transporter assigned, and unassign it
+            var assignedTransporters = await _shipmentService.GetAssignedTransporters(new FilterShipmentTransporter
+            {
+                ShipmentId = shipmentId,
+                CustomerId = customerId,
+            });
+
+            var transporterAssigned = assignedTransporters.FirstOrDefault(item => item.Assigned);
+            if (transporterAssigned != null)
+            {
+                await
+                    _shipmentService.AssignToTransporter(currentUser.Id, true, shipmentId,
+                        transporterAssigned.Id);
+            }
+
+            // assign current tranporter
+            return
+                await
+                    _shipmentService.AssignToTransporter(currentUser.Id, true, shipmentId, shipmentTransporterId);
+        }
 
         /// <summary>
         /// Get all assigned shipment transporters for a shipment id.
@@ -223,7 +266,7 @@ namespace TransApp.Site.ApiControllers
                 ShipmentId = shipmentId,
                 CustomerId = customerId,
             };
-            var shipments = await _shipmentService.GetShipmentTransporterAll(searchFilter);
+            var shipments = await _shipmentService.GetAssignedTransporters(searchFilter);
             return shipments.OrderByDescending(item => item.Id);
         }
 

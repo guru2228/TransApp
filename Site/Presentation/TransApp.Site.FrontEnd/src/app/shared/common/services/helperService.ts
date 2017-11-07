@@ -3,6 +3,7 @@ import { ComponentStateType } from "app/shared/common/helper/component-state-typ
 import PerfectScrollbar from 'perfect-scrollbar';
 import { BehaviorSubject } from "rxjs/BehaviorSubject";
 declare var $: any;
+const moment = require("moment/moment");
 
 @Injectable()
 export class HelperService {
@@ -65,6 +66,9 @@ export class HelperService {
     return false;
   }
 
+  toMomentDate(date: Date) {
+    return moment(date);
+  }
   /**
      * Convert datetime to string
      * @param dateobj

@@ -969,14 +969,14 @@ namespace TransApp.Domain.Services.Shipment
         }
 
         #region assign transporter
-        public async Task<List<ShipmentTransporterModel>> GetShipmentTransporterAll(FilterShipmentTransporter filter)
+        public async Task<List<ShipmentTransporterModel>> GetAssignedTransporters(FilterShipmentTransporter filter)
         {
             var shipmentTransporters =
                 await _unitOfWork.ShipmentTransporterRepository.GetAll(filter);
             return Mapper.Map<List<ShipmentTransporterDto>, List<ShipmentTransporterModel>>(shipmentTransporters);
         }
 
-        public async Task<bool> AssignTransporter(int userId, int shipmentId,
+        public async Task<bool> AssignToTransporters(int userId, int shipmentId,
             int amoutFlexibility = 0)
         {
             await CreateShipmentTransporterHistory("ShipmentId=" + shipmentId, null);
@@ -984,21 +984,21 @@ namespace TransApp.Domain.Services.Shipment
             return true;
         }
 
-        public async Task<bool> UpdateTransporterAssigned(int userId, bool assigned,int shipmentId, int shipmentTransporterId,
+        public async Task<bool> AssignToTransporter(int currentUserId, bool assigned,int shipmentId, int shipmentTransporterId,
             IDbTransaction transaction = null)
         {
-            bool result =  await _unitOfWork.ShipmentTransporterRepository.UpdateTransporterAssigned(userId, assigned,
+            bool result =  await _unitOfWork.ShipmentTransporterRepository.UpdateTransporterAssigned(currentUserId, assigned,
                 shipmentTransporterId, transaction);
 
             if (result)
             {
                 if (!assigned)
                 {
-                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "UAS");
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(currentUserId, shipmentId, null, "UAS");
                 }
                 else
                 {
-                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(userId, shipmentId, null, "ASS");
+                    await _unitOfWork.ShipmentRepository.UpdateShipmentStatus(currentUserId, shipmentId, null, "ASS");
                 }
             }
             return result;
